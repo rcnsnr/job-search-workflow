@@ -77,7 +77,9 @@ ALLOWLIST = [
     r"github\.com/alexchen-example",  # Fictitious fixture
     r"github\.com/youruser",
     r"github\.com/\[",
+    r"github\.com/search",  # GitHub search feature URL, not a profile
     r"/home/\[",
+    r"rcnsnr@users\.noreply\.github\.com",  # GitHub noreply email (privacy-preserving)
 ]
 
 
