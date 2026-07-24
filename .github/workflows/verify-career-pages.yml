@@ -1,0 +1,19 @@
+name: Career Pages Verification
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"  # Every Monday 09:00 UTC
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: Verify Career Page URLs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pyyaml
+      - run: python3 scripts/verify_career_pages.py --timeout 10
+        name: Verify career page URLs
