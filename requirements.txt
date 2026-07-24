@@ -9,4 +9,8 @@ pypandoc>=1.11
 pytest>=7.0.0
 
 # Optional: Dashboard
-flask>=3.0.0
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.27,<1.0
+jinja2>=3.1,<4.0
+markdown>=3.5,<4.0
+pyyaml>=6.0,<7.0

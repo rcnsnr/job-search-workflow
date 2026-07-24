@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ filename }} — Job Search Workflow{% endblock %}
+{% block nav_kanban %}active{% endblock %}
+{% block content %}
+<div class="content-page">
+  <p><a href="/" style="color:var(--text-muted);text-decoration:none;">← Back to pipeline</a></p>
+  <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0;">
+  {{ posting_html | safe }}
+</div>
+{% endblock %}
