@@ -270,7 +270,7 @@ async function getActiveLinkedInTab() {
 
     if (!activeTab.url) {
       logger.error("Failed to get tab URL", { tabId: activeTab.id });
-      throw new Error("Failed to get tab URL. Sekmeyi yenileyin ve tekrar deneyin.");
+      throw new Error("Failed to get tab URL. Refresh the tab and try again.");
     }
 
     if (!activeTab.url.includes("linkedin.com/jobs")) {

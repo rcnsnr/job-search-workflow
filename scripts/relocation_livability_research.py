@@ -31,7 +31,7 @@ FAMILY_PROFILE = "1 working parent + 1 stay-at-home parent + 2 children age ≤3
 DIMENSIONS = {
     "cost_of_living": {
         "weight": 0.25,
-        "label": "Cost of Living (tek gelir, 4 kişi)",
+        "label": "Cost of Living (single income, family of 4)",
         "search_queries": [
             "cost of living {city} {country} family of 4 2025",
             "average rent {city} {country} 2 bedroom 2025",
@@ -41,7 +41,7 @@ DIMENSIONS = {
     },
     "healthcare": {
         "weight": 0.20,
-        "label": "Healthcare (erişim + giderler)",
+        "label": "Healthcare (access + cost)",
         "search_queries": [
             "healthcare system {country} expats access quality",
             "NHS {country} waiting times quality 2025",
@@ -199,7 +199,7 @@ def generate_report(
     lines.extend([
         "## Search Query Reference",
         "",
-        "Aşağıdaki sorgular veri toplamak için kullanılabilir (web search / firecrawl):",
+        "The following queries can be used to collect data (web search / firecrawl):",
         "",
     ])
 
@@ -222,7 +222,7 @@ def generate_report(
         if note:
             lines.append(note)
         else:
-            lines.append("Veri toplanacak. Yukarıdaki search query'leri kullan.")
+            lines.append("No data collected yet. Use the search queries above.")
         lines.append("")
 
     # Add cost breakdown template if salary provided

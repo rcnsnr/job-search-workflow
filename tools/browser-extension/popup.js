@@ -675,9 +675,9 @@ function setupDebugPanel() {
   if (clearButton) {
     clearButton.addEventListener("click", () => {
       if (confirm("Are you sure you want to clear all debug logs??")) {
-        logger.info("Loglar temizleniyor...");
+        logger.info("Logs are being cleared...");
         Logger.clearLogs();
-        debugLogsContainer.innerHTML = "<p style=\"color: #6c757d;\">Loglar temizlendi.</p>";
+        debugLogsContainer.innerHTML = "<p style=\"color: #6c757d;\">Logs cleared.</p>";
       }
     });
   }
@@ -768,7 +768,7 @@ function renderTelemetry(container, telemetry, metadata = {}) {
     <hr>
     <p class="telemetry__stat"><strong>Premium toplam kota:</strong> ${premiumLimit}</p>
     <p class="telemetry__stat"><strong>Premium used:</strong> ${premiumUsed}</p>
-    <p class="telemetry__stat"><strong>Kalan Premium quota:</strong> ${premiumRemaining}</p>
+    <p class="telemetry__stat"><strong>Remaining Premium quota:</strong> ${premiumRemaining}</p>
     <p class="telemetry__stat"><strong>Last Premium request:</strong> ${premiumLast}</p>
   `;
 }
@@ -798,7 +798,7 @@ function formatRelativeTimestamp(value) {
   const diffMinutes = Math.floor(diffMs / (1000 * 60));
 
   if (diffMinutes < 1) {
-    return "Şimdi";
+    return "Just now";
   }
 
   if (diffMinutes < 60) {
@@ -815,7 +815,7 @@ function formatRelativeTimestamp(value) {
     return `${diffDays} days ago`;
   }
 
-  return new Date(timestamp).toLocaleString("tr-TR");
+  return new Date(timestamp).toLocaleString("en-US");
 }
 
 function normalizeKeywordValue(value) {

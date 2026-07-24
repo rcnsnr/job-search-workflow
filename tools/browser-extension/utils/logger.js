@@ -50,7 +50,7 @@ class Logger {
         console.log(formattedMsg);
     }
 
-    // Storage'a kaydet
+    // Save to storage
     this._saveToStorage(level, message, data);
   }
 

@@ -9,7 +9,7 @@ following terms.
 - **"Contributor"** means the individual submitting a contribution.
 - **"Contribution"** means any original work of authorship, including
   modifications, additions, or new files, submitted to the Project.
-- **"Maintainer"** means Orçun Şener, the project owner.
+- **"Maintainer"** means Orcun Sener, the project owner.
 
 ## 2. Grant of Copyright License
 
@@ -41,7 +41,7 @@ Contributor represents that:
 ## 5. Trademark
 
 Contributor acknowledges that "job-search-workflow" is a trademark of
-Orçun Şener. This CLA does not grant any trademark rights. Contributions
+Orcun Sener. This CLA does not grant any trademark rights. Contributions
 must not use the trademark name in a way that implies endorsement without
 permission.
 

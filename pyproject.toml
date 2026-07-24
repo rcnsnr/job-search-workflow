@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "PolyForm Noncommercial 1.0.0" }
 authors = [
-    { name = "Orçun Şener", email = "rcnsnr@users.noreply.github.com" },
+    { name = "Orcun Sener", email = "rcnsnr@users.noreply.github.com" },
 ]
 keywords = ["job-search", "ai-assisted", "career", "local-first", "markdown", "privacy-first"]
 classifiers = [

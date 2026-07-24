@@ -246,7 +246,7 @@ license from the author.
 
 ## Trademark
 
-**job-search-workflow™** is a trademark of Orçun Şener. This is the official
+**job-search-workflow™** is a trademark of Orcun Sener. This is the official
 repository. Forks and derivatives must comply with the PolyForm Noncommercial
 license and must not use the trademark name in their project name, package
 name, or promotional materials without written permission.
