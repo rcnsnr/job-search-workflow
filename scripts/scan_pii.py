@@ -73,6 +73,7 @@ ALLOWLIST = [
     r"github\.com/rcnsnr/job-search-workflow",  # This repo itself
     r"github\.com/rcnsnr(?:/|$)",  # Repo owner
     r"github\.com/sponsors",  # GitHub Sponsors feature URL, not a profile
+    r"github\.com/about",  # GitHub about page, not a profile
     r"github\.com/alexchen-example",  # Fictitious fixture
     r"github\.com/youruser",
     r"github\.com/\[",
