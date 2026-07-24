@@ -499,15 +499,15 @@ function renderWorkflowProfileSummary(profile, mode, parseError = "") {
   const summaryItems = [
     `Mod: ${modeLabels[mode] || modeLabels.off}`,
     `Label: ${normalizedProfile.profileLabel}`,
-    `Role tracks: ${normalizedProfile.roleTracks.join(", ") || "yok"}`,
-    `Keywords: ${normalizedProfile.keywords.join(", ") || "yok"}`,
-    `Required keywords: ${normalizedProfile.requiredKeywords.join(", ") || "yok"}`,
-    `Avoid keywords: ${normalizedProfile.avoidKeywords.join(", ") || "yok"}`,
-    `Locations: ${normalizedProfile.locationPreferences.join(", ") || "yok"}`,
+    `Role tracks: ${normalizedProfile.roleTracks.join(", ") || "none"}`,
+    `Keywords: ${normalizedProfile.keywords.join(", ") || "none"}`,
+    `Required keywords: ${normalizedProfile.requiredKeywords.join(", ") || "none"}`,
+    `Avoid keywords: ${normalizedProfile.avoidKeywords.join(", ") || "none"}`,
+    `Locations: ${normalizedProfile.locationPreferences.join(", ") || "none"}`,
     `Remote only: ${normalizedProfile.remoteOnly ? "yes" : "no"}`,
     `Company origin: ${normalizedProfile.companyOrigin}`,
-    `Min salary: ${normalizedProfile.minSalary ?? "yok"}`,
-    `Max age days: ${normalizedProfile.maxAgeDays ?? "yok"}`,
+    `Min salary: ${normalizedProfile.minSalary ?? "none"}`,
+    `Max age days: ${normalizedProfile.maxAgeDays ?? "none"}`,
   ];
 
   container.innerHTML = `<ul>${summaryItems.map((item) => `<li>${item}</li>`).join("")}</ul>`;

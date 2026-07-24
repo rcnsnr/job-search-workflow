@@ -47,8 +47,8 @@ Evaluate every role in this exact order:
 
 ## Compensation Assessment (Geographic Market-Aware)
 
-Compensation scoring is market-aware. In some markets (e.g., Turkey, India,
-Brazil), salary ranges are rarely published in job postings. Penalizing missing
+Compensation scoring is market-aware. In some markets (e.g., India, Brazil,
+Mexico), salary ranges are rarely published in job postings. Penalizing missing
 salary information in those markets produces false rejections.
 
 ### Configuration
@@ -190,8 +190,7 @@ Before scoring a role, check linked pages that the posting references:
 contain disqualifying details (e.g., mandatory live coding interviews,
 relocation/visa constraints, core-hour expectations) that are not visible on the
 main posting. Record findings in the capture under `Extracted Facts` or a
-`Linked Page Snapshots` section. See `AGENTS.md` GAP-20260719-01 and
-`docs/runbooks/posting-intake-operations.md` Section 7 step 6.
+`Linked Page Snapshots` section.
 
 ## Travel and Security Clearance Gate
 
@@ -282,10 +281,8 @@ basis for all cost-of-living and childcare calculations.
 
 ### Data Sources
 
-- City-based livability reports are stored under
-  `docs/sources/relocation-livability/` (format: `{city}-{country}-livability.md`)
-- Data collection script: `scripts/relocation_livability_research.py`
-  (web search + structured output)
+- Generate a city-based livability report with
+  `scripts/relocation_livability_research.py` (web search + structured output)
 - Data refresh: every 6 months or when a new city is added
 - If there is no data for the city, the `Unknown` label is used and Livability
   Score cannot be calculated — in this case the role receives a `hold` decision
@@ -298,7 +295,7 @@ basis for all cost-of-living and childcare calculations.
 
 - **Target city:** Cambridge, UK
 - **Family profile:** 1 working parent + 1 stay-at-home parent + 2 children (≤3 years)
-- **Livability data source:** docs/sources/relocation-livability/cambridge-uk-livability.md
+- **Livability data source:** `outputs/relocation-livability/{city}-{country}-livability.md`
 - **Cost of Living:** 3.5/5 — [short rationale]
 - **Healthcare:** 4.5/5 — [short rationale]
 - **Childcare/Nursery:** 3.0/5 — [short rationale]

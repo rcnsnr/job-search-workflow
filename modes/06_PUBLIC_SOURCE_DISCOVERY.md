@@ -31,11 +31,8 @@ posting is selected.
 - Treat LinkedIn Premium or platform ranking as evidence signals only.
 - Record provenance and access constraints in the source registry.
 - Favor batch/bulk-friendly source structures over one-off opaque pages.
-- Prefer row-level patches against `docs/sources/company-catalog-v1.csv` over
+- Prefer row-level patches against `data/career-pages/companies.yaml` over
   narrative-only lists when the ask is catalog maintenance.
-- Use `docs/sources/source-discovery-query-pack.md` and
-  `docs/runbooks/source-discovery-operations.md` when the ask is recurring
-  source expansion or refresh work.
 
 ## Fit Filters
 

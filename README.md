@@ -28,12 +28,15 @@
 - [License](#license)
 - [Trademark](#trademark)
 
-Companies use Applicant Tracking Systems (ATS) to filter you out before a human
-ever sees your application. Many employers use Applicant Tracking Systems (ATS) to sort and screen applications before human review. Greenhouse reported that, in any given quarter in 2024, **18-22% of jobs posted on its platform were classified as ghost jobs**. This is platform-specific industry data, not an official estimate for the entire labor market.
+Many employers use Applicant Tracking Systems (ATS) to sort and screen
+applications before human review. Greenhouse reported that, in any given quarter
+in 2024, **18-22% of jobs posted on its platform were classified as ghost
+jobs**. This is platform-specific industry data, not an official estimate for the
+entire labor market.
 
 `job-search-workflow` is a local-first, AI-assisted framework that helps you run
 your job search like an engineering project — with triage, scoring, decision
-records, and structured application materials. 
+records, and structured application materials.
 
 ## The Problem It Solves
 
@@ -75,6 +78,10 @@ assistant (Claude, Codex, Cursor, Windsurf, etc.) to run the workflow. The
    If evidence is missing, the framework says so explicitly.
 2. **Local-first**:  No SaaS, no database, no
    third-party submissions without your explicit action.
+
+   > Workflow state and personal files are stored locally by design. Content
+   > submitted to an AI coding assistant remains subject to that provider's
+   > privacy and data-processing terms.
 3. **Methodology over tooling**: The value is in the decision framework and
    quality gates, not in a specific tool or platform.
 4. **AI-assisted, human-decided**: AI helps draft, evaluate, and format. You
@@ -173,9 +180,7 @@ verification every Monday. Community PRs welcome — see
 job-search-workflow/
 ├── modes/                  # AI prompt contracts (triage, CV, outreach, etc.)
 ├── docs/
-│   ├── runbooks/           # Step-by-step operational guides
-│   ├── policies/           # Development and privacy standards
-│   └── architecture/       # System design docs
+│   └── getting-started/    # Setup and first-use walkthrough
 ├── scripts/                # Automation helpers (PDF validation, PII scan, etc.)
 │   └── jsw/                # CLI: python3 -m jsw dashboard|init|smoke
 ├── dashboard/              # Local-first web dashboard (FastAPI + Jinja2)
@@ -184,7 +189,6 @@ job-search-workflow/
 ├── fixtures/               # Sample data (fictitious profiles, postings, CVs)
 ├── templates/
 │   ├── user-data-skeleton/ # Blank starting point for your personal data
-│   ├── wp-template.md      # Work Package spec template
 │   └── cv-reference.docx   # Pandoc reference template for DOCX export
 ├── .github/workflows/      # CI pipeline (lint, PII scan, tests)
 ├── user_data/              # YOUR personal data (gitignored, never committed)
@@ -217,7 +221,7 @@ job-search-workflow/
   `exports/` (gitignored by default). The framework itself contains no
   real personal information.
 - **Geographic salary transparency**: Compensation scoring is market-aware. In markets
-  where salary ranges are rarely published (e.g., Turkey, India, Brazil),
+  where salary ranges are rarely published (e.g., India, Brazil, Mexico),
   missing salary information does not penalize the score.
 
 ## Validation
@@ -243,7 +247,7 @@ runbook improvements, sample fixtures, and translations.
 
 ## Support This Project
 
-This framework is built and maintained as an source-available side project. If it
+This framework is built and maintained as a source-available side project. If it
 saved you time, reduced your job-search stress, or helped you make a better
 career decision, you can support continued development through any of these
 channels:

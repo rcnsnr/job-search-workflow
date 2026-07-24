@@ -148,13 +148,13 @@
       return "Unknown";
     }
 
-    if (/(hybrid|hibrit)/.test(text)) {
+    if (/(hybrid|hybrid work)/.test(text)) {
       return "hybrid";
     }
-    if (/(on-site|onsite|on site|office|ofis|yerinde)/.test(text)) {
+    if (/(on-site|onsite|on site|office)/.test(text)) {
       return "onsite";
     }
-    if (/(remote|uzaktan|work from home|home office)/.test(text)) {
+    if (/(remote|work from home|home office)/.test(text)) {
       return "remote";
     }
 
@@ -208,7 +208,7 @@
     if (!text) {
       return "Unknown";
     }
-    if (/(europe|eu|emea|germany|berlin|amsterdam|london|uk|istanbul|turkey)/.test(text)) {
+    if (/(europe|eu|emea|germany|berlin|amsterdam|london|uk)/.test(text)) {
       return "europe_friendly";
     }
     if (/(united states|usa|us only|north america|pst|est)/.test(text)) {
@@ -328,7 +328,7 @@
     if (locationMatches.length > 0) {
       reasons.push(`matched locations: ${locationMatches.join(", ")}`);
     }
-    if (normalizedProfile.remoteOnly && /remote|uzaktan/.test(text)) {
+    if (normalizedProfile.remoteOnly && /remote/.test(text)) {
       reasons.push("remote-compatible signal present");
     }
     if (missingRequiredKeywords.length > 0) {
@@ -337,7 +337,7 @@
     if (blockedKeywords.length > 0) {
       risks.push(`blocked keywords: ${blockedKeywords.join(", ")}`);
     }
-    if (normalizedProfile.remoteOnly && /on-site|onsite|on site|office|ofis|yerinde/.test(text)) {
+    if (normalizedProfile.remoteOnly && /on-site|onsite|on site|office/.test(text)) {
       risks.push("remote-only profile conflicts with onsite signal");
     }
     if (normalizedProfile.companyOrigin === "exclude-outsourcing" && readText(job, "companyOrigin") === "outsourcing") {

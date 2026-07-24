@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local read-only dashboard for Job Search Workflow job records."""
+"""Local read-only dashboard for job search workflow records."""
 
 from __future__ import annotations
 
@@ -271,11 +271,11 @@ def serialize_records(
 
 
 HTML_TEMPLATE = """<!doctype html>
-<html lang=\"tr\">
+<html lang=\"en\">
 <head>
   <meta charset=\"utf-8\">
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-  <title>Job Search Workflow Job Dashboard</title>
+  <title>Job Search Workflow Dashboard</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -539,8 +539,8 @@ HTML_TEMPLATE = """<!doctype html>
 <body>
   <main>
     <header id=\"top\">
-      <h1>Job Search Workflow Job Dashboard</h1>
-      <p>Read-only local dashboard. Canonical truth hâlâ <code>inbox/jobs/*.md</code>.</p>
+      <h1>Job Search Workflow Dashboard</h1>
+      <p>Read-only local dashboard. Canonical truth still lives in <code>inbox/jobs/*.md</code>.</p>
     </header>
 
     <section aria-labelledby=\"summary-heading\">
@@ -1242,7 +1242,7 @@ def serve(host: str, port: int) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Job Search Workflow local job dashboard")
+    parser = argparse.ArgumentParser(description="Local job search workflow dashboard")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--check", action="store_true")

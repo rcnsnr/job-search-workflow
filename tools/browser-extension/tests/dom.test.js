@@ -160,7 +160,7 @@ describe("DOM Integration Tests", () => {
           <a class="job-card-list__title" href="/jobs/123">Senior Developer</a>
           <a class="job-card-container__company-name">Tech Corp</a>
           <ul class="job-card-container__metadata">
-            <li>Istanbul, Turkey</li>
+            <li>Berlin, Germany</li>
           </ul>
         </li>
       `;
@@ -170,7 +170,7 @@ describe("DOM Integration Tests", () => {
 
       expect(job.title).toBe("Senior Developer");
       expect(job.company).toBe("Tech Corp");
-      expect(job.location).toBe("Istanbul, Turkey");
+      expect(job.location).toBe("Berlin, Germany");
     });
 
     test("should extract job data from recommended page card", () => {
@@ -304,12 +304,12 @@ describe("DOM Integration Tests", () => {
 
       // Simulate user input
       keywordsInput.value = "developer, engineer";
-      locationInput.value = "Istanbul";
+      locationInput.value = "Berlin";
       remoteCheckbox.checked = true;
       minSalaryInput.value = "50000";
 
       expect(keywordsInput.value).toBe("developer, engineer");
-      expect(locationInput.value).toBe("Istanbul");
+      expect(locationInput.value).toBe("Berlin");
       expect(remoteCheckbox.checked).toBe(true);
       expect(minSalaryInput.value).toBe("50000");
     });
@@ -344,8 +344,8 @@ describe("DOM Integration Tests", () => {
   describe("Results Display", () => {
     test("should render job results list", () => {
       const jobs = [
-        { title: "Developer", company: "Company A", location: "Istanbul" },
-        { title: "Engineer", company: "Company B", location: "Ankara" },
+        { title: "Developer", company: "Company A", location: "Berlin" },
+        { title: "Engineer", company: "Company B", location: "Munich" },
       ];
 
       const renderJobs = (jobList) => {
@@ -452,7 +452,7 @@ describe("DOM Integration Tests", () => {
     test("should save filters to storage", (done) => {
       const filters = {
         keywords: ["react", "vue"],
-        location: "Istanbul",
+        location: "Berlin",
         remoteOnly: true,
       };
 

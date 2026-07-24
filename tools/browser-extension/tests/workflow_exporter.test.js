@@ -80,7 +80,7 @@ describe("Job Search exporter", () => {
   });
 
   test("inferWorkModel normalizes onsite", () => {
-    expect(inferWorkModel({ location: "On-site / Istanbul" })).toBe("onsite");
+    expect(inferWorkModel({ location: "On-site / Berlin" })).toBe("onsite");
   });
 
   test("inferWorkModel falls back to Unknown", () => {

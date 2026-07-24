@@ -146,7 +146,7 @@
       keywords: ["platform", "reliability", "observability", "agent", "developer productivity"],
       requiredKeywords: ["platform"],
       avoidKeywords: ["onsite-only", "commission"],
-      locationPreferences: ["Remote", "Europe", "Turkey"],
+      locationPreferences: ["Remote", "Europe"],
       remoteOnly: true,
       workModelPreferences: ["remote", "hybrid"],
       companyOrigin: "exclude-outsourcing",
@@ -342,7 +342,7 @@
     if (locationMatches.length > 0) {
       reasons.push(`matched locations: ${locationMatches.join(", ")}`);
     }
-    if (normalizedProfile.remoteOnly && /remote|uzaktan/.test(text)) {
+    if (normalizedProfile.remoteOnly && /remote/.test(text)) {
       reasons.push("remote-compatible signal present");
     }
 
@@ -352,7 +352,7 @@
     if (blockedKeywords.length > 0) {
       risks.push(`blocked keywords: ${blockedKeywords.join(", ")}`);
     }
-    if (normalizedProfile.remoteOnly && /on-site|onsite|on site|office|ofis|yerinde/.test(text)) {
+    if (normalizedProfile.remoteOnly && /on-site|onsite|on site|office/.test(text)) {
       risks.push("remote-only profile conflicts with onsite signal");
     }
     if (normalizedProfile.companyOrigin === "exclude-outsourcing" && normalizeWhitespace(job?.companyOrigin) === "outsourcing") {

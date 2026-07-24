@@ -22,7 +22,7 @@ import urllib.parse
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_DIR = REPO_ROOT / "docs/sources/relocation-livability"
+OUTPUT_DIR = REPO_ROOT / "outputs" / "relocation-livability"
 
 # Family profile constants
 FAMILY_PROFILE = "1 working parent + 1 stay-at-home parent + 2 children age ≤3"

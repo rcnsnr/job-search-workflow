@@ -1,5 +1,5 @@
 // utils/logger.js - Debug Logging Utility
-// Log recording in Istanbul (GMT+03) timezone
+// Log timestamps use UTC+03
 
 const LOG_LEVELS = {
   DEBUG: 0,
@@ -19,9 +19,9 @@ class Logger {
 
   _getTimestamp() {
     const now = new Date();
-    // UTC+3 for Istanbul timezone
-    const istanbulTime = new Date(now.getTime() + (3 * 60 * 60 * 1000));
-    return istanbulTime.toISOString().replace('T', ' ').substring(0, 23);
+    // UTC+3 offset
+    const offsetTime = new Date(now.getTime() + (3 * 60 * 60 * 1000));
+    return offsetTime.toISOString().replace('T', ' ').substring(0, 23);
   }
 
   _formatMessage(level, message, data) {
@@ -35,7 +35,7 @@ class Logger {
 
     const formattedMsg = this._formatMessage(level, message, data);
     
-    // Console'a yaz
+    // Write to console
     switch (level) {
       case 'ERROR':
         console.error(formattedMsg);

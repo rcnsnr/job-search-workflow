@@ -43,9 +43,8 @@ jobs:
           python3 -m py_compile scripts/job_dashboard.py
           python3 -m py_compile scripts/md_to_tex.py
           python3 -m py_compile scripts/md_to_docx.py
-          python3 -m py_compile scripts/calc_turkey_contractor_net.py
-          python3 -m py_compile scripts/validate_company_catalog.py
           python3 -m py_compile scripts/verify_no_turkish.py
+          python3 -m py_compile scripts/relocation_livability_research.py
         name: Verify Python scripts compile
 
   test:
