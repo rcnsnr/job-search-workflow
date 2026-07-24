@@ -3,14 +3,6 @@
 ![Official](https://img.shields.io/badge/official-repository-blue)
 ![License](https://img.shields.io/badge/license-PolyForm_NC-orange)
 ![Support](https://img.shields.io/badge/support-GitHub_Sponsors-ff69b4)
-<<<<<<< HEAD
-
-![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-CI_passing-brightgreen)
-![Dashboard](https://img.shields.io/badge/dashboard-FastAPI-009688)
-![Status](https://img.shields.io/badge/status-alpha-yellow)
-=======
->>>>>>> 0e711cd (feat: add Turkish-content detector CI and slogan banner.)
 
 ![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-CI_passing-brightgreen)
@@ -18,22 +10,6 @@
 ![Status](https://img.shields.io/badge/status-alpha-yellow)
 
 ![Slogan](/assets/slogan-banner.svg)
-
-## README Index
-
-- [The Problem It Solves](#the-problem-it-solves)
-- [Who Is This For?](#who-is-this-for)
-- [Philosophy](#philosophy)
-- [Quick Start](#quick-start)
-- [Career Pages Directory](#career-pages-directory)
-- [Project Structure](#project-structure)
-- [Modes (AI Prompt Contracts)](#modes-ai-prompt-contracts)
-- [Key Design Decisions](#key-design-decisions)
-- [Validation](#validation)
-- [Contributing](#contributing)
-- [Support This Project](#support-this-project)
-- [License](#license)
-- [Trademark](#trademark)
 
 ## README Index
 
