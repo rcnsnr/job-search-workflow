@@ -360,7 +360,7 @@ async function persistTelemetry() {
     await chrome.storage.local.set({ [key]: data });
   } catch (error) {
     console.error("Telemetry save error:", error);
-    throw new Error("Telemetri kaydedilemedi: " + error.message);
+    throw new Error("Telemetry could not be saved: " + error.message);
   }
 }
 

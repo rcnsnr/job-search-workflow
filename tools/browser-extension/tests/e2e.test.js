@@ -235,7 +235,7 @@ describe("Popup Functionality", () => {
 
     // Enter values
     await popupPage.type("#keyword-input", "react, node");
-    await popupPage.type("#location-input", "Istanbul");
+    await popupPage.type("#location-input", "Berlin");
 
     const values = await popupPage.evaluate(() => ({
       keyword: document.querySelector("#keyword-input").value,
@@ -243,7 +243,7 @@ describe("Popup Functionality", () => {
     }));
 
     expect(values.keyword).toBe("react, node");
-    expect(values.location).toBe("Istanbul");
+    expect(values.location).toBe("Berlin");
     console.log("✅ Filter values accepted");
   });
 });

@@ -98,9 +98,8 @@ Use for:
 
 **Rationale:** HTML-to-PDF tools produce inconsistent typography, poor font
 rendering, non-standard spacing, and lack the ATS-neutral formatting that
-`pdflatex` + `tgheros` provides. The repo standard was established in
-`WORKPACKAGE-EXPORT-HARDENING-01` receipts 9.5-9.7 and validated through
-multiple export cycles.
+`pdflatex` + `tgheros` provides. The repo standard was established and
+validated through multiple export cycles.
 
 **Validation:** `python3 scripts/validate_pdf_standard.py`
 

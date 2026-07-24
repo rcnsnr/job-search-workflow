@@ -191,7 +191,6 @@
   const KEYWORD_SYNONYM_MAP = buildSynonymMap(KEYWORD_SYNONYM_GROUPS);
   const REMOTE_POSITIVE_HINTS = [
     "remote",
-    "uzaktan",
     "home office",
     "fully remote",
     "remote-first",
@@ -200,7 +199,7 @@
   const REMOTE_NEGATIVE_HINTS = [
     "on-site",
     "onsite",
-    "ofiste",
+    "in office",
     "hybrid",
     "shift",
     "travel required",
@@ -496,12 +495,12 @@
 
   function matchRemote(job) {
     const type = job.workplaceType?.toLowerCase?.() ?? "";
-    if (type.includes("remote") || type.includes("uzaktan")) {
+    if (type.includes("remote")) {
       return true;
     }
 
     const location = job.location?.toLowerCase?.() ?? "";
-    if (location.includes("remote") || location.includes("uzaktan")) {
+    if (location.includes("remote")) {
       return true;
     }
 
@@ -598,7 +597,7 @@
 
   function hasRemoteIndicator(texts) {
     for (const text of texts) {
-      if (text.includes("remote") || text.includes("uzaktan")) {
+      if (text.includes("remote")) {
         return true;
       }
     }
@@ -607,7 +606,7 @@
 
   function hasHybridIndicator(texts) {
     for (const text of texts) {
-      if (text.includes("hybrid") || text.includes("hibrit")) {
+      if (text.includes("hybrid")) {
         return true;
       }
     }
@@ -616,7 +615,7 @@
 
   function hasOnsiteIndicator(texts) {
     for (const text of texts) {
-      if (text.includes("on-site") || text.includes("ofis")) {
+      if (text.includes("on-site") || text.includes("office")) {
         return true;
       }
     }

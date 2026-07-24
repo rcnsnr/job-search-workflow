@@ -30,7 +30,6 @@ SEARCH_QUERIES = [
     '"Job hunting shouldn\'t be a full-time job"',
     '"They have ATS. You have Job Search Workflow"',
     '"PolyForm Noncommercial" "job-search-workflow"',
-    '"WORKPACKAGE" "job-search-workflow"',
     '"ghost_job_risk" "exploitation_risk" "chaos_risk"',
     '"opaque_normative_market" "compensation_signal"',
     '"quality_audit_recommendation" "quality_badge"',

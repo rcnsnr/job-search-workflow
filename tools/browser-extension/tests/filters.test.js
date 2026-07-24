@@ -122,7 +122,7 @@ describe("Filter Logic Tests", () => {
     }
 
     const normalized = workplaceType.toLowerCase();
-    return normalized.includes("remote") || normalized.includes("uzaktan");
+    return normalized.includes("remote");
   };
 
   const matchJobAge = (listedAt, maxAgeDays) => {
@@ -291,7 +291,7 @@ describe("Filter Logic Tests", () => {
   describe("matchRemoteOnly", () => {
     test("should match remote positions when filter enabled", () => {
       expect(matchRemoteOnly("Remote", true)).toBe(true);
-      expect(matchRemoteOnly("Uzaktan", true)).toBe(true);
+      expect(matchRemoteOnly("Fully remote", true)).toBe(true);
     });
 
     test("should not match on-site when filter enabled", () => {

@@ -36,7 +36,7 @@ coverage/
 # Chrome profile (contains session cookies; local-only)
 .chrome-profile/
 
-# agent-runtime local-only consumer overlay
+# Local-only consumer overlay
 .codex/GLOBAL_RULES.md
 .codex/rules
 .codex/skills

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lightweight secret hygiene scan for Job Search Workflow."""
+"""Lightweight secret hygiene scan for the job-search-workflow project."""
 
 from __future__ import annotations
 
