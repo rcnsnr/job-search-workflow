@@ -9,3 +9,4 @@ config:
   MD034: false  # bare URLs allowed in fixtures/profile templates
   MD041: false  # first line need not be a heading (letters, front matter)
   MD053: false  # link/image reference definitions may be unused in templates
+  MD060: false  # table column style (compact tables in mode files are fine)
