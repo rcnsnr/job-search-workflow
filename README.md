@@ -2,7 +2,7 @@
 
 ![Official](https://img.shields.io/badge/official-repository-blue)
 ![License](https://img.shields.io/badge/license-PolyForm_NC-orange)
-![Support](https://img.shields.io/badge/support-GitHub_Sponsors-ff69b4)
+![Support](https://img.shields.io/badge/support-GitHub_Sponsors-ff69b4?logo=heart&logoColor=white)
 
 ![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-CI_passing-brightgreen)
