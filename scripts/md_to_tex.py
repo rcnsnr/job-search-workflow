@@ -325,12 +325,12 @@ def convert(md_path: Path) -> str:
     return "".join(out_parts)
 
 
-def find_legacy_cvs_missing_tex() -> list[Path]:
+def find_legacy_cvs_missing_tex(glob: str = "*-cv-*.md") -> list[Path]:
     """Find CV .md files under exports/applications/ whose .pdf has no .tex."""
     apps = REPO_ROOT / "exports" / "applications"
     result = []
-    for md in apps.rglob("*-cv-*.md"):
-        stem = md.stem  # e.g. *-cv-polar-senior-platform-engineer
+    for md in apps.rglob(glob):
+        stem = md.stem  # e.g. myname-cv-polar-senior-platform-engineer
         tex = md.with_suffix(".tex")
         pdf = md.with_suffix(".pdf")
         if pdf.exists() and not tex.exists():
@@ -343,10 +343,11 @@ def main() -> int:
     parser.add_argument("input", nargs="?", help="input .md file")
     parser.add_argument("output", nargs="?", help="output .tex file")
     parser.add_argument("--batch", action="store_true", help="convert all legacy CVs missing .tex")
+    parser.add_argument("--glob", default="*-cv-*.md", help="glob pattern for batch CV discovery")
     args = parser.parse_args()
 
     if args.batch:
-        mds = find_legacy_cvs_missing_tex()
+        mds = find_legacy_cvs_missing_tex(args.glob)
         if not mds:
             print("No legacy CVs missing .tex found.")
             return 0
