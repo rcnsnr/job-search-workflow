@@ -1,0 +1,12 @@
+# job-search-workflow framework dependencies
+# PDF validation
+PyPDF2>=3.0.0
+
+# DOCX generation (pandoc wrapper)
+pypandoc>=1.11
+
+# Testing
+pytest>=7.0.0
+
+# Optional: Dashboard
+flask>=3.0.0

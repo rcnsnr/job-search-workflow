@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Job Search Workflow — LinkedIn Capture",
+  "version": "2.0.0",
+  "description": "LinkedIn Jobs capture extension for job-search-workflow. Unattended scan + local FastAPI server companion. Captures job postings to inbox/jobs/ directory.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "cookies",
+    "alarms",
+    "tabs"
+  ],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "http://localhost:8766/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/jobs/*"],
+      "js": [
+        "content/jobs.js",
+        "content/autoscan.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.css", "options.css", "utils/logger.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

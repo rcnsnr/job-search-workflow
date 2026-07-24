@@ -1,0 +1,176 @@
+# Job Search Workflow — Scoring Configuration
+#
+# This file defines the weighted scoring dimensions, thresholds, and
+# geographic salary transparency rules used by the job triage mode.
+#
+# Users can override any value here in their local copy. The triage mode
+# (modes/01_JOB_TRIAGE.md) references this config for compensation scoring.
+#
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+
+# ---------------------------------------------------------------------------
+# Weighted Scoring Dimensions
+# ---------------------------------------------------------------------------
+# Each dimension has a weight (0.0–1.0). Weights should sum to 1.0.
+# The triage mode assigns a sub-score (0.0–5.0) per dimension, then computes
+# a weighted total. The weighted total maps to a 0–10 Role Fit Score via
+# total * 2.
+
+dimensions:
+  - name: life_sustainability
+    weight: 0.20
+    description: >
+      Work-life balance, on-call burden, commute, family compatibility.
+      Reject if structurally unsustainable regardless of other scores.
+
+  - name: work_model_timezone
+    weight: 0.15
+    description: >
+      Remote / hybrid / on-site fit, timezone overlap, core hours alignment.
+
+  - name: location_relocation
+    weight: 0.10
+    description: >
+      Location practicality, relocation livability score (if applicable),
+      right-to-work constraints.
+
+  - name: career_track_alignment
+    weight: 0.20
+    description: >
+      Primary track (e.g., AI-native engineering) and secondary track
+      (e.g., SRE/Platform) alignment with the posting.
+
+  - name: technical_skill_fit
+    weight: 0.15
+    description: >
+      Hands-on skill matrix match, AI-assisted gap tolerance signal.
+
+  - name: compensation
+    weight: 0.15
+    description: >
+      Salary transparency, range alignment with target, equity upside.
+      See compensation_rules below for geographic market logic.
+
+  - name: growth_upside
+    weight: 0.05
+    description: >
+      Career growth potential, learning opportunities, company trajectory.
+
+# ---------------------------------------------------------------------------
+# Score Thresholds
+# ---------------------------------------------------------------------------
+# Weighted total (0.0–5.0) maps to decision buckets.
+
+thresholds:
+  strong_match: 4.5    # >= 4.5 → apply
+  good_match: 4.0      # >= 4.0 → apply (verify risks)
+  conditional: 3.5     # >= 3.5 → conditional_apply
+  review: 3.0          # >= 3.0 → hold / review
+  reject_below: 3.0    # < 3.0 → reject
+
+# ---------------------------------------------------------------------------
+# Compensation Rules — Geographic Salary Transparency
+# ---------------------------------------------------------------------------
+# In some markets, salary ranges are rarely published in job postings.
+# Penalizing missing salary information in those markets produces false
+# rejections. This config makes the penalty market-aware.
+#
+# Market categories:
+#   high_transparency  — salary ranges are expected; missing salary = penalty
+#   low_transparency   — salary ranges are rare; missing salary = no penalty
+#   mixed              — default; missing salary = small penalty
+
+compensation_rules:
+  high_transparency_markets:
+    regions:
+      - US
+      - CA
+      - UK
+      - IE
+      - DE
+      - NL
+      - FR
+      - ES
+      - AU
+      - NZ
+    salary_sharing_norm: expected
+    missing_salary_penalty: 1.0
+    explicit_range_bonus: 0.5
+
+  low_transparency_markets:
+    regions:
+      - TR
+      - IN
+      - BR
+      - MX
+      - AR
+      - PL
+      - CZ
+      - RO
+      - BG
+      - HU
+    salary_sharing_norm: rare
+    missing_salary_penalty: 0.0
+    explicit_range_bonus: 1.0
+
+  mixed_markets:
+    regions:
+      - default
+    salary_sharing_norm: mixed
+    missing_salary_penalty: 0.5
+    explicit_range_bonus: 0.5
+
+# ---------------------------------------------------------------------------
+# Compensation Signal — Normalized Labels
+# ---------------------------------------------------------------------------
+# The triage mode produces one of these labels for every evaluated role.
+# These labels feed into the decision record and dashboard.
+
+compensation_signals:
+  - label: transparent_aligned
+    description: Salary range published and aligned with target.
+    score_impact: "+1.0 to +2.0"
+
+  - label: transparent_low
+    description: Salary range published but below target.
+    score_impact: "-1.0 to -2.0"
+
+  - label: opaque_expected_market
+    description: >
+      Salary not published, but the market norm is to publish.
+      Penalty applies per high_transparency_markets.missing_salary_penalty.
+    score_impact: "-0.5 to -1.0"
+
+  - label: opaque_normative_market
+    description: >
+      Salary not published, and the market norm is to not publish.
+      No penalty. Common in low_transparency_markets.
+    score_impact: "0.0"
+
+  - label: unknown
+    description: >
+      Market could not be determined or salary context is ambiguous.
+      Treat as mixed_markets penalty.
+    score_impact: "-0.5"
+
+# ---------------------------------------------------------------------------
+# User Override Section
+# ---------------------------------------------------------------------------
+# Users can override the market classification for their target markets.
+# Example:
+#
+# target_markets:
+#   primary: TR
+#   secondary:
+#     - DE
+#     - NL
+#     - UK
+#   overrides:
+#     TR: low_transparency
+#     DE: high_transparency
+#     UK: high_transparency
+
+target_markets:
+  primary: null
+  secondary: []
+  overrides: {}

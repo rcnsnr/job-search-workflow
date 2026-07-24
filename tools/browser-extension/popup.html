@@ -1,0 +1,129 @@
+<!-- in-job-search-addon-chrome/popup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Job Filter</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <h3>Filtered Job Listings</h3>
+    <div class="layout">
+        <section class="panel panel--filters">
+            <div class="panel__section grid-2">
+                <div class="field">
+                    <h4>Keywords</h4>
+                    <input id="keyword-input" type="text" placeholder="Separate keywords with commas...">
+                </div>
+                <div class="field">
+                    <h4>Location</h4>
+                    <input id="location-input" type="text" placeholder="Example: Remote, Istanbul...">
+                </div>
+            </div>
+
+            <div class="panel__section grid-2">
+                <div class="field">
+                    <h4>Company Name</h4>
+                    <input id="company-input" type="text" placeholder="Separate company names with commas...">
+                </div>
+                <div class="field">
+                    <h4>Experience Level</h4>
+                    <input id="experience-input" type="text" placeholder="Example: Entry level, Mid-senior...">
+                </div>
+            </div>
+
+            <div class="panel__section grid-2">
+                <div class="field">
+                    <h4>Industry</h4>
+                    <input id="industry-input" type="text" placeholder="Example: Software, Finance...">
+                </div>
+                <div class="field">
+                    <h4>Company Source</h4>
+                    <select id="company-origin">
+                        <option value="any">Any</option>
+                        <option value="direct">Direct employers only</option>
+                        <option value="exclude-outsourcing">Exclude agencies/consultancies</option>
+                        <option value="outsourcing">Agencies/consultancies only</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="panel__section grid-2">
+                <div class="field">
+                    <h4>Minimum Salary (para birimi dahil)</h4>
+                    <input id="min-salary-input" type="number" min="0" step="100" placeholder="Example: 50000">
+                </div>
+                <div class="field">
+                    <h4>Speed Profile</h4>
+                    <select id="profile-input">
+                        <option value="conservative">Conservative (6-10 sec)</option>
+                        <option value="balanced" selected>Balanced (4-6 sec)</option>
+                        <option value="aggressive">Aggressive (2-4 sec)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="panel__section grid-2">
+                <label class="checkbox">
+                    <input id="remote-only" type="checkbox">
+                    Remote positions only
+                </label>
+                <div class="field">
+                    <h4>Job Age (days)</h4>
+                    <input id="max-age-input" type="number" min="0" placeholder="Example: 7 (empty = unlimited)">
+                </div>
+            </div>
+
+            <div class="panel__section">
+                <h4>Keyword Whitelist</h4>
+                <textarea id="keyword-whitelist" rows="3" placeholder="One word per line"></textarea>
+            </div>
+
+            <div class="panel__section">
+                <h4>Keyword Blacklist</h4>
+                <textarea id="keyword-blacklist" rows="3" placeholder="One word per line"></textarea>
+            </div>
+        </section>
+
+        <section class="panel panel--results">
+            <div class="panel__section">
+                <div class="button-row">
+                    <button id="save-filters">Save Filters and Scan</button>
+                    <button id="download-csv">Download CSV</button>
+                    <button id="download-json">Download JSON</button>
+                </div>
+                <div class="button-row button-row--compact">
+                    <button id="download-workflow-markdown">Download Markdown</button>
+                    <button id="download-workflow-jsonl">Download JSONL</button>
+                    <button id="copy-workflow-markdown">Copy Markdown</button>
+                </div>
+            </div>
+            <div id="status" class="status panel__section">Ready</div>
+            <div id="telemetry" class="telemetry panel__section">
+                <h4>Daily Profile Status</h4>
+                <p class="telemetry__stat">Loading telemetry...</p>
+            </div>
+            <div class="panel__section">
+                <ul id="job-list"><li>No results yet.</li></ul>
+            </div>
+        </section>
+    </div>
+
+    <!-- Debug Panel -->
+    <div id="debug-panel" class="debug-panel" style="display: none;">
+        <h4>🐛 Debug Logs</h4>
+        <div class="debug-controls">
+            <button id="toggle-debug" class="btn-debug">Show/Hide Logs</button>
+            <button id="export-logs" class="btn-debug">Download Logs</button>
+            <button id="clear-logs" class="btn-debug">Clear Logs</button>
+        </div>
+        <div id="debug-logs" class="debug-logs"></div>
+    </div>
+
+    <script src="utils/logger.js"></script>
+    <script src="utils/workflow_profile.js"></script>
+    <script src="utils/workflow_exporter.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>

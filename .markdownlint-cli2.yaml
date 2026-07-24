@@ -1,0 +1,11 @@
+# markdownlint-cli2 config for job-search-workflow public repository
+# Prompt files, fixtures, and templates intentionally relax strict prose rules.
+config:
+  default: true
+  MD013: false  # line length
+  MD022: false  # blanks around headings (prompt files use compact structure)
+  MD026: false  # trailing punctuation in headings
+  MD032: false  # blanks around lists
+  MD034: false  # bare URLs allowed in fixtures/profile templates
+  MD041: false  # first line need not be a heading (letters, front matter)
+  MD053: false  # link/image reference definitions may be unused in templates
