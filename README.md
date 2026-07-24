@@ -13,6 +13,7 @@
 
 ## README Index
 
+- [Getting Started Guide](docs/getting-started/GETTING_STARTED.md) — full walkthrough for macOS, Linux, and Windows
 - [The Problem It Solves](#the-problem-it-solves)
 - [Who Is This For?](#who-is-this-for)
 - [Philosophy](#philosophy)
@@ -105,6 +106,9 @@ pip install -r requirements.txt
 # 4. (Optional) Install markdown linting
 npm install -g markdownlint-cli2
 ```
+
+For platform-specific setup (macOS, Linux, Windows) and a full walkthrough,
+see [Getting Started](docs/getting-started/GETTING_STARTED.md).
 
 ### First Steps
 
