@@ -85,6 +85,25 @@ Every triage output must include a `compensation_signal` label:
 4. If region is unknown: treat as mixed market (`unknown`).
 5. Record the `compensation_signal` label in Decision Summary.
 
+## Quality Audit Integration (Mode 07)
+
+Before running the full triage, optionally run
+`modes/07_JOB_QUALITY_AUDIT.md` to detect ghost job, exploitation, and chaos
+risks. The quality audit produces a recommendation and badge that feed into
+the triage decision:
+
+1. **Early gate:** If quality audit recommendation is `reject`, record
+   `quality_audit_reject` in the Early Rejection Protocol and skip full
+   evaluation.
+2. **Penalty adjustment:** If recommendation is `proceed_with_caution` or
+   `hold`, apply the quality audit penalty (per `config/scoring.yaml`
+   `quality_audit` section) to the weighted total.
+3. **Decision record:** Include in Decision Summary:
+   - `quality_audit_recommendation`: `proceed` | `proceed_with_caution` | `hold` | `reject` | `skipped`
+   - `quality_badge`: `quality_clean` | `quality_caution` | `quality_flagged` | `quality_reject` | `skipped`
+4. **Skip option:** The user can skip the quality audit. If skipped, record
+   `quality_audit_skipped` in the decision record.
+
 ## Early Rejection Protocol
 
 Start every analysis with this pre-filter:
@@ -360,6 +379,10 @@ so the result can later be promoted into a decision record:
   `reject_candidate`
 - `Compensation signal`: `transparent_aligned` | `transparent_low` |
   `opaque_expected_market` | `opaque_normative_market` | `unknown`
+- `Quality audit recommendation`: `proceed` | `proceed_with_caution` | `hold` |
+  `reject` | `skipped`
+- `Quality badge`: `quality_clean` | `quality_caution` | `quality_flagged` |
+  `quality_reject` | `skipped`
 - `Travel gate`: `pass` | `risk` | `reject_candidate` | `not_applicable`
 - `Security clearance gate`: `pass` | `risk` | `reject_candidate` |
   `not_applicable`
@@ -425,6 +448,10 @@ Secondary concerns or notes.
   `reject_candidate`
 - Compensation signal: `transparent_aligned` | `transparent_low` |
   `opaque_expected_market` | `opaque_normative_market` | `unknown`
+- Quality audit recommendation: `proceed` | `proceed_with_caution` | `hold` |
+  `reject` | `skipped`
+- Quality badge: `quality_clean` | `quality_caution` | `quality_flagged` |
+  `quality_reject` | `skipped`
 - Final decision: Apply | Conditional apply | Do not apply | Wait
 - Final decision code: `apply` | `conditional_apply` | `reject` | `hold` |
   `already_applied`

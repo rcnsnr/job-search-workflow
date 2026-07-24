@@ -181,14 +181,16 @@ channels:
 
 - **GitHub Sponsors** (card / bank transfer):
   [github.com/sponsors/rcnsnr](https://github.com/sponsors/rcnsnr)
-- **Bitcoin (BTC) support address**:
-  `bc1qnnuj47aer9qzkt3j5dlyvjs4944fmdk8dw9mnu`
-- **Ethereum (ETH) support address**:
-  `0xaFBD7EdF13C779a685ee8553E0E28cee4B78fa57`
+- **Solana (SOL) support address**:
+  `FZv4G1131XNpvLgdEn4rDyZNKnAF3misVG9FmqA983Wp`
+- **Litecoin (LTC) support address**:
+  `ltc1qnn8dtgtv4p6eug6ttm3gm300lkm95hf9rdapkl`
 
-> Crypto support addresses are personal self-custody wallets. Small support
-> contributions help cover development time, infrastructure costs, and keep
-> this project free for individual job seekers.
+> Crypto support addresses are personal self-custody wallets. SOL and LTC are
+> chosen for their near-zero transaction fees, so even small support amounts
+> arrive without being eaten by network costs. Contributions help cover
+> development time, infrastructure costs, and keep this project free for
+> individual job seekers.
 
 ## License
 

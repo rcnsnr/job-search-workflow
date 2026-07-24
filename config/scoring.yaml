@@ -174,3 +174,25 @@ target_markets:
   primary: null
   secondary: []
   overrides: {}
+
+# ---------------------------------------------------------------------------
+# Quality Audit Penalties (Mode 07 Integration)
+# ---------------------------------------------------------------------------
+# When modes/07_JOB_QUALITY_AUDIT.md produces a risk level for each category,
+# the corresponding penalty is applied to the weighted total in triage.
+# The multi_high_escalation penalty is added on top if 2+ categories are high.
+
+quality_audit:
+  ghost_job_penalty:
+    low: 0.0
+    medium: -0.5
+    high: -1.0
+  exploitation_penalty:
+    low: 0.0
+    medium: -0.5
+    high: -1.5
+  chaos_penalty:
+    low: 0.0
+    medium: -0.3
+    high: -0.8
+  multi_high_escalation: -1.0
