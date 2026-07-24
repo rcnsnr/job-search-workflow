@@ -102,6 +102,28 @@ npm install -g markdownlint-cli2
 5. **Track your decision**: The AI records the outcome in your evaluation
    ledger so you can review it later.
 
+### Local Dashboard (optional)
+
+Visualize your job pipeline as a Kanban board with quality audit badges and
+scoring dashboard:
+
+```bash
+# Install dashboard dependencies
+pip install -r requirements.txt
+
+# Start the dashboard (opens at http://localhost:3000)
+python3 -m jsw dashboard
+```
+
+The dashboard reads from your local markdown files only. No data leaves your
+machine. Features:
+
+- **Pipeline Kanban**: new → triage → shortlist → applied → interview → offer/reject
+- **Profile viewer**: renders `user_data/career_profile.md`
+- **Job posting viewer**: renders individual postings from `inbox/jobs/`
+- **Scoring dashboard**: triage scores with quality audit badges
+  (ghost/exploitation/chaos) and compensation signals
+
 ## Project Structure
 
 ```text
@@ -112,6 +134,8 @@ job-search-workflow/
 │   ├── policies/           # Development and privacy standards
 │   └── architecture/       # System design docs
 ├── scripts/                # Automation helpers (PDF validation, PII scan, etc.)
+│   └── jsw/                # CLI: python3 -m jsw dashboard|init|smoke
+├── dashboard/              # Local-first web dashboard (FastAPI + Jinja2)
 ├── fixtures/               # Sample data (fictitious profiles, postings, CVs)
 ├── templates/
 │   ├── user-data-skeleton/ # Blank starting point for your personal data

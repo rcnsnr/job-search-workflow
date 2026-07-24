@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Pipeline — Job Search Workflow{% endblock %}
+{% block nav_kanban %}active{% endblock %}
+{% block content %}
+<div class="kanban">
+  {% for stage in stages %}
+  <div class="column">
+    <div class="column-header">
+      <h3>{{ stage | capitalize }}</h3>
+      <span class="column-count">{{ stage_counts[stage] }}</span>
+    </div>
+    <div class="column-cards">
+      {% for card in cards_by_stage[stage] %}
+      <a href="/posting/{{ card.filename }}" style="text-decoration:none;color:inherit;">
+        <div class="card">
+          <div class="card-title">{{ card.title }}</div>
+          <div class="card-company">{{ card.company }} · {{ card.location }}</div>
+          <div class="card-meta">
+            {% if card.fit_score is not none %}
+            <span class="badge badge-fit">{{ card.fit_score }}/5</span>
+            {% endif %}
+            {% if card.quality_badge and card.quality_badge != 'skipped' %}
+            <span class="badge badge-{{ card.quality_badge | replace('_', '-') }}">{{ card.quality_badge | replace('quality_', '') }}</span>
+            {% endif %}
+            {% if card.compensation_signal and card.compensation_signal != 'unknown' %}
+            <span class="badge badge-compensation-{{ card.compensation_signal | replace('_', '-') }}">{{ card.compensation_signal | replace('_', ' ') }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

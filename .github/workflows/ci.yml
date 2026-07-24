@@ -58,6 +58,18 @@ jobs:
       - run: pip install pytest
       - run: pytest --tb=short -q || echo "No tests found (OK for now)"
 
+  dashboard-smoke:
+    name: Dashboard Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install fastapi uvicorn jinja2 markdown pyyaml httpx
+      - run: PYTHONPATH=scripts python3 -m jsw smoke
+        name: Dashboard smoke test
+
   extension-lint:
     name: Browser Extension Lint & Test
     runs-on: ubuntu-latest

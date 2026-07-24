@@ -1,0 +1,220 @@
+/* Job Search Workflow Dashboard — Minimal CSS */
+
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-hover: #334155;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --border: #334155;
+  --green: #22c55e;
+  --yellow: #eab308;
+  --red: #ef4444;
+  --orange: #f97316;
+  --purple: #a855f7;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* Nav */
+nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+nav a:hover, nav a.active {
+  color: var(--text);
+}
+
+nav .brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-right: auto;
+}
+
+/* Kanban */
+.kanban {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  overflow-x: auto;
+  min-height: calc(100vh - 60px);
+}
+
+.column {
+  flex: 1;
+  min-width: 250px;
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.column-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.column-header h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.column-count {
+  background: var(--surface-hover);
+  padding: 0.1rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.column-cards {
+  padding: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Card */
+.card {
+  background: var(--surface-hover);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.card:hover {
+  border-color: var(--accent);
+}
+
+.card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.card-company {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.badge-fit {
+  background: var(--accent);
+  color: white;
+}
+
+.badge-quality-clean { background: var(--green); color: white; }
+.badge-quality-caution { background: var(--yellow); color: var(--bg); }
+.badge-quality-flagged { background: var(--orange); color: white; }
+.badge-quality-reject { background: var(--red); color: white; }
+.badge-quality-skipped { background: var(--surface-hover); color: var(--text-muted); }
+
+.badge-compensation-transparent_aligned { background: var(--green); color: white; }
+.badge-compensation-transparent_low { background: var(--yellow); color: var(--bg); }
+.badge-compensation-opaque_expected_market { background: var(--orange); color: white; }
+.badge-compensation-opaque_normative_market { background: var(--surface-hover); color: var(--text-muted); }
+.badge-compensation-unknown { background: var(--surface-hover); color: var(--text-muted); }
+
+/* Profile / Posting */
+.content-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.content-page h1, .content-page h2, .content-page h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.content-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.content-page th, .content-page td {
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.content-page th {
+  background: var(--surface);
+}
+
+.content-page code {
+  background: var(--surface);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* Scoring table */
+.scoring-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.scoring-table th, .scoring-table td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.scoring-table th {
+  background: var(--surface);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.scoring-table tr:hover {
+  background: var(--surface);
+}

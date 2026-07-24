@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Job Search Workflow{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <nav>
+    <span class="brand">Job Search Workflow</span>
+    <a href="/" class="{% block nav_kanban %}{% endblock %}">Pipeline</a>
+    <a href="/profile" class="{% block nav_profile %}{% endblock %}">Profile</a>
+    <a href="/scoring" class="{% block nav_scoring %}{% endblock %}">Scoring</a>
+  </nav>
+  {% block content %}{% endblock %}
+</body>
+</html>
