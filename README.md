@@ -1,5 +1,8 @@
 # job-search-workflow
 
+![Official](https://img.shields.io/badge/official-repository-blue)
+![License](https://img.shields.io/badge/license-PolyForm_NC-orange)
+
 > **Job hunting shouldn't be a full-time job.**
 > **They have ATS. You have Job Search Workflow.**
 
@@ -188,8 +191,8 @@ job-search-workflow/
 - **PII boundary**: Personal data lives in `user_data/` (gitignored) and
   `exports/` (gitignored by default). The framework itself contains no
   real personal information.
-- **Coğrafi maaş şeffaflığı**: Compensation scoring is market-aware. In markets
-  where salary ranges are rarely published (e.g., Türkiye, India, Brazil),
+- **Geographic salary transparency**: Compensation scoring is market-aware. In markets
+  where salary ranges are rarely published (e.g., Turkey, India, Brazil),
   missing salary information does not penalize the score.
 
 ## Validation
@@ -240,6 +243,13 @@ Free for personal use, education, research, and individual job searching.
 Commercial use (selling the Software, using it as a paid service/product, or
 providing it as a for-fee consulting service) requires a separate commercial
 license from the author.
+
+## Trademark
+
+**job-search-workflow™** is a trademark of Orçun Şener. This is the official
+repository. Forks and derivatives must comply with the PolyForm Noncommercial
+license and must not use the trademark name in their project name, package
+name, or promotional materials without written permission.
 
 ## Disclaimer
 

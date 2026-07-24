@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "job-search-workflow"
+version = "0.1.0"
+description = "AI-assisted, local-first job search workflow framework — triage, scoring, application tracking"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "PolyForm Noncommercial 1.0.0" }
+authors = [
+    { name = "Orçun Şener", email = "rcnsnr@users.noreply.github.com" },
+]
+keywords = ["job-search", "ai-assisted", "career", "local-first", "markdown", "privacy-first"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business",
+]
+dependencies = [
+    "pyyaml>=6.0,<7.0",
+    "markdown>=3.5,<4.0",
+]
+
+[project.optional-dependencies]
+dashboard = [
+    "fastapi>=0.110,<1.0",
+    "uvicorn[standard]>=0.27,<1.0",
+    "jinja2>=3.1,<4.0",
+]
+export = [
+    "PyPDF2>=3.0.0",
+    "pypandoc>=1.11",
+]
+dev = [
+    "pytest>=7.0.0",
+]
+
+[project.scripts]
+jsw = "jsw.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/rcnsnr/job-search-workflow"
+Repository = "https://github.com/rcnsnr/job-search-workflow"
+Issues = "https://github.com/rcnsnr/job-search-workflow/issues"
+Sponsor = "https://github.com/sponsors/rcnsnr"
+
+[tool.setuptools]
+packages = ["jsw"]
+package-dir = { "" = "scripts" }
+
+[tool.setuptools.package-data]
+jsw = ["*.py"]
