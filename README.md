@@ -182,9 +182,9 @@ channels:
 - **GitHub Sponsors** (card / bank transfer):
   [github.com/sponsors/rcnsnr](https://github.com/sponsors/rcnsnr)
 - **Bitcoin (BTC) support address**:
-  `REPLACE_WITH_YOUR_BTC_ADDRESS`
+  `bc1qnnuj47aer9qzkt3j5dlyvjs4944fmdk8dw9mnu`
 - **Ethereum (ETH) support address**:
-  `REPLACE_WITH_YOUR_ETH_ADDRESS`
+  `0xaFBD7EdF13C779a685ee8553E0E28cee4B78fa57`
 
 > Crypto support addresses are personal self-custody wallets. Small support
 > contributions help cover development time, infrastructure costs, and keep
