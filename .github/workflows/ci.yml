@@ -56,7 +56,21 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install pytest
-      - run: pytest --tb=short -q || echo "No tests found (OK for now)"
+      - run: pytest --tb=short -q
+
+  setup-script-test:
+    name: Setup Script Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pytest
+      - run: bash -n scripts/setup.sh
+        name: Bash syntax check
+      - run: pytest tests/test_setup.py -v --tb=short
+        name: Setup behavior tests
 
   dashboard-smoke:
     name: Dashboard Smoke Test
