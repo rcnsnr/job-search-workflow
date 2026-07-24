@@ -1,10 +1,32 @@
-# job-search-workflow
+# Job Search Workflow
 
 ![Official](https://img.shields.io/badge/official-repository-blue)
 ![License](https://img.shields.io/badge/license-PolyForm_NC-orange)
+![Support](https://img.shields.io/badge/support-GitHub_Sponsors-ff69b4)
+
+![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-CI_passing-brightgreen)
+![Dashboard](https://img.shields.io/badge/dashboard-FastAPI-009688)
+![Status](https://img.shields.io/badge/status-alpha-yellow)
 
 > **Job hunting shouldn't be a full-time job.**
 > **They have ATS. You have Job Search Workflow.**
+
+## README Index
+
+- [The Problem It Solves](#the-problem-it-solves)
+- [Who Is This For?](#who-is-this-for)
+- [Philosophy](#philosophy)
+- [Quick Start](#quick-start)
+- [Career Pages Directory](#career-pages-directory)
+- [Project Structure](#project-structure)
+- [Modes (AI Prompt Contracts)](#modes-ai-prompt-contracts)
+- [Key Design Decisions](#key-design-decisions)
+- [Validation](#validation)
+- [Contributing](#contributing)
+- [Support This Project](#support-this-project)
+- [License](#license)
+- [Trademark](#trademark)
 
 Companies use Applicant Tracking Systems (ATS) to filter you out before a human
 ever sees your application. Many employers use Applicant Tracking Systems (ATS) to sort and screen applications before human review. Greenhouse reported that, in any given quarter in 2024, **18-22% of jobs posted on its platform were classified as ghost jobs**. This is platform-specific industry data, not an official estimate for the entire labor market.
