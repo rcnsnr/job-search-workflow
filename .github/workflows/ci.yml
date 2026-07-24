@@ -45,6 +45,7 @@ jobs:
           python3 -m py_compile scripts/md_to_docx.py
           python3 -m py_compile scripts/calc_turkey_contractor_net.py
           python3 -m py_compile scripts/validate_company_catalog.py
+          python3 -m py_compile scripts/verify_no_turkish.py
         name: Verify Python scripts compile
 
   test:
@@ -69,6 +70,17 @@ jobs:
       - run: pip install fastapi uvicorn jinja2 markdown pyyaml httpx
       - run: PYTHONPATH=scripts python3 -m jsw smoke
         name: Dashboard smoke test
+
+  turkish-check:
+    name: Turkish Content Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python3 scripts/verify_no_turkish.py --path .
+        name: Verify no Turkish content in public-facing files
 
   extension-lint:
     name: Browser Extension Lint & Test

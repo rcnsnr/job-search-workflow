@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="150" viewBox="0 0 800 150">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="150" rx="12" fill="url(#bg)"/>
+
+  <!-- Left accent bar -->
+  <rect x="0" y="0" width="8" height="150" rx="12" fill="#38bdf8"/>
+
+  <!-- Small logo mark (top-left) -->
+  <g transform="translate(40, 30)" fill="#38bdf8">
+    <circle cx="10" cy="10" r="3"/>
+    <circle cx="22" cy="10" r="3"/>
+    <circle cx="34" cy="10" r="3"/>
+    <rect x="4" y="20" width="36" height="4" rx="2"/>
+  </g>
+
+  <!-- Project name -->
+  <text x="90" y="45" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#94a3b8" letter-spacing="0.5">job-search-workflow</text>
+
+  <!-- Slogan line 1 -->
+  <text x="90" y="88" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#f8fafc" filter="url(#glow)">
+    Job hunting shouldn't be a full-time job.
+  </text>
+
+  <!-- Slogan line 2 -->
+  <text x="90" y="123" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#38bdf8" filter="url(#glow)">
+    They have ATS. You have Job Search Workflow.
+  </text>
+
+  <!-- Bottom-right mark -->
+  <text x="740" y="130" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#64748b">PolyForm NC · Local-first · AI-assisted</text>
+</svg>
