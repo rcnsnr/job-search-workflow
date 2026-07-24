@@ -1,0 +1,449 @@
+# Job Search Workflow — Career Pages Directory
+#
+# Structured, machine-readable registry of company career pages.
+# Each entry includes: name, careers_url, ats_provider, location_policy,
+# industry, company_size, last_verified.
+#
+# Community PRs welcome — see data/career-pages/README.md for guidelines.
+#
+# ats_provider values: greenhouse | lever | ashby | workday | rippling |
+#   workable | personio | greenhouse_io | custom | unknown
+# location_policy values: remote | hybrid | onsite | mixed
+# company_size values: startup | small | medium | large | enterprise
+#
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+
+companies:
+  # --- AI / ML Platforms ---
+  - name: OpenAI
+    careers_url: https://openai.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: ai_ml
+    company_size: large
+    last_verified: "2026-07-23"
+
+  - name: Anthropic
+    careers_url: https://www.anthropic.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: ai_ml
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Hugging Face
+    careers_url: https://huggingface.co/careers
+    ats_provider: lever
+    location_policy: remote
+    industry: ai_ml
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Cohere
+    careers_url: https://cohere.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: ai_ml
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Mistral AI
+    careers_url: https://mistral.ai/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: ai_ml
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Scale AI
+    careers_url: https://scale.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: ai_ml
+    company_size: large
+    last_verified: "2026-07-23"
+
+  - name: Replicate
+    careers_url: https://replicate.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: ai_ml
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Stability AI
+    careers_url: https://stability.ai/careers
+    ats_provider: lever
+    location_policy: mixed
+    industry: ai_ml
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Together AI
+    careers_url: https://www.together.ai/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: ai_ml
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Anyscale
+    careers_url: https://www.anyscale.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: ai_ml
+    company_size: small
+    last_verified: "2026-07-23"
+
+  # --- Developer Tools / DevEx ---
+  - name: GitHub
+    careers_url: https://github.com/about/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: developer_tools
+    company_size: enterprise
+    last_verified: "2026-07-23"
+
+  - name: Vercel
+    careers_url: https://vercel.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: developer_tools
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Cursor (Anysphere)
+    careers_url: https://www.cursor.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Replit
+    careers_url: https://replit.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Sourcegraph
+    careers_url: https://about.sourcegraph.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Codeium
+    careers_url: https://codeium.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Coder
+    careers_url: https://coder.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Modal
+    careers_url: https://modal.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Railway
+    careers_url: https://railway.com/careers
+    ats_provider: lever
+    location_policy: remote
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"
+
+  # --- Platform / Infrastructure / SRE ---
+  - name: Cloudflare
+    careers_url: https://www.cloudflare.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: infrastructure
+    company_size: enterprise
+    last_verified: "2026-07-23"
+
+  - name: Datadog
+    careers_url: https://www.datadoghq.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: infrastructure
+    company_size: large
+    last_verified: "2026-07-23"
+
+  - name: HashiCorp
+    careers_url: https://www.hashicorp.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: infrastructure
+    company_size: large
+    last_verified: "2026-07-23"
+
+  - name: Grafana Labs
+    careers_url: https://grafana.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: infrastructure
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: PagerDuty
+    careers_url: https://www.pagerduty.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: infrastructure
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Buoyant
+    careers_url: https://buoyant.io/careers
+    ats_provider: lever
+    location_policy: remote
+    industry: infrastructure
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Render
+    careers_url: https://render.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: infrastructure
+    company_size: small
+    last_verified: "2026-07-23"
+
+  # --- Cloud / Kubernetes ---
+  - name: Google Cloud
+    careers_url: https://www.google.com/about/careers/applications/
+    ats_provider: custom
+    location_policy: mixed
+    industry: cloud
+    company_size: enterprise
+    last_verified: "2026-07-23"
+
+  - name: AWS
+    careers_url: https://www.amazon.jobs
+    ats_provider: custom
+    location_policy: mixed
+    industry: cloud
+    company_size: enterprise
+    last_verified: "2026-07-23"
+
+  - name: Microsoft
+    careers_url: https://careers.microsoft.com
+    ats_provider: custom
+    location_policy: mixed
+    industry: cloud
+    company_size: enterprise
+    last_verified: "2026-07-23"
+
+  - name: Kong
+    careers_url: https://konghq.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: cloud
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Civo
+    careers_url: https://www.civo.com/careers
+    ats_provider: lever
+    location_policy: remote
+    industry: cloud
+    company_size: small
+    last_verified: "2026-07-23"
+
+  # --- Observability ---
+  - name: Honeycomb
+    careers_url: https://www.honeycomb.io/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: observability
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Sentry
+    careers_url: https://sentry.io/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: observability
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Chronosphere
+    careers_url: https://chronosphere.io/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: observability
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  # --- Data / Analytics ---
+  - name: Snowflake
+    careers_url: https://careers.snowflake.com
+    ats_provider: workday
+    location_policy: mixed
+    industry: data
+    company_size: large
+    last_verified: "2026-07-23"
+
+  - name: Databricks
+    careers_url: https://www.databricks.com/company/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: data
+    company_size: large
+    last_verified: "2026-07-23"
+
+  - name: dbt Labs
+    careers_url: https://www.getdbt.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: data
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Pinecone
+    careers_url: https://pinecone.io/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: data
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Weaviate
+    careers_url: https://weaviate.io/company/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: data
+    company_size: small
+    last_verified: "2026-07-23"
+
+  # --- Security ---
+  - name: Snyk
+    careers_url: https://snyk.io/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: security
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Wiz
+    careers_url: https://www.wiz.io/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: security
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Tailscale
+    careers_url: https://tailscale.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: security
+    company_size: small
+    last_verified: "2026-07-23"
+
+  # --- Fintech ---
+  - name: Stripe
+    careers_url: https://stripe.com/jobs
+    ats_provider: custom
+    location_policy: mixed
+    industry: fintech
+    company_size: large
+    last_verified: "2026-07-23"
+
+  - name: Plaid
+    careers_url: https://plaid.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: fintech
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Mercury
+    careers_url: https://mercury.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: fintech
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  # --- Productivity / Collaboration ---
+  - name: Notion
+    careers_url: https://www.notion.so/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: productivity
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Linear
+    careers_url: https://linear.app/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: productivity
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Figma
+    careers_url: https://www.figma.com/careers
+    ats_provider: greenhouse
+    location_policy: mixed
+    industry: productivity
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  # --- Startup / Misc ---
+  - name: Zapier
+    careers_url: https://zapier.com/jobs
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: automation
+    company_size: medium
+    last_verified: "2026-07-23"
+
+  - name: Supabase
+    careers_url: https://supabase.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: PostHog
+    careers_url: https://posthog.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: analytics
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Resend
+    careers_url: https://resend.com/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"
+
+  - name: Bun
+    careers_url: https://bun.sh/careers
+    ats_provider: greenhouse
+    location_policy: remote
+    industry: developer_tools
+    company_size: small
+    last_verified: "2026-07-23"

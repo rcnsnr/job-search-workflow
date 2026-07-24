@@ -124,6 +124,21 @@ machine. Features:
 - **Scoring dashboard**: triage scores with quality audit badges
   (ghost/exploitation/chaos) and compensation signals
 
+## Career Pages Directory
+
+A structured registry of 50+ tech company career pages with ATS provider,
+location policy, and verification status. Useful for direct application
+bypassing job boards.
+
+```bash
+# Verify all career page URLs
+python3 scripts/verify_career_pages.py
+```
+
+The registry lives in `data/career-pages/companies.yaml`. CI runs weekly
+verification every Monday. Community PRs welcome — see
+`data/career-pages/README.md` for guidelines.
+
 ## Project Structure
 
 ```text
@@ -136,6 +151,8 @@ job-search-workflow/
 ├── scripts/                # Automation helpers (PDF validation, PII scan, etc.)
 │   └── jsw/                # CLI: python3 -m jsw dashboard|init|smoke
 ├── dashboard/              # Local-first web dashboard (FastAPI + Jinja2)
+├── data/
+│   └── career-pages/       # Structured company career page registry
 ├── fixtures/               # Sample data (fictitious profiles, postings, CVs)
 ├── templates/
 │   ├── user-data-skeleton/ # Blank starting point for your personal data
