@@ -58,7 +58,6 @@ def strip_wrapping(value: str) -> str:
 
 
 def normalize_key(value: str) -> str:
-    value = value.replace("İ", "I").replace("ı", "i")
     decomposed = unicodedata.normalize("NFKD", value)
     stripped = "".join(char for char in decomposed if not unicodedata.combining(char))
     return re.sub(r"\s+", " ", stripped).strip().casefold()
@@ -193,29 +192,26 @@ def parse_job_record(path: Path) -> JobRecord:
         metadata = parse_pairs(sections["Capture Metadata"])
 
     fit_pairs = parse_pairs(sections.get("Fit Hypothesis", []))
-    primary_match = first_present(fit_pairs, "primary match", "birincil eşleşme")
+    primary_match = first_present(fit_pairs, "primary match")
     initial_fit_score = first_present(
         fit_pairs,
         "initial fit score",
-        "ilk uyum skoru",
-        "başlangıç fit skoru",
-        "uyum skoru",
     )
     initial_decision = first_present(
-        fit_pairs, "initial decision", "ilk karar", "başlangıç kararı"
+        fit_pairs, "initial decision"
     )
-    main_risk = first_present(fit_pairs, "main risk", "ana risk")
+    main_risk = first_present(fit_pairs, "main risk")
 
     application_pairs = parse_pairs(sections.get("Application Status", []))
-    application_status = first_present(application_pairs, "status", "durum")
+    application_status = first_present(application_pairs, "status")
     applied_at = first_present(
-        application_pairs, "applied at", "tarih", "başvuru tarihi"
+        application_pairs, "applied at"
     )
     materials_used = first_present(
-        application_pairs, "materials used", "kullanılan materyaller"
+        application_pairs, "materials used"
     )
     tracking_note = first_present(
-        application_pairs, "tracking note", "iz notu", "başvuru öncesi"
+        application_pairs, "tracking note"
     )
     if initial_decision == "Unknown" and application_status != "Unknown":
         initial_decision = application_status
@@ -548,7 +544,7 @@ HTML_TEMPLATE = """<!doctype html>
     </header>
 
     <section aria-labelledby=\"summary-heading\">
-      <h2 id=\"summary-heading\">Özet</h2>
+      <h2 id=\"summary-heading\">Summary</h2>
       <div class=\"summary-grid\" id=\"summary-cards\"></div>
     </section>
 
@@ -557,8 +553,8 @@ HTML_TEMPLATE = """<!doctype html>
       <form id=\"filter-form\">
         <div class=\"filter-grid\">
           <div>
-            <label for=\"search\">Arama</label>
-            <input id=\"search\" name=\"search\" type=\"search\" placeholder=\"Şirket, rol, risk, match\" />
+            <label for=\"search\">Search</label>
+            <input id=\"search\" name=\"search\" type=\"search\" placeholder=\"Company, role, risk, match\" />
           </div>
           <div>
             <label for=\"company\">Company</label>
@@ -573,19 +569,19 @@ HTML_TEMPLATE = """<!doctype html>
             <select id=\"track\" name=\"track\"></select>
           </div>
           <div>
-            <label for=\"sort\">Sıralama</label>
+            <label for=\"sort\">Sort</label>
             <select id=\"sort\" name=\"sort\">
-              <option value=\"score_desc\">Score yüksekten düşüğe</option>
-              <option value=\"score_asc\">Score düşükten yükseğe</option>
-              <option value=\"captured_desc\">Tarih yeniden eskiye</option>
-              <option value=\"captured_asc\">Tarih eskiden yeniye</option>
-              <option value=\"company_asc\">Şirket A-Z</option>
+              <option value=\"score_desc\">Score high to low</option>
+              <option value=\"score_asc\">Score low to high</option>
+              <option value=\"captured_desc\">Date new to old</option>
+              <option value=\"captured_asc\">Date old to new</option>
+              <option value=\"company_asc\">Company A-Z</option>
             </select>
           </div>
         </div>
         <div class=\"filter-actions\">
-          <button type=\"reset\" id=\"reset-filters\">Filtreleri temizle</button>
-          <a class=\"button\" href=\"#top\">Özete dön</a>
+          <button type=\"reset\" id=\"reset-filters\">Clear filters</button>
+          <a class=\"button\" href=\"#top\">Back to summary</a>
         </div>
       </form>
       <p class=\"status\" id=\"status\" aria-live=\"polite\"></p>
@@ -594,20 +590,20 @@ HTML_TEMPLATE = """<!doctype html>
     <section class=\"detail-panel\" aria-labelledby=\"detail-heading\">
       <div class=\"detail-header\">
         <div>
-          <h2 id=\"detail-heading\">Seçili kayıt detayı</h2>
-          <p id=\"detail-subtitle\">Bir satırdan detay seç. Dashboard context korunur.</p>
+          <h2 id=\"detail-heading\">Selected record detail</h2>
+          <p id=\"detail-subtitle\">Select a detail from a row. Dashboard context is preserved.</p>
         </div>
-        <button type=\"button\" class=\"button subtle-button\" id=\"clear-selection\" hidden>Seçimi temizle</button>
+        <button type=\"button\" class=\"button subtle-button\" id=\"clear-selection\" hidden>Clear selection</button>
       </div>
-      <div id=\"detail-empty\" class=\"muted\">Henüz kayıt seçilmedi.</div>
+      <div id=\"detail-empty\" class=\"muted\">No record selected yet.</div>
       <div id=\"detail-content\" hidden>
         <div class=\"detail-grid\" id=\"detail-meta\"></div>
         <section class=\"detail-block\">
-          <strong>Neden yakalandı</strong>
+          <strong>Why captured</strong>
           <ul id=\"detail-why\"></ul>
         </section>
         <section class=\"detail-block\">
-          <strong>Çıkarılan sinyaller</strong>
+          <strong>Extracted signals</strong>
           <ul id=\"detail-facts\"></ul>
         </section>
         <section class=\"detail-block\" id=\"detail-application-block\" hidden>
@@ -619,27 +615,27 @@ HTML_TEMPLATE = """<!doctype html>
     </section>
 
     <section class=\"mobile-list\" id=\"mobile-applied-section\" aria-labelledby=\"mobile-applied-heading\" hidden>
-      <h2 id=\"mobile-applied-heading\">Applied · kart görünümü</h2>
-      <p class=\"section-lead\">Başvuru gönderilmiş kayıtlar ayrı tutulur.</p>
+      <h2 id=\"mobile-applied-heading\">Applied · card view</h2>
+      <p class=\"section-lead\">Submitted applications are kept separately.</p>
       <div id=\"mobile-applied\"></div>
-      <div class=\"empty-state\" id=\"mobile-applied-empty-state\" hidden>Filtrelere uyan applied kayıt yok.</div>
+      <div class=\"empty-state\" id=\"mobile-applied-empty-state\" hidden>No applied records matching filters.</div>
     </section>
 
     <section class=\"mobile-list\" aria-labelledby=\"mobile-list-heading\">
-      <h2 id=\"mobile-list-heading\">Job kayıtları · kart görünümü</h2>
+      <h2 id=\"mobile-list-heading\">Job records · card view</h2>
       <div id=\"mobile-jobs\"></div>
-      <div class=\"empty-state\" id=\"mobile-empty-state\" hidden>Filtrelere uyan job kaydı yok.</div>
+      <div class=\"empty-state\" id=\"mobile-empty-state\" hidden>No job records matching filters.</div>
     </section>
 
     <section class=\"table-wrap\" id=\"applied-section\" aria-labelledby=\"applied-heading\" hidden>
       <h2 id=\"applied-heading\">Applied</h2>
-      <p class=\"section-lead\">Başvurusu gönderilmiş kayıtlar.</p>
+      <p class=\"section-lead\">Submitted application records.</p>
       <table>
         <thead>
           <tr>
-            <th scope=\"col\">Kayıt</th>
-            <th scope=\"col\">Şirket / Rol</th>
-            <th scope=\"col\">Applied / Lokasyon</th>
+            <th scope=\"col\">Record</th>
+            <th scope=\"col\">Company / Role</th>
+            <th scope=\"col\">Applied / Location</th>
             <th scope=\"col\">Track / Match</th>
             <th scope=\"col\">Score / Decision</th>
             <th scope=\"col\">Tracking</th>
@@ -648,17 +644,17 @@ HTML_TEMPLATE = """<!doctype html>
         </thead>
         <tbody id=\"applied-body\"></tbody>
       </table>
-      <div class=\"empty-state\" id=\"applied-empty-state\" hidden>Filtrelere uyan applied kayıt yok.</div>
+      <div class=\"empty-state\" id=\"applied-empty-state\" hidden>No applied records matching filters.</div>
     </section>
 
     <section class=\"table-wrap\" aria-labelledby=\"table-heading\">
-      <h2 id=\"table-heading\">Job kayıtları</h2>
+      <h2 id=\"table-heading\">Job records</h2>
       <table>
         <thead>
           <tr>
-            <th scope=\"col\">Kayıt</th>
-            <th scope=\"col\">Şirket / Rol</th>
-            <th scope=\"col\">Tarih / Lokasyon</th>
+            <th scope=\"col\">Record</th>
+            <th scope=\"col\">Company / Role</th>
+            <th scope=\"col\">Date / Location</th>
             <th scope=\"col\">Track / Match</th>
             <th scope=\"col\">Score / Decision</th>
             <th scope=\"col\">Risk</th>
@@ -667,7 +663,7 @@ HTML_TEMPLATE = """<!doctype html>
         </thead>
         <tbody id=\"jobs-body\"></tbody>
       </table>
-      <div class=\"empty-state\" id=\"empty-state\" hidden>Filtrelere uyan job kaydı yok.</div>
+      <div class=\"empty-state\" id=\"empty-state\" hidden>No job records matching filters.</div>
     </section>
   </main>
 
@@ -703,11 +699,11 @@ HTML_TEMPLATE = """<!doctype html>
     const detailActions = document.getElementById("detail-actions");
     const clearSelectionButton = document.getElementById("clear-selection");
     const sortLabels = {
-      score_desc: "Score yüksekten düşüğe",
-      score_asc: "Score düşükten yükseğe",
-      captured_desc: "Tarih yeniden eskiye",
-      captured_asc: "Tarih eskiden yeniye",
-      company_asc: "Şirket A-Z",
+      score_desc: "Score high to low",
+      score_asc: "Score low to high",
+      captured_desc: "Date new to old",
+      captured_asc: "Date old to new",
+      company_asc: "Company A-Z",
     };
     let selectedFilename = "";
 
@@ -722,17 +718,17 @@ HTML_TEMPLATE = """<!doctype html>
 
     function decisionClass(decision) {
       const value = decision.toLowerCase();
-      if (value.includes("başvur") || value.includes("uygun") || value.includes("applied")) {
-        return value.includes("şartlı") ? "decision-warn" : "decision-good";
-      }
-      if (value.includes("uygun değil") || value.includes("red")) {
+      if (value.includes("not a fit") || value.includes("reject")) {
         return "decision-bad";
+      }
+      if (value.includes("apply") || value.includes("viable") || value.includes("applied")) {
+        return value.includes("conditional") ? "decision-warn" : "decision-good";
       }
       return "decision-warn";
     }
 
     function fillSelect(element, values) {
-      const options = ["<option value=''>Tümü</option>"];
+      const options = ["<option value=''>All</option>"];
       for (const value of values) {
         options.push(`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`);
       }
@@ -740,11 +736,11 @@ HTML_TEMPLATE = """<!doctype html>
     }
 
     function uniqueSorted(values) {
-      return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, "tr"));
+      return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, "en"));
     }
 
     function renderSummary(records, totalRecords) {
-      const conditional = records.filter((item) => item.initial_decision.toLowerCase().includes("şartlı")).length;
+      const conditional = records.filter((item) => item.initial_decision.toLowerCase().includes("conditional")).length;
       const applied = records.filter((item) => item.is_applied).length;
       const avgScoreValues = records
         .map((item) => item.initial_fit_score_value)
@@ -754,11 +750,11 @@ HTML_TEMPLATE = """<!doctype html>
         : "-";
 
       const cards = [
-        { label: "Gösterilen kayıt", value: `${records.length} / ${totalRecords}` },
+        { label: "Shown records", value: `${records.length} / ${totalRecords}` },
         { label: "Unique company", value: String(uniqueSorted(records.map((item) => item.company)).length) },
         { label: "Applied", value: String(applied) },
-        { label: "Şartlı başvur", value: String(conditional) },
-        { label: "Ortalama score", value: avgScore },
+        { label: "Conditional apply", value: String(conditional) },
+        { label: "Average score", value: avgScore },
       ];
 
       summaryCards.innerHTML = cards.map((item) => `
@@ -833,7 +829,7 @@ HTML_TEMPLATE = """<!doctype html>
       clearSelectionButton.hidden = !hasSelection;
 
       if (!record) {
-        detailSubtitle.textContent = "Bir satırdan detay seç. Dashboard context korunur.";
+        detailSubtitle.textContent = "Select a detail from a row. Dashboard context is preserved.";
         detailMeta.innerHTML = "";
         detailWhy.innerHTML = "";
         detailFacts.innerHTML = "";
@@ -877,8 +873,8 @@ HTML_TEMPLATE = """<!doctype html>
         detailApplication.innerHTML = "";
       }
       detailActions.innerHTML = `
-        <a class="button" href="${escapeHtml(record.record_url)}" target="_blank" rel="noopener noreferrer">Raw kayıt</a>
-        <a class="button" href="${escapeHtml(record.source_url)}" target="_blank" rel="noopener noreferrer">İlan sayfası</a>
+        <a class="button" href="${escapeHtml(record.record_url)}" target="_blank" rel="noopener noreferrer">Raw record</a>
+        <a class="button" href="${escapeHtml(record.source_url)}" target="_blank" rel="noopener noreferrer">Posting page</a>
         <a class="button" href="${escapeHtml(record.catalog_root_url)}" target="_blank" rel="noopener noreferrer">Catalog root</a>
       `;
     }
@@ -926,12 +922,12 @@ HTML_TEMPLATE = """<!doctype html>
             </div>${extraCard}
           </div>
           <div class="job-card-actions">
-            <button type="button" class="button subtle-button" data-select-record="${escapeHtml(item.filename)}">Detay</button>
+            <button type="button" class="button subtle-button" data-select-record="${escapeHtml(item.filename)}">Detail</button>
             ${extraLinks}
           </div>
           <div class="job-card-links">
-            <a href="${escapeHtml(item.record_url)}" target="_blank" rel="noopener noreferrer">Kayıt</a>
-            <a href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener noreferrer">İlan</a>
+            <a href="${escapeHtml(item.record_url)}" target="_blank" rel="noopener noreferrer">Record</a>
+            <a href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener noreferrer">Posting</a>
             <a href="${escapeHtml(item.catalog_root_url)}" target="_blank" rel="noopener noreferrer">Catalog</a>
           </div>
         </article>
@@ -1010,9 +1006,9 @@ HTML_TEMPLATE = """<!doctype html>
               </td>
               <td>${escapeHtml(item.tracking_note)}</td>
               <td class="links">
-                <button type="button" class="button subtle-button" data-select-record="${escapeHtml(item.filename)}">Detay</button>
-                <a href="${escapeHtml(item.record_url)}" target="_blank" rel="noopener noreferrer">Kayıt</a>
-                <a href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener noreferrer">İlan</a>
+                <button type="button" class="button subtle-button" data-select-record="${escapeHtml(item.filename)}">Detail</button>
+                <a href="${escapeHtml(item.record_url)}" target="_blank" rel="noopener noreferrer">Record</a>
+                <a href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener noreferrer">Posting</a>
                 <a href="${escapeHtml(item.catalog_root_url)}" target="_blank" rel="noopener noreferrer">Catalog</a>
               </td>
             </tr>
@@ -1042,9 +1038,9 @@ HTML_TEMPLATE = """<!doctype html>
             </td>
             <td>${escapeHtml(item.main_risk)}</td>
             <td class="links">
-              <button type="button" class="button subtle-button" data-select-record="${escapeHtml(item.filename)}">Detay</button>
-              <a href="${escapeHtml(item.record_url)}" target="_blank" rel="noopener noreferrer">Kayıt</a>
-              <a href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener noreferrer">İlan</a>
+              <button type="button" class="button subtle-button" data-select-record="${escapeHtml(item.filename)}">Detail</button>
+              <a href="${escapeHtml(item.record_url)}" target="_blank" rel="noopener noreferrer">Record</a>
+              <a href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener noreferrer">Posting</a>
               <a href="${escapeHtml(item.catalog_root_url)}" target="_blank" rel="noopener noreferrer">Catalog</a>
             </td>
           </tr>
@@ -1062,7 +1058,7 @@ HTML_TEMPLATE = """<!doctype html>
       }
 
       renderSummary(filtered, JOBS.length);
-      statusEl.textContent = `${filtered.length} / ${JOBS.length} kayıt · ${applied.length} applied · ${backlog.length} job kaydı · ${sortLabels[sortSelect.value]}.`;
+      statusEl.textContent = `${filtered.length} / ${JOBS.length} records · ${applied.length} applied · ${backlog.length} job records · ${sortLabels[sortSelect.value]}.`;
 
       appliedSection.hidden = !applied.length;
       mobileAppliedSection.hidden = !applied.length;

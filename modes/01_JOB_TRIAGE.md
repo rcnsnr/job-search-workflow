@@ -47,7 +47,7 @@ Evaluate every role in this exact order:
 
 ## Compensation Assessment (Geographic Market-Aware)
 
-Compensation scoring is market-aware. In some markets (e.g., Türkiye, India,
+Compensation scoring is market-aware. In some markets (e.g., Turkey, India,
 Brazil), salary ranges are rarely published in job postings. Penalizing missing
 salary information in those markets produces false rejections.
 

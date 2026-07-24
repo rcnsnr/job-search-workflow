@@ -17,7 +17,7 @@ Use for:
 - Do not copy the CV verbatim.
 - Write naturally and professionally.
 - Do not keyword-stuff.
-- Keep positioning honest and abartısız.
+- Keep positioning honest and free of exaggeration.
 - Avoid hype, inflated claims, and “AI guru” language.
 - For international targets, artifact text may be English while explanations remain Turkish.
 - Keep sensitive personal data out of public profile text.

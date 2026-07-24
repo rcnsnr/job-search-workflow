@@ -61,7 +61,7 @@ const waitForManualLogin = async (page) => {
   console.log("=".repeat(60));
   console.log("1. Log in to LinkedIn in the opened browser");
   console.log("2. After login completes, tests will continue automatically");
-  console.log("3. Timeout: 3 dakika");
+  console.log("3. Timeout: 3 minutes");
   console.log("=".repeat(60) + "\n");
 
   await page.goto("https://www.linkedin.com/login", { waitUntil: "domcontentloaded", timeout: 60000 });
@@ -229,7 +229,7 @@ describe("Popup Functionality", () => {
   });
 
   test("should accept filter values", async () => {
-    // Önce temizle
+    // Clear first
     await popupPage.$eval("#keyword-input", (el) => (el.value = ""));
     await popupPage.$eval("#location-input", (el) => (el.value = ""));
 
@@ -294,7 +294,7 @@ describe("LinkedIn Page Integration", () => {
       };
     });
 
-    console.log("📋 Sayfa durumu:", markers);
+    console.log("📋 Page state:", markers);
     expect(markers.hasJobList || markers.hasJobCards).toBe(true);
   });
 });
