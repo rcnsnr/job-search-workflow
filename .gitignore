@@ -1,0 +1,71 @@
+# Personal data (NEVER commit)
+user_data/
+
+# Application outputs (personal by nature)
+exports/
+outputs/
+runs/
+inbox/
+
+# Python
+.venv/
+venv/
+env/
+.python-version
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.eggs/
+*.egg-info/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Local secrets and credentials
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.csr
+id_rsa
+id_ed25519
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local agent overlays
+.codex/
+.agents/
+.devin/
+.windsurf/
+
+# Playwright/browser artifacts
+.playwright-cli/
+.playwright-mcp/
+output/playwright/
+tmp/
+
+# Reports (generated)
+reports/
+
+# Database files
+*.db

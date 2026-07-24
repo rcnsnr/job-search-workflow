@@ -1,0 +1,93 @@
+% Auto-generated from markdown CV source via scripts/md_to_tex.py
+% Standard repo export chain: LaTeX .tex -> pdflatex -> PDF (GAP-20260714-02)
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[scale=0.95]{tgheros}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{needspace}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\setlength{\parindent}{0pt}
+\setlist[itemize]{leftmargin=1.2em,itemsep=0.15em,topsep=0.2em,parsep=0em}
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titlespacing*{\section}{0pt}{0.7em}{0.35em}
+
+% Disable hyphenation
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\raggedright
+
+\begin{document}
+
+\begin{center}
+{\LARGE \textbf{Alex Chen}}\\[0.3em]
+Berlin, Germany \,|\, \href{mailto:alex.chen@example.com}{alex.chen@example.com} \,|\, +1-555-0142\\
+\href{https://linkedin.com/in/alexchen-example}{linkedin.com/in/alexchen-example} \,|\, \href{https://github.com/alexchen-example}{github.com/alexchen-example}\\[0.4em]
+\textbf{Senior Platform Engineer --- AI Infrastructure}
+\end{center}
+
+\section{Professional Summary}
+
+Platform engineer with 6 years of experience building internal developer tools
+and infrastructure automation. Transitioning toward AI-assisted engineering
+workflows and LLM-powered developer productivity tooling.
+
+\section{Experience}
+
+\needspace{4\baselineskip}
+\textbf{Senior Platform Engineer} \hfill \textbf{Nebula Systems}\\
+\textit{March 2023 -- Present} \hfill \textit{Berlin, Germany (Remote)}
+
+\begin{itemize}
+\item Own internal developer platform (Backstage-based) serving 80+ engineers across 12 teams
+\item Manage 3 Kubernetes clusters (200+ services, 99.95\% SLA) with GitOps (ArgoCD)
+\item Architect CI/CD pipeline infrastructure (GitHub Actions), reducing build times 35\%
+\item Lead on-call rotation design, achieving shared 1-week-per-month sustainable cadence
+\end{itemize}
+
+\needspace{4\baselineskip}
+\textbf{Platform Engineer} \hfill \textbf{CloudForge Inc.}\\
+\textit{June 2020 -- February 2023} \hfill \textit{Munich, Germany}
+
+\begin{itemize}
+\item Reduced deployment time from 45min to 8min via GitOps migration (Flux + ArgoCD)
+\item Built self-service infrastructure provisioning with Terraform modules (15+ reusable modules)
+\item Led incident response for 3 P1 outages; MTTR reduced 40\% through runbook automation
+\item Implemented cost optimization initiative saving \texteuro{}18K/month on cloud spend
+\end{itemize}
+
+\needspace{4\baselineskip}
+\textbf{Junior DevOps Engineer} \hfill \textbf{DataStream GmbH}\\
+\textit{September 2018 -- May 2020} \hfill \textit{Munich, Germany}
+
+\begin{itemize}
+\item Automated monitoring setup (Prometheus + Grafana) for 50+ services
+\item Migrated legacy deployment scripts to Helm charts (30+ services containerized)
+\item Contributed to SLO definition and alerting strategy for core data pipeline
+\end{itemize}
+
+\section{Technical Skills}
+
+\textbf{Infrastructure:} Kubernetes (CKA), Terraform, ArgoCD, Helm, Docker, AWS, GCP\\
+\textbf{Observability:} Prometheus, Grafana, OpenTelemetry, PagerDuty\\
+\textbf{Languages:} Python, Go (basic), Bash, HCL\\
+\textbf{AI/ML:} LLM API integration, RAG prototypes, basic model serving (Ray)\\
+\textbf{Practices:} GitOps, IaC, SRE principles, incident management
+
+\section{Education}
+
+\textbf{B.Sc. Computer Science} \hfill Technical University of Munich, 2018
+
+\section{Certifications}
+
+\begin{itemize}
+\item CKA (Certified Kubernetes Administrator) --- CNCF --- 2021
+\item AWS Solutions Architect Associate --- 2020
+\end{itemize}
+
+\end{document}

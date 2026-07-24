@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Job Filter - Settings</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🔍 LinkedIn Job Filter - Settings</h1>
+            <p class="subtitle">Advanced filtering and configuration settings</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-button active" data-tab="general">🎯 General</button>
+            <button class="tab-button" data-tab="filters">🔧 Filters</button>
+            <button class="tab-button" data-tab="performance">⚡ Performance</button>
+            <button class="tab-button" data-tab="export">📊 Export</button>
+            <button class="tab-button" data-tab="unattended">🌙 Unattended</button>
+            <button class="tab-button" data-tab="advanced">🛠️ Advanced</button>
+        </nav>
+
+        <main class="content">
+            <!-- General Tab -->
+            <section class="tab-content active" id="general">
+                <div class="card">
+                    <h2>🎯 General Settings</h2>
+                    
+                    <div class="form-group">
+                        <label for="default-keywords">Default Keywords</label>
+                        <input type="text" id="default-keywords" placeholder="Frontend, React, JavaScript">
+                        <small>Keywords to auto-load when popup opens</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="default-location">Default Location</label>
+                        <input type="text" id="default-location" placeholder="Remote, Istanbul">
+                        <small>Preferred location filters</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="default-profile">Default Speed Profile</label>
+                        <select id="default-profile">
+                            <option value="conservative">Conservative (6-10 sec)</option>
+                            <option value="balanced">Balanced (4-6 sec)</option>
+                            <option value="aggressive">Aggressive (2-4 sec)</option>
+                        </select>
+                        <small>Default speed setting against LinkedIn bot detection</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="auto-save-filters">
+                            <span class="checkmark"></span>
+                            Auto-save filters
+                        </label>
+                        <small>Save changes instantly</small>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Job Search Profile</h2>
+
+                    <div class="form-group">
+                        <label for="workflow-profile-mode">Usage Mode</label>
+                        <select id="workflow-profile-mode">
+                            <option value="off">Off</option>
+                            <option value="default_filters">Default filters only</option>
+                            <option value="export_hints">Sadece export hint metadata</option>
+                            <option value="default_filters_and_export_hints">Default filters + export hints</option>
+                        </select>
+                        <small>Profile is used locally only; no automatic data fetching from sibling repos.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="workflow-profile-json">Profile JSON</label>
+                        <textarea id="workflow-profile-json" rows="12" placeholder='{\n  "profileLabel": "Job Search Default Profile",\n  "roleTracks": ["sre_platform"],\n  "keywords": ["platform", "reliability"]\n}'></textarea>
+                        <small>Paste only structured, non-sensitive metadata. Do not add private notes, tokens, sessions, or cookies.</small>
+                    </div>
+
+                    <div class="button-group button-group--compact">
+                        <button class="btn btn-secondary" id="workflow-profile-template" type="button">Load Template</button>
+                        <button class="btn btn-secondary" id="workflow-profile-import" type="button">Import JSON File</button>
+                        <button class="btn btn-warning" id="workflow-profile-clear" type="button">Clear Profile</button>
+                    </div>
+
+                    <div class="profile-summary" id="workflow-profile-summary">
+                        <p>Profile not loaded yet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters Tab -->
+            <section class="tab-content" id="filters">
+                <div class="card">
+                    <h2>🔧 Advanced Filters</h2>
+                    
+                    <div class="form-group">
+                        <label for="global-whitelist">Global Whitelist</label>
+                        <textarea id="global-whitelist" rows="6" placeholder="One word/phrase per line&#10;Remote&#10;Work from home&#10;Flexible"></textarea>
+                        <small>Keywords to include in all searches</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="global-blacklist">Global Blacklist</label>
+                        <textarea id="global-blacklist" rows="6" placeholder="One word/phrase per line&#10;Unpaid&#10;Intern&#10;Commission only"></textarea>
+                        <small>Keywords to exclude from all searches</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company-blacklist">Company Blacklist</label>
+                        <textarea id="company-blacklist" rows="4" placeholder="One company name per line&#10;Spam Company&#10;Bad Employer"></textarea>
+                        <small>Companies that will never be shown</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="min-salary-default">Default Minimum Salary</label>
+                        <input type="number" id="min-salary-default" min="0" step="1000" placeholder="50000">
+                        <small>Minimum salary filter to apply automatically</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="exclude-outsourcing-default">
+                            <span class="checkmark"></span>
+                            Exclude outsourcing companies by default
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Tab -->
+            <section class="tab-content" id="performance">
+                <div class="card">
+                    <h2>⚡ Performance Settings</h2>
+                    
+                    <div class="form-group">
+                        <label for="max-results">Maximum Results</label>
+                        <input type="range" id="max-results" min="50" max="500" step="50" value="200">
+                        <div class="range-value">200 jobs</div>
+                        <small>Maximum number of jobs to process in a single scan</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="premium-quota">Daily Premium Quota</label>
+                        <input type="range" id="premium-quota" min="10" max="100" step="10" value="50">
+                        <div class="range-value">50 companies/day</div>
+                        <small>Daily limit for premium company data</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="enable-premium-insights">
+                            <span class="checkmark"></span>
+                            Collect premium company data (Voyager API)
+                        </label>
+                        <small>Premium data like company growth, employee count.
+                        <strong>Disabled by default.</strong> Enabling this uses
+                        LinkedIn's Voyager API which may violate LinkedIn's Terms
+                        of Service. Use at your own risk. No premium data is
+                        transmitted to any third party.</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="auto-cleanup-storage">
+                            <span class="checkmark"></span>
+                            Automatic storage cleanup
+                        </label>
+                        <small>Automatically clean old data</small>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📊 Current Status</h3>
+                    <div id="performance-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Processed today:</span>
+                            <span class="stat-value" id="processed-today">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Premium quota:</span>
+                            <span class="stat-value" id="premium-used">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Storage usage:</span>
+                            <span class="stat-value" id="storage-usage">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Export Tab -->
+            <section class="tab-content" id="export">
+                <div class="card">
+                    <h2>📊 Export Settings</h2>
+                    
+                    <div class="form-group">
+                        <label for="export-format">Default Format</label>
+                        <select id="export-format">
+                            <option value="csv">CSV</option>
+                            <option value="json">JSON</option>
+                            <option value="xlsx">Excel (XLSX)</option>
+                        </select>
+                        <small>Default format for the download button</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fields to Export</label>
+                        <div class="checkbox-grid">
+                            <label class="checkbox">
+                                <input type="checkbox" id="export-title" checked>
+                                <span class="checkmark"></span>
+                                Job Title
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="export-company" checked>
+                                <span class="checkmark"></span>
+                                Company Name
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="export-location" checked>
+                                <span class="checkmark"></span>
+                                Lokasyon
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="export-salary">
+                                <span class="checkmark"></span>
+                                Salary Info
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="export-experience">
+                                <span class="checkmark"></span>
+                                Experience Level
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="export-workplace">
+                                <span class="checkmark"></span>
+                                Work Type
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="export-posted-date">
+                                <span class="checkmark"></span>
+                                Posted Date
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="export-premium-data">
+                                <span class="checkmark"></span>
+                                Premium Data
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="auto-filename">
+                            <span class="checkmark"></span>
+                            Automatic filename (includes date-time)
+                        </label>
+                        <small>in linkedin-jobs-2025-09-29-20-30.csv format</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Unattended Scan Tab -->
+            <section class="tab-content" id="unattended">
+                <div class="card">
+                    <h2>🌙 Unattended Scan</h2>
+
+                    <div class="form-group">
+                        <label for="capture-server-url">Capture Server URL</label>
+                        <input type="url" id="capture-server-url" value="http://localhost:8766" placeholder="http://localhost:8766">
+                        <small>Job Search Workflow capture server address</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unattended-keywords">Keywords</label>
+                        <textarea id="unattended-keywords" rows="3" placeholder="platform engineer&#10;sre&#10;devops"></textarea>
+                        <small>One keyword per line</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unattended-locations">Locations</label>
+                        <textarea id="unattended-locations" rows="3" placeholder="Europe&#10;Worldwide&#10;Remote"></textarea>
+                        <small>One location per line (empty = no filter)</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="unattended-date-filter">Date Posted Filter</label>
+                            <select id="unattended-date-filter">
+                                <option value="r86400">Last 24 hours</option>
+                                <option value="r604800" selected>Last 7 days</option>
+                                <option value="r2592000">Last 30 days</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="unattended-pacing-profile">Speed Profile</label>
+                            <select id="unattended-pacing-profile">
+                                <option value="conservative" selected>Conservative (recommended)</option>
+                                <option value="balanced">Balanced</option>
+                                <option value="aggressive">Aggressive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unattended-search-mode">Search Mode</label>
+                        <select id="unattended-search-mode">
+                            <option value="keyword" selected>Keyword (each line is a separate search)</option>
+                            <option value="natural">Natural language (each line is a search sentence)</option>
+                        </select>
+                        <small>Use natural language sentences for LinkedIn's new AI-powered search</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="unattended-remote-only">
+                            <span class="checkmark"></span>
+                            Remote-only jobs
+                        </label>
+                    </div>
+
+                    <fieldset class="checkbox-group">
+                        <legend>Work Model</legend>
+                        <label class="checkbox"><input type="checkbox" id="unattended-worktype-remote" value="2" checked><span class="checkmark"></span>Remote</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-worktype-hybrid" value="3"><span class="checkmark"></span>Hybrid</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-worktype-onsite" value="1"><span class="checkmark"></span>Ofiste</label>
+                    </fieldset>
+
+                    <fieldset class="checkbox-group">
+                        <legend>Job Type</legend>
+                        <label class="checkbox"><input type="checkbox" id="unattended-jobtype-fulltime" value="F" checked><span class="checkmark"></span>Full-time</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-jobtype-contract" value="C"><span class="checkmark"></span>Contract</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-jobtype-parttime" value="P"><span class="checkmark"></span>Part-time</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-jobtype-temporary" value="T"><span class="checkmark"></span>Temporary</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-jobtype-internship" value="I"><span class="checkmark"></span>Staj</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-jobtype-volunteer" value="V"><span class="checkmark"></span>Volunteer</label>
+                    </fieldset>
+
+                    <fieldset class="checkbox-group">
+                        <legend>Experience Level</legend>
+                        <label class="checkbox"><input type="checkbox" id="unattended-exp-internship" value="1"><span class="checkmark"></span>Stajyer</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-exp-entry" value="2"><span class="checkmark"></span>Junior</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-exp-associate" value="3"><span class="checkmark"></span>Associate</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-exp-midsenior" value="4" checked><span class="checkmark"></span>Mid-Senior</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-exp-director" value="5"><span class="checkmark"></span>Director</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-exp-executive" value="6"><span class="checkmark"></span>Executive</label>
+                    </fieldset>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="unattended-sort-by">Sort By</label>
+                            <select id="unattended-sort-by">
+                                <option value="DD" selected>En yeni</option>
+                                <option value="R">Most relevant</option>
+                            </select>
+                            <small>LinkedIn result sorting</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="unattended-min-salary">Minimum Salary</label>
+                            <input type="number" id="unattended-min-salary" min="0" step="1000" placeholder="e.g. 100000">
+                            <small>LinkedIn `f_SB2` parametresi (USD cinsinden)</small>
+                        </div>
+                    </div>
+
+                    <fieldset class="checkbox-group">
+                        <legend>Other Filters</legend>
+                        <label class="checkbox"><input type="checkbox" id="unattended-easy-apply" value="true"><span class="checkmark"></span>Easy Apply</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-actively-hiring" value="true"><span class="checkmark"></span>Actively hiring</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-under-10" value="true"><span class="checkmark"></span>Under 10 applicants</label>
+                        <label class="checkbox"><input type="checkbox" id="unattended-verified" value="true"><span class="checkmark"></span>Verified jobs</label>
+                    </fieldset>
+
+                    <div class="form-group">
+                        <label for="unattended-company-ids">Company IDs (optional)</label>
+                        <textarea id="unattended-company-ids" rows="2" placeholder="One LinkedIn company ID per line&#10;12345&#10;67890"></textarea>
+                        <small>LinkedIn `f_C` parametresi</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unattended-city-ids">City IDs (optional)</label>
+                        <textarea id="unattended-city-ids" rows="2" placeholder="One LinkedIn city ID per line&#10;102257491"></textarea>
+                        <small>LinkedIn `f_PP` parametresi</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unattended-period-minutes">Alarm Frequency (minutes)</label>
+                        <input type="number" id="unattended-period-minutes" value="60" min="15" max="1440">
+                        <small>How often the unattended scan repeats</small>
+                    </div>
+
+                    <div class="button-group">
+                        <button id="save-unattended-scan" class="btn btn-primary">Kaydet</button>
+                        <button id="start-unattended-scan" class="btn btn-success">Şimdi Tara</button>
+                        <button id="stop-unattended-scan" class="btn btn-danger">Durdur</button>
+                    </div>
+
+                    <div id="unattended-scan-status" class="status-box"></div>
+                </div>
+            </section>
+
+            <!-- Advanced Tab -->
+            <section class="tab-content" id="advanced">
+                <div class="card">
+                    <h2>🛠️ Advanced Settings</h2>
+                    
+                    <div class="form-group">
+                        <label for="debug-mode">Debug Modu</label>
+                        <select id="debug-mode">
+                            <option value="off">Off</option>
+                            <option value="minimal">Minimal</option>
+                            <option value="verbose">Verbose</option>
+                        </select>
+                        <small>Console logs and debugging information</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="enable-telemetry">
+                            <span class="checkmark"></span>
+                            Telemetri verilerini topla
+                        </label>
+                        <small>Performance metrics and usage statistics</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="experimental-features">
+                            <span class="checkmark"></span>
+                            Experimental features
+                        </label>
+                        <small>New features in beta</small>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🔧 Data Management</h3>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" id="export-settings">
+                            📤 Export Settings
+                        </button>
+                        <button class="btn btn-secondary" id="import-settings">
+                            📥 Import Settings
+                        </button>
+                        <button class="btn btn-warning" id="reset-settings">
+                            🔄 Reset Settings
+                        </button>
+                        <button class="btn btn-danger" id="clear-all-data">
+                            🗑️ Clear All Data
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📋 Sistem Bilgileri</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Extension Version:</span>
+                            <span class="info-value" id="extension-version">1.0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Manifest Versiyonu:</span>
+                            <span class="info-value">V3</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Browser:</span>
+                            <span class="info-value" id="browser-info">Chrome</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Last Updated:</span>
+                            <span class="info-value" id="last-update">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="save-section">
+                <button class="btn btn-primary" id="save-all-settings">
+                    💾 Save All Settings
+                </button>
+                <div class="save-status" id="save-status"></div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="utils/scan_planner.js"></script>
+    <script src="utils/workflow_profile.js"></script>
+    <script src="options.js"></script>
+</body>
+</html>

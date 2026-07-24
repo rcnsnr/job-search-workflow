@@ -1,0 +1,45 @@
+PolyForm Noncommercial License 1.0.0
+
+<https://polyformproject.org/licenses/noncommercial/1.0.0>
+
+Copyright (c) 2026 Orcun Sensar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+1. The Software may be used only for Noncommercial Purposes. "Noncommercial
+   Purposes" means any purpose that does not constitute "Commercial Use" as
+   defined below.
+
+2. "Commercial Use" means any use of the Software that is primarily intended
+   for or directed toward commercial advantage or monetary compensation.
+   Examples of Commercial Use include: using the Software as part of a paid
+   service or product; using the Software internally within a business to
+   generate revenue; selling copies of the Software; or using the Software to
+   provide consulting or services for a fee.
+
+3. The following are not Commercial Use:
+   - Personal learning, education, and research
+   - Non-commercial open-source projects
+   - Job searching by individuals for their own employment
+   - Use by non-profit organizations, universities, and educational
+     institutions for non-revenue-generating purposes
+   - Internal use by a business for its own hiring (not as a product or
+     service sold to others)
+
+4. Redistributions of the Software must retain this license and copyright
+   notice.
+
+5. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+
+SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
