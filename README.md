@@ -1,8 +1,8 @@
-# CareerOps Public Framework
+# Job Search Workflow Public Framework
 
 > Status: Preparing for public release. This directory is not yet an independent, publication-ready public repository.
 
-CareerOps is intended to become a reusable framework that contains no personal data. It is designed to run career triage, document-generation standards and public job-source discovery workflows using data supplied by the user.
+Job Search Workflow is intended to become a reusable framework that contains no personal data. It is designed to run career triage, document-generation standards and public job-source discovery workflows using data supplied by the user.
 
 ## Quick Start
 
@@ -68,7 +68,7 @@ The setup scripts do not install missing system packages automatically and do no
 ## Browser Extension
 
 The `Job Search Workflow Capture` browser extension captures job postings from
-LinkedIn Jobs and exports them as CareerOps Markdown/JSONL, CSV, or JSON. It can
+LinkedIn Jobs and exports them as Job Search Workflow Markdown/JSONL, CSV, or JSON. It can
 also send postings to a local FastAPI capture server that writes directly to
 `inbox/jobs/` for unattended workflows.
 

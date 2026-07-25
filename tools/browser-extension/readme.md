@@ -1,6 +1,6 @@
 # Job Search Workflow Capture
 
-A browser extension companion for the [CareerOps](https://github.com/<your-username>/job-search-workflow-capture) job-search workflow. It captures job postings from LinkedIn Jobs, lets you filter by keywords, location, company, and work model, and exports the results as CareerOps Markdown, CareerOps JSONL, CSV, or JSON. Captures can be sent to a local FastAPI capture server that writes to `inbox/jobs/` for unattended workflows, or exported manually and imported later.
+A browser extension companion for the [Job Search Workflow](https://github.com/<your-username>/job-search-workflow-capture) job-search workflow. It captures job postings from LinkedIn Jobs, lets you filter by keywords, location, company, and work model, and exports the results as Job Search Workflow Markdown, Job Search Workflow JSONL, CSV, or JSON. Captures can be sent to a local FastAPI capture server that writes to `inbox/jobs/` for unattended workflows, or exported manually and imported later.
 
 ## Features
 
@@ -8,8 +8,8 @@ A browser extension companion for the [CareerOps](https://github.com/<your-usern
 - **Location & Company Filtering**: Narrow results by location and company name.
 - **Speed Profile Management**: Choose conservative, balanced, or aggressive scan pacing to minimize bot-detection risk.
 - **Human-like Behavior**: Adds randomized delays to simulate natural browsing.
-- **Export Results**: Download filtered postings as **JSON**, **CSV**, **CareerOps Markdown**, or **CareerOps JSONL**.
-- **Copy Markdown**: Copy the CareerOps Markdown export to the clipboard.
+- **Export Results**: Download filtered postings as **JSON**, **CSV**, **Job Search Workflow Markdown**, or **Job Search Workflow JSONL**.
+- **Copy Markdown**: Copy the Job Search Workflow Markdown export to the clipboard.
 - **View Results in New Tab**: Open filtered postings in a browser tab.
 - **Advanced Options Page**: Configure global whitelist/blacklist, speed profiles, export defaults, and telemetry preferences.
 - **Unattended Capture Server**: Post captures to a local FastAPI server for automated `inbox/jobs/` intake.
@@ -40,26 +40,26 @@ A browser extension companion for the [CareerOps](https://github.com/<your-usern
 4. Press **Save & Scan** to start the scan.
 5. When the scan finishes:
    - Download results as **JSON** or **CSV**.
-   - Use **Download CareerOps Markdown**, **Download CareerOps JSONL**, or **Copy Markdown** for CareerOps workflow intake.
+   - Use **Download Job Search Workflow Markdown**, **Download Job Search Workflow JSONL**, or **Copy Markdown** for Job Search Workflow workflow intake.
    - View filtered postings in a new tab.
 
-## CareerOps Export Notes
+## Job Search Workflow Export Notes
 
-- CareerOps exports are generated from the currently filtered job list in the popup.
-- Markdown file: `careerops-jobs-YYYY-MM-DD.md`
-- JSONL file: `careerops-normalized-postings-YYYY-MM-DD.jsonl`
-- This flow does **not** write to the CareerOps repo automatically.
-- The user downloads or copies the file, then moves or imports it into the CareerOps repo manually.
+- Job Search Workflow exports are generated from the currently filtered job list in the popup.
+- Markdown file: `jsw-jobs-YYYY-MM-DD.md`
+- JSONL file: `jsw-normalized-postings-YYYY-MM-DD.jsonl`
+- This flow does **not** write to the Job Search Workflow repo automatically.
+- The user downloads or copies the file, then moves or imports it into the Job Search Workflow repo manually.
 - The export maps only visible fields from the current job object; it does not export cookies, tokens, sessions, browser profiles, or private payloads.
 
-## CareerOps Profile (Optional)
+## Job Search Workflow Profile (Optional)
 
-- From `Options > General > CareerOps Profile`, paste or import a local JSON profile.
+- From `Options > General > Job Search Workflow Profile`, paste or import a local JSON profile.
 - Usage mode is visible:
   - `Off`
   - `Default filters only`
   - `Default filters + export hints`
-- This profile is used locally only; no automatic data pull from a sibling CareerOps repo.
+- This profile is used locally only; no automatic data pull from a sibling Job Search Workflow repo.
 - This field is for strategy notes and non-sensitive metadata only. Do not synchronize cookies, tokens, sessions, or private payloads.
 
 ## Project Structure
@@ -78,7 +78,7 @@ job-search-workflow-capture/
 │   └── autoscan.js       # Unattended scan content script
 ├── service_worker.js     # Background alarms, state, and message passing
 ├── utils/
-│   ├── careerops_exporter.js  # CareerOps Markdown/JSONL export
+│   ├── careerops_exporter.js  # Job Search Workflow Markdown/JSONL export
 │   ├── careerops_profile.js   # Profile schema and validation
 │   ├── logger.js              # Debug logging
 │   └── scan_planner.js        # Pacing profiles and query planning

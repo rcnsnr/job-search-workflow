@@ -48,13 +48,13 @@ mode. This runbook covers the load-unpacked flow used for Phase 1 releases.
 5. Wait for the scan to finish. The popup shows the result count and action
    buttons.
 
-6. Click **Download CareerOps Markdown** and confirm a `.md` file is saved.
+6. Click **Download Job Search Workflow Markdown** and confirm a `.md` file is saved.
 
 ## Options configuration
 
 The options page has several tabs:
 
-- **General** — default keywords, speed profile, CareerOps profile mode.
+- **General** — default keywords, speed profile, Job Search Workflow profile mode.
 - **Advanced Filters** — global whitelist/blacklist, company blacklist, default
   minimum salary, outsourcing exclusion.
 - **Performance** — maximum results per scan, premium quota, storage cleanup.
@@ -70,7 +70,7 @@ The options page has several tabs:
 | --- | --- |
 | Default speed profile | `Conservative` until you confirm the scan is stable. |
 | Maximum results | `100` for the first scans. |
-| Export format | `careerops_markdown` or `careerops_jsonl`. |
+| Export format | `jsw_markdown` or `jsw_jsonl`. |
 | Capture server URL | `http://localhost:8766` if you run the capture server. |
 
 ## Unattended scan setup

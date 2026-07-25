@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""CareerOps Job Search Workflow Capture Server.
+"""Job Search Workflow Capture Server.
 
 Receives job records from the Job Search Workflow Capture browser extension and
 writes them as Markdown files under inbox/jobs/. Front-matter is in English;
-free-form sections are in Turkish to match CareerOps capture conventions
+free-form sections are in Turkish to match Job Search Workflow capture conventions
 (GAP-20260622-02).
 """
 
@@ -67,7 +67,7 @@ def build_filename(payload: CapturePayload) -> str:
 
 
 def build_markdown(payload: CapturePayload) -> str:
-    """Build CareerOps-compatible markdown with English front-matter."""
+    """Build Job Search Workflow-compatible markdown with English front-matter."""
     front_matter = {
         "source_id": payload.source_id,
         "source_url": payload.source_url,
@@ -133,7 +133,7 @@ def create_app(inbox_dir: str | None = None) -> FastAPI:
     inbox_path = os.path.abspath(inbox_dir)
     os.makedirs(inbox_path, exist_ok=True)
 
-    app = FastAPI(title="CareerOps Job Search Workflow Capture Server", version="2.0.0")
+    app = FastAPI(title="Job Search Workflow Capture Server", version="2.0.0")
 
     @app.get("/health")
     def health() -> dict[str, str]:

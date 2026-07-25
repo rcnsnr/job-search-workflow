@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Job Search Workflow Capture",
   "version": "2.0.0",
-  "description": "A job-posting capture companion for the CareerOps job-search workflow. Supports manual export and unattended local capture.",
+  "description": "A job-posting capture companion for the Job Search Workflow. Supports manual export and unattended local capture.",
   "permissions": [
     "activeTab",
     "scripting",

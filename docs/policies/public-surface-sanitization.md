@@ -1,6 +1,6 @@
 # Public Surface Sanitization Policy
 
-This policy defines how the CareerOps repository produces a clean, reusable,
+This policy defines how the Job Search Workflow repository produces a clean, reusable,
 public-facing surface under `public/`. It covers source code, documentation,
 fixtures, CI configuration, and release artifacts.
 
@@ -36,8 +36,8 @@ preferences:
 - Location defaults MUST be generic (e.g. `Remote, Berlin`) not tied to the
   owner.
 - Company-origin filters MUST default to neutral (`any`) in public templates.
-- `CareerOps` is the public framework name; profile labels MUST use
-  `Example CareerOps Profile` or a similarly generic label.
+- `Job Search Workflow` is the public framework name; profile labels MUST use
+  `Example Job Search Workflow Profile` or a similarly generic label.
 
 ### 3. Brand and Trademark Boundaries
 
@@ -47,8 +47,8 @@ preferences:
   host permissions because the extension operates on LinkedIn Jobs.
 - `LinkedIn` MUST NOT be used as the main product name in `manifest.json`,
   `package.json`, popup/options titles, or README level-one heading.
-- Private repo slugs such as `linkedin-job-filter` or `CareerOps-framework`
-  MUST NOT appear in public files.
+- Private repo slugs such as `linkedin-job-filter` or any owner-specific
+  framework slug MUST NOT appear in public files.
 - Source identifiers and capture method names MUST use generic identifiers such
   as `job-search-workflow-capture` / `job_search_workflow_capture`, not
   `linkedin-manual-extension` or `linkedin_manual_extension_capture`.

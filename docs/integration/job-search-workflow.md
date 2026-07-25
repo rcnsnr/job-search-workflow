@@ -2,7 +2,7 @@
 
 This document defines how the `Job Search Workflow Capture` browser extension,
 the `public/scripts/linkedin_capture_server.py` FastAPI capture server, and the
-CareerOps `inbox/jobs/` triage/decision/export pipeline fit together.
+Job Search Workflow `inbox/jobs/` triage/decision/export pipeline fit together.
 
 ## Scope
 
@@ -23,7 +23,7 @@ CareerOps `inbox/jobs/` triage/decision/export pipeline fit together.
 ┌─────────────────────────────────────────────────────────────────────┐
 │ Job Search Workflow Capture popup                                   │
 │  • filter by keyword / location / company                           │
-│  • export CareerOps Markdown / JSONL / CSV / JSON                   │
+│  • export Job Search Workflow Markdown / JSONL / CSV / JSON                   │
 │  • or send to local capture server for unattended intake            │
 └──────────────────┬──────────────────────────────────────────────────┘
                    │
@@ -37,7 +37,7 @@ CareerOps `inbox/jobs/` triage/decision/export pipeline fit together.
        │                           │
        ▼                           ▼
 ┌─────────────────────────────────────────┐
-│ CareerOps inbox/jobs/                   │
+│ Job Search Workflow inbox/jobs/                   │
 │  dedupe by source_url                   │
 │  triage → decision → export             │
 └─────────────────────────────────────────┘
@@ -49,8 +49,8 @@ CareerOps `inbox/jobs/` triage/decision/export pipeline fit together.
 
 Use the extension popup to filter visible LinkedIn postings, then choose one of:
 
-- **Download CareerOps Markdown** — a single `.md` file with English front-matter.
-- **Download CareerOps JSONL** — one JSON object per line with normalized fields.
+- **Download Job Search Workflow Markdown** — a single `.md` file with English front-matter.
+- **Download Job Search Workflow JSONL** — one JSON object per line with normalized fields.
 - **Copy Markdown** — copies the Markdown content to the clipboard.
 
 The user then moves the downloaded file to `inbox/jobs/` (or copies the
@@ -169,7 +169,7 @@ GET /captures?since=2026-07-25T00:00:00+00:00
 ## Normalized Posting Schema
 
 The Markdown file written to `inbox/jobs/` has English front-matter and
-Turkish prose sections to match CareerOps capture conventions
+Turkish prose sections to match Job Search Workflow capture conventions
 (GAP-20260622-02).
 
 ```markdown
@@ -257,7 +257,7 @@ this URL when the user clicks **Save & Scan** if unattended mode is enabled.
 
 ## Downstream Pipeline
 
-After a file lands in `inbox/jobs/`, the CareerOps pipeline performs the
+After a file lands in `inbox/jobs/`, the Job Search Workflow pipeline performs the
 following steps:
 
 1. **Normalize** — front-matter is parsed; free-form sections are kept as-is.
