@@ -69,7 +69,7 @@ The archive must contain at minimum:
 
 - [ ] Download the release `.zip` and confirm it loads unpacked in Chrome.
 - [ ] Smoke-test the popup on a LinkedIn Jobs search page.
-- [ ] Confirm CareerOps Markdown export works.
+- [ ] Confirm Job Search Workflow Markdown export works.
 - [ ] Confirm capture server intake works when the server is running.
 
 ## Phase 2: Chrome Web Store

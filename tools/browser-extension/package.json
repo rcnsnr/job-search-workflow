@@ -1,7 +1,7 @@
 {
   "name": "job-search-workflow-capture",
   "version": "2.0.0",
-  "description": "Browser extension that captures job postings and exports them to the CareerOps inbox/workflow.",
+  "description": "Browser extension that captures job postings and exports them to the Job Search Workflow inbox/workflow.",
   "scripts": {
     "lint": "eslint *.js content/*.js utils/careerops_exporter.js utils/careerops_profile.js utils/scan_planner.js",
     "lint:fix": "eslint *.js content/*.js utils/careerops_exporter.js utils/careerops_profile.js utils/scan_planner.js --fix",

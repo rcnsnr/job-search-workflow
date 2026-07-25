@@ -1,5 +1,5 @@
 {
-  "profileLabel": "Example CareerOps Profile",
+  "profileLabel": "Example Job Search Workflow Profile",
   "roleTracks": ["sre_platform", "dual_track"],
   "keywords": ["platform", "reliability", "observability", "agent", "developer productivity"],
   "requiredKeywords": ["platform"],
