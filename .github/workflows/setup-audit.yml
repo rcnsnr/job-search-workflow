@@ -82,7 +82,7 @@ jobs:
           npm test
 
       - name: PII / private-reference scan
-        run: python3 public/scripts/scan_pii.py
+        run: python3 scripts/scan_pii.py
 
       - name: LinkedIn brand check
         run: python3 public/scripts/check_linkedin_brand.py
@@ -104,13 +104,13 @@ jobs:
           python3 -m pip install fastapi pydantic pyyaml uvicorn httpx pytest
 
       - name: Run capture server tests
-        run: python3 -m pytest public/tests/test_linkedin_capture_server.py -q
+        run: python3 -m pytest tests/test_linkedin_capture_server.py -q
 
       - name: Python compile check
         run: |
-          python3 -m py_compile public/scripts/linkedin_capture_server.py
-          python3 -m py_compile public/scripts/scan_pii.py
-          python3 -m py_compile public/scripts/check_linkedin_brand.py
+          python3 -m py_compile scripts/linkedin_capture_server.py
+          python3 -m py_compile scripts/scan_pii.py
+          python3 -m py_compile scripts/check_linkedin_brand.py
 
   windows:
     name: Windows setup smoke test
