@@ -39,7 +39,7 @@ const STORAGE_USAGE_TARGET_BYTES = Math.floor(4 * 1024 * 1024);
 const jobQueue = [];
 let activeJob = null;
 let cooldownTimer = null;
-let premiumInsightsEnabled = false;
+let premiumInsightsEnabled = true;
 let premiumDailyLimit = PREMIUM_DAILY_LIMIT;
 
 const telemetry = createTelemetryState();
@@ -67,8 +67,8 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         logger.debug("Telemetry read successfully", { data });
         sendResponse({ success: true, telemetry: data });
       }).catch((error) => {
-        logger.error("Failed to read telemetry", { error: error.message });
-        console.error("Failed to read telemetry", error);
+        logger.error("Could not read telemetry", { error: error.message });
+        console.error("Could not read telemetry", error);
         sendResponse({
           success: false,
           error: error instanceof Error ? error.message : String(error),
@@ -133,7 +133,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       return false;
     }
 
-    logger.info("Job scan request enqueued", { filters: message.filters });
+    logger.info("Job search request queued", { filters: message.filters });
     enqueueJob({ message, sendResponse, createdAt: Date.now() });
     return true;
 
@@ -231,7 +231,7 @@ async function scheduleAndHandleJob(request) {
 async function handleJobScan(request) {
   const activeTab = await getActiveLinkedInTab();
   if (!activeTab?.id) {
-    throw new Error("No active LinkedIn Jobs tab found.");
+    throw new Error("Active LinkedIn Jobs tab not found.");
   }
 
   await chrome.scripting.executeScript({
@@ -257,25 +257,25 @@ async function handleJobScan(request) {
 
 async function getActiveLinkedInTab() {
   try {
-    logger.debug("Searching for active LinkedIn tab...");
+    logger.debug("Looking for active LinkedIn tab...");
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     const activeTab = tabs[0];
 
-    logger.debug("Aktif sekme bulundu", { tabId: activeTab?.id, url: activeTab?.url });
+    logger.debug("Active tab found", { tabId: activeTab?.id, url: activeTab?.url });
 
     if (!activeTab) {
-      logger.error("No active tab found");
-      throw new Error("No active tab found. Please activate a tab.");
+      logger.error("Active tab not found");
+      throw new Error("Active tab not found. Please make a tab active.");
     }
 
     if (!activeTab.url) {
-      logger.error("Failed to get tab URL", { tabId: activeTab.id });
-      throw new Error("Failed to get tab URL. Refresh the tab and try again.");
+      logger.error("Could not get tab URL", { tabId: activeTab.id });
+      throw new Error("Could not get tab URL. Refresh the tab and try again.");
     }
 
     if (!activeTab.url.includes("linkedin.com/jobs")) {
       logger.error("Not a LinkedIn Jobs page", { url: activeTab.url });
-      throw new Error("Please open LinkedIn Jobs page in the active tab. Current URL: " + activeTab.url);
+      throw new Error("Please open the LinkedIn Jobs page in the active tab. Current URL: " + activeTab.url);
     }
 
     logger.info("LinkedIn Jobs tab verified", { tabId: activeTab.id, url: activeTab.url });
@@ -360,7 +360,7 @@ async function persistTelemetry() {
     await chrome.storage.local.set({ [key]: data });
   } catch (error) {
     console.error("Telemetry save error:", error);
-    throw new Error("Telemetry could not be saved: " + error.message);
+    throw new Error("Telemetri kaydedilemedi: " + error.message);
   }
 }
 
@@ -419,11 +419,11 @@ async function loadOptionsSettings() {
     const settings = stored?.optionsSettings ?? {};
     const limit = Number(settings.premiumQuota);
 
-    premiumInsightsEnabled = settings.enablePremiumInsights === true;
+    premiumInsightsEnabled = settings.enablePremiumInsights !== false;
     premiumDailyLimit = Number.isFinite(limit) && limit > 0 ? limit : PREMIUM_DAILY_LIMIT;
   } catch (error) {
-    console.warn("Failed to load settings, using default premium limit", error);
-    premiumInsightsEnabled = false;
+    console.warn("Settings could not be loaded, default premium limit will be used", error);
+    premiumInsightsEnabled = true;
     premiumDailyLimit = PREMIUM_DAILY_LIMIT;
   }
 }
@@ -485,7 +485,7 @@ async function schedulePremiumInsights(jobs, profileKey) {
     }
 
     if (telemetry.premiumCallsToday >= dailyLimit) {
-      console.warn("Premium Insights quota exhausted.");
+      console.warn("Premium Insights quota completed.");
       break;
     }
   }
@@ -695,7 +695,7 @@ async function getCsrfToken() {
 
     return cookie.value.replace(/"/g, "");
   } catch (error) {
-    console.warn("Failed to get CSRF token", error);
+    console.warn("CSRF token could not be retrieved", error);
     return "";
   }
 }

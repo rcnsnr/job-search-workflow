@@ -1,46 +1,13 @@
-# Node modules
+# Extension dependencies
 node_modules/
-yarn.lock
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-npm-debug.log*
-
-# Build
-dist/
-build/
-
-# Test
+# Coverage output
 coverage/
 
-# Chrome extension
-*.crx
-*.pem
-*.zip
-
-# Environment
+# Local environment
 .env
-.env.local
+.env.*
 
-# Chrome profile (contains session cookies; local-only)
-.chrome-profile/
-
-# Local-only consumer overlay
-.codex/GLOBAL_RULES.md
-.codex/rules
-.codex/skills
-.codex/standards
-.codex/workflows
-AGENTS.md
-active_task.md
+# Debug logs
+*.log
+logs/

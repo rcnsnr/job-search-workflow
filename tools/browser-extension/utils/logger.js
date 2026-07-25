@@ -1,5 +1,5 @@
 // utils/logger.js - Debug Logging Utility
-// Log timestamps use UTC+03
+// Logs in the browser's local timezone by default.
 
 const LOG_LEVELS = {
   DEBUG: 0,
@@ -19,9 +19,7 @@ class Logger {
 
   _getTimestamp() {
     const now = new Date();
-    // UTC+3 offset
-    const offsetTime = new Date(now.getTime() + (3 * 60 * 60 * 1000));
-    return offsetTime.toISOString().replace('T', ' ').substring(0, 23);
+    return now.toISOString().replace('T', ' ').substring(0, 23);
   }
 
   _formatMessage(level, message, data) {
@@ -68,7 +66,7 @@ class Logger {
             data: data || null
           });
 
-          // Exceeding maximum log count
+          // Exceeds maximum log count
           if (logs.length > MAX_LOG_ENTRIES) {
             logs = logs.slice(-MAX_LOG_ENTRIES);
           }
@@ -127,7 +125,7 @@ class Logger {
     
     const a = document.createElement('a');
     a.href = url;
-    a.download = `linkedin-job-filter-debug-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+    a.download = `job-search-workflow-capture-debug-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
     a.click();
     
     URL.revokeObjectURL(url);

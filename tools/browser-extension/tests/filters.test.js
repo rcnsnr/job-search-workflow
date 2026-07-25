@@ -106,7 +106,7 @@ describe("Filter Logic Tests", () => {
 
     const parsed = parseSalary(salaryText);
     if (!parsed) {
-      return true; // Pass if no salary info
+      return true; // Skip if no salary info
     }
 
     return parsed.max >= minSalary;

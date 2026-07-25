@@ -191,6 +191,7 @@
   const KEYWORD_SYNONYM_MAP = buildSynonymMap(KEYWORD_SYNONYM_GROUPS);
   const REMOTE_POSITIVE_HINTS = [
     "remote",
+    "remote",
     "home office",
     "fully remote",
     "remote-first",
@@ -199,7 +200,7 @@
   const REMOTE_NEGATIVE_HINTS = [
     "on-site",
     "onsite",
-    "in office",
+    "office",
     "hybrid",
     "shift",
     "travel required",
@@ -237,7 +238,7 @@
         const jobs = collectJobs(request.filters ?? {});
         sendResponse({ jobs });
       } catch (error) {
-        console.error("Job collection error", error);
+        console.error("Job posting collection error", error);
         sendResponse({ jobs: [], error: error instanceof Error ? error.message : String(error) });
       }
       return true;
@@ -267,7 +268,7 @@
   function getJobCards() {
     const pageType = detectPageType();
     const selectors = [
-      // 2025-2026 current selectors (AI search and new search experience)
+      // 2025-2026 current selectors (AI search ve yeni arama deneyimi)
       "[data-tracking-control-name='public_jobs_jserp-result_search-card']",
       "[data-view-name='search-entity-result-universal-template']",
       "li[data-occludable-job-id]",
@@ -315,14 +316,14 @@
       cards = unique;
 
       if (cards.length > 0) {
-        console.log(`[LinkedIn Job Filter] ${cards.length} job cards found (selector: ${selector}, page: ${pageType})`);
+        console.log(`[Job Search Workflow Capture] ${cards.length} job posting cards found (selector: ${selector}, page: ${pageType})`);
         break;
       }
     }
 
     if (cards.length === 0) {
-      console.warn("[LinkedIn Job Filter] No job cards found. Page type:", pageType);
-      console.warn("[LinkedIn Job Filter] Please make sure you are on a LinkedIn Jobs search or recommendations page.");
+      console.warn("[Job Search Workflow Capture] No job posting cards found. Page type:", pageType);
+      console.warn("[Job Search Workflow Capture] Please make sure you are on a LinkedIn Jobs search or recommendations page.");
     }
 
     return cards;
@@ -350,7 +351,7 @@
       }
     });
 
-    console.log(`[LinkedIn Job Filter] ${cards.length} cards scanned, ${jobs.length} jobs passed filter`);
+    console.log(`[Job Search Workflow Capture] ${cards.length} cards scanned, ${jobs.length} job postings passed the filter`);
     return jobs;
   }
 
@@ -495,12 +496,12 @@
 
   function matchRemote(job) {
     const type = job.workplaceType?.toLowerCase?.() ?? "";
-    if (type.includes("remote")) {
+    if (type.includes("remote") || type.includes("remote")) {
       return true;
     }
 
     const location = job.location?.toLowerCase?.() ?? "";
-    if (location.includes("remote")) {
+    if (location.includes("remote") || location.includes("remote")) {
       return true;
     }
 
@@ -597,7 +598,7 @@
 
   function hasRemoteIndicator(texts) {
     for (const text of texts) {
-      if (text.includes("remote")) {
+      if (text.includes("remote") || text.includes("remote")) {
         return true;
       }
     }
@@ -615,7 +616,7 @@
 
   function hasOnsiteIndicator(texts) {
     for (const text of texts) {
-      if (text.includes("on-site") || text.includes("office")) {
+      if (text.includes("on-site")) {
         return true;
       }
     }
@@ -960,7 +961,7 @@
         return match[1].toLowerCase();
       }
     } catch (error) {
-      console.debug("Failed to extract company slug", error);
+      console.debug("Could not extract company slug", error);
     }
 
     return "";
@@ -979,7 +980,7 @@
     return "";
   }
 
-  window.JobSearchLinkedInScraper = {
+  window.CareerOpsLinkedInScraper = {
     getJobCards,
     extractJob,
     collectJobs,

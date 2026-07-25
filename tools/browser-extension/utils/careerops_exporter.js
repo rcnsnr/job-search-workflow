@@ -1,6 +1,6 @@
 (function (globalTarget) {
-  const DEFAULT_SOURCE_ID = "linkedin-manual-extension";
-  const DEFAULT_SOURCE_FAMILY = "linkedin_manual_extension_capture";
+  const DEFAULT_SOURCE_ID = "job-search-workflow-capture";
+  const DEFAULT_SOURCE_FAMILY = "job_search_workflow_capture";
   const DEFAULT_CAPTURE_METHOD = "manual_browser_extension_export";
   const DEFAULT_SOURCE_POLICY_STATE = "discovery_only";
   const DEFAULT_DECISION_HANDOFF_STATE = "pending_triage";
@@ -10,9 +10,6 @@
   const DESCRIPTION_SNIPPET_LIMIT = 320;
   const NOTES_LIMIT = 240;
 
-  // Default keywords for role track inference. Users can configure their own
-  // filtering keywords via the Profile JSON in the Options UI; these defaults
-  // are used only for export tagging when no profile keywords are provided.
   const SRE_KEYWORDS = [
     "sre",
     "site reliability",
@@ -148,7 +145,7 @@
       return "Unknown";
     }
 
-    if (/(hybrid|hybrid work)/.test(text)) {
+    if (/(hybrid)/.test(text)) {
       return "hybrid";
     }
     if (/(on-site|onsite|on site|office)/.test(text)) {
@@ -208,7 +205,7 @@
     if (!text) {
       return "Unknown";
     }
-    if (/(europe|eu|emea|germany|berlin|amsterdam|london|uk)/.test(text)) {
+    if (/(europe|eu|emea|germany|berlin|amsterdam|london|uk)/i.test(text)) {
       return "europe_friendly";
     }
     if (/(united states|usa|us only|north america|pst|est)/.test(text)) {
@@ -297,11 +294,11 @@
     return result;
   }
 
-  function normalizeWorkflowProfile(profile) {
+  function normalizeCareerOpsProfile(profile) {
     const source = profile && typeof profile === "object" ? profile : {};
 
     return {
-      profileLabel: normalizeWhitespace(source.profileLabel) || "Job Search Profile",
+      profileLabel: normalizeWhitespace(source.profileLabel) || "Example CareerOps Profile",
       keywords: normalizeProfileArray(source.keywords),
       requiredKeywords: normalizeProfileArray(source.requiredKeywords),
       avoidKeywords: normalizeProfileArray(source.avoidKeywords),
@@ -312,7 +309,7 @@
   }
 
   function evaluateJobAgainstProfile(job, profile) {
-    const normalizedProfile = normalizeWorkflowProfile(profile);
+    const normalizedProfile = normalizeCareerOpsProfile(profile);
     const text = buildSearchText(job);
     const matchedKeywords = normalizedProfile.keywords.filter((keyword) => text.includes(keyword.toLowerCase()));
     const missingRequiredKeywords = normalizedProfile.requiredKeywords.filter((keyword) => !text.includes(keyword.toLowerCase()));
@@ -397,7 +394,7 @@
       parts.push(`aiWorkflowSignal=${context.aiAssistedWorkflowSignal}`);
     }
     if (context.profileHint) {
-      parts.push(`workflowProfile=${context.profileHint.profileLabel}`);
+      parts.push(`careerOpsProfile=${context.profileHint.profileLabel}`);
       parts.push(`profileFit=${context.profileHint.fitLabel}`);
     }
 
@@ -437,12 +434,12 @@
     facts.push(`capture method: ${context.captureMethod}`);
     facts.push(`source policy state: ${context.sourcePolicyState}`);
     if (context.profileHint) {
-      facts.push(`workflow profile fit: ${context.profileHint.fitLabel}`);
+      facts.push(`careerops profile fit: ${context.profileHint.fitLabel}`);
       context.profileHint.reasons.forEach((reason) => {
-        facts.push(`workflow profile reason: ${reason}`);
+        facts.push(`careerops profile reason: ${reason}`);
       });
       context.profileHint.risks.forEach((risk) => {
-        facts.push(`workflow profile risk: ${risk}`);
+        facts.push(`careerops profile risk: ${risk}`);
       });
     }
 
@@ -460,7 +457,7 @@
       why.push(`Company origin classification seen during capture: ${readText(job, "companyOrigin")}.`);
     }
     if (context.profileHint) {
-      why.push(`Job Search profile hint: ${context.profileHint.fitLabel} (${context.profileHint.profileLabel}).`);
+      why.push(`CareerOps profile hint: ${context.profileHint.fitLabel} (${context.profileHint.profileLabel}).`);
     }
 
     return why;
@@ -495,8 +492,8 @@
     const normalizedStatus = safeText(options.normalizedStatus, DEFAULT_NORMALIZED_STATUS);
     const roleFamilyTags = inferRoleFamilyTags(job, roleTrackHint);
     const aiAssistedWorkflowSignal = inferAiWorkflowSignal(job);
-    const profileHint = options.workflowProfile
-      ? evaluateJobAgainstProfile(job, options.workflowProfile)
+    const profileHint = options.careerOpsProfile
+      ? evaluateJobAgainstProfile(job, options.careerOpsProfile)
       : null;
     const context = {
       capturedAt,
@@ -586,18 +583,18 @@
       "- Status: Unknown",
       "- Applied at: Unknown",
       "- Materials used: Unknown",
-      "- Tracking note: Manual download/copy export only; move into Job Search Workflow repo manually if needed.",
+      "- Tracking note: Manual download/copy export only; move into CareerOps repo manually if needed.",
     ];
 
     return lines.join("\n");
   }
 
-  function toWorkflowMarkdown(jobs, options = {}) {
+  function toCareerOpsMarkdown(jobs, options = {}) {
     const records = Array.isArray(jobs) ? jobs : [];
     return records.map((job) => formatMarkdownJob(job, options)).join("\n\n---\n\n");
   }
 
-  function toWorkflowJsonl(jobs, options = {}) {
+  function toCareerOpsJsonl(jobs, options = {}) {
     const records = Array.isArray(jobs) ? jobs : [];
     return records.map((job) => {
       const context = buildExportContext(job, options);
@@ -638,14 +635,14 @@
   }
 
   const api = {
-    toWorkflowMarkdown,
-    toWorkflowJsonl,
+    toCareerOpsMarkdown,
+    toCareerOpsJsonl,
     slugifyJobRecord,
     inferRoleTrackHint,
     inferWorkModel,
   };
 
-  globalTarget.JobSearchExporter = api;
+  globalTarget.CareerOpsExporter = api;
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api;

@@ -1,25 +1,25 @@
 const {
   PROFILE_MODES,
-  normalizeWorkflowProfile,
-  parseWorkflowProfileInput,
-  createWorkflowProfileTemplate,
+  normalizeCareerOpsProfile,
+  parseCareerOpsProfileInput,
+  createCareerOpsProfileTemplate,
   profileModeUsesDefaultFilters,
   profileModeUsesExportHints,
   buildFilterDefaultsFromOptions,
   buildFilterDefaultsFromProfile,
   resolvePopupFilters,
-  evaluateJobAgainstWorkflowProfile,
-} = require("../utils/workflow_profile");
+  evaluateJobAgainstCareerOpsProfile,
+} = require("../utils/careerops_profile");
 
-describe("Job Search profile helpers", () => {
-  test("createWorkflowProfileTemplate returns valid JSON", () => {
-    const parsed = JSON.parse(createWorkflowProfileTemplate());
-    expect(parsed.profileLabel).toBe("Job Search Default Profile");
+describe("CareerOps profile helpers", () => {
+  test("createCareerOpsProfileTemplate returns valid JSON", () => {
+    const parsed = JSON.parse(createCareerOpsProfileTemplate());
+    expect(parsed.profileLabel).toBe("Example CareerOps Profile");
     expect(Array.isArray(parsed.keywords)).toBe(true);
   });
 
-  test("parseWorkflowProfileInput normalizes valid JSON", () => {
-    const parsed = parseWorkflowProfileInput(JSON.stringify({
+  test("parseCareerOpsProfileInput normalizes valid JSON", () => {
+    const parsed = parseCareerOpsProfileInput(JSON.stringify({
       profileLabel: "  My Profile  ",
       roleTracks: ["sre_platform", "sre_platform", "dual_track"],
       keywords: ["platform", "platform", " ai "],
@@ -40,8 +40,8 @@ describe("Job Search profile helpers", () => {
     expect(parsed.profile.remoteOnly).toBe(true);
   });
 
-  test("parseWorkflowProfileInput rejects invalid JSON", () => {
-    const parsed = parseWorkflowProfileInput("{bad json");
+  test("parseCareerOpsProfileInput rejects invalid JSON", () => {
+    const parsed = parseCareerOpsProfileInput("{bad json");
     expect(parsed.ok).toBe(false);
     expect(parsed.error).toBeTruthy();
   });
@@ -81,7 +81,7 @@ describe("Job Search profile helpers", () => {
       locationPreferences: ["Remote", "Europe"],
       remoteOnly: true,
       companyOrigin: "exclude-outsourcing",
-      minSalary: 80000,
+      minSalary: null,
       maxAgeDays: 10,
       preferredScanProfile: "balanced",
       preferredSeniority: ["Senior", "Staff"],
@@ -106,8 +106,8 @@ describe("Job Search profile helpers", () => {
       defaultLocation: "Remote",
       defaultProfile: "aggressive",
       globalWhitelist: "platform",
-      workflowProfileMode: PROFILE_MODES.DEFAULT_FILTERS,
-      workflowProfile: {
+      careerOpsProfileMode: PROFILE_MODES.DEFAULT_FILTERS,
+      careerOpsProfile: {
         keywords: ["profile keyword"],
         locationPreferences: ["Europe"],
         remoteOnly: true,
@@ -134,8 +134,8 @@ describe("Job Search profile helpers", () => {
       defaultKeywords: "default keyword",
       defaultLocation: "Remote",
       minSalaryDefault: 90000,
-      workflowProfileMode: PROFILE_MODES.DEFAULT_FILTERS,
-      workflowProfile: {
+      careerOpsProfileMode: PROFILE_MODES.DEFAULT_FILTERS,
+      careerOpsProfile: {
         keywords: ["profile keyword"],
         requiredKeywords: ["platform"],
         avoidKeywords: ["onsite"],
@@ -153,8 +153,8 @@ describe("Job Search profile helpers", () => {
     expect(filters.maxAgeDays).toBeNull();
   });
 
-  test("evaluateJobAgainstWorkflowProfile returns strong match when signals align", () => {
-    const result = evaluateJobAgainstWorkflowProfile({
+  test("evaluateJobAgainstCareerOpsProfile returns strong match when signals align", () => {
+    const result = evaluateJobAgainstCareerOpsProfile({
       title: "Senior Platform Reliability Engineer",
       description: "Remote role for platform, reliability and observability work.",
       location: "Remote - Europe",
@@ -173,8 +173,8 @@ describe("Job Search profile helpers", () => {
     expect(result.profileLabel).toBe("Core Profile");
   });
 
-  test("evaluateJobAgainstWorkflowProfile returns low or mixed match for conflicts", () => {
-    const result = evaluateJobAgainstWorkflowProfile({
+  test("evaluateJobAgainstCareerOpsProfile returns low or mixed match for conflicts", () => {
+    const result = evaluateJobAgainstCareerOpsProfile({
       title: "Onsite Sales Manager",
       description: "Office-based sales role",
       location: "On-site / London",
@@ -190,8 +190,8 @@ describe("Job Search profile helpers", () => {
     expect(result.risks.length).toBeGreaterThan(0);
   });
 
-  test("normalizeWorkflowProfile drops unsupported or duplicate values", () => {
-    const profile = normalizeWorkflowProfile({
+  test("normalizeCareerOpsProfile drops unsupported or duplicate values", () => {
+    const profile = normalizeCareerOpsProfile({
       roleTracks: ["sre_platform", "bad", "sre_platform"],
       workModelPreferences: ["remote", "remote", "weird"],
       companyOrigin: "invalid",

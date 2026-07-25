@@ -13,8 +13,8 @@ describe("autoscan content script", () => {
 
   beforeEach(() => {
     document.body.innerHTML = "";
-    window.__jobSearchAutoScanInitialized = false;
-    delete window.JobSearchAutoScan;
+    window.__careerOpsAutoScanInitialized = false;
+    delete window.CareerOpsAutoScan;
     scrollCalls = [];
     window.scrollTo = jest.fn((x, y) => {
       scrollCalls.push({ x, y });
@@ -72,7 +72,7 @@ describe("autoscan content script", () => {
       },
     };
 
-    window.JobSearchLinkedInScraper = {
+    window.CareerOpsLinkedInScraper = {
       getJobCards: jest.fn(() => Array.from(document.querySelectorAll("[data-occludable-job-id]"))),
       extractJob: jest.fn((card) => ({
         title: card.dataset.title || "Software Engineer",
@@ -84,7 +84,7 @@ describe("autoscan content script", () => {
       })),
       collectJobs: jest.fn(() => {
         const cards = Array.from(document.querySelectorAll("[data-occludable-job-id]"));
-        return cards.map((card) => window.JobSearchLinkedInScraper.extractJob(card));
+        return cards.map((card) => window.CareerOpsLinkedInScraper.extractJob(card));
       }),
       detectPageType: jest.fn(() => "search"),
     };
@@ -93,8 +93,8 @@ describe("autoscan content script", () => {
   });
 
   afterEach(() => {
-    delete window.JobSearchAutoScan;
-    delete window.__jobSearchAutoScanInitialized;
+    delete window.CareerOpsAutoScan;
+    delete window.__careerOpsAutoScanInitialized;
   });
 
   function requireAutoscan() {
@@ -129,11 +129,11 @@ describe("autoscan content script", () => {
     expect(runtimeListeners.length).toBeGreaterThan(0);
   });
 
-  it("exposes JobSearchAutoScan on window", () => {
+  it("exposes CareerOpsAutoScan on window", () => {
     requireAutoscan();
-    expect(window.JobSearchAutoScan).toBeDefined();
-    expect(typeof window.JobSearchAutoScan.start).toBe("function");
-    expect(typeof window.JobSearchAutoScan.stop).toBe("function");
+    expect(window.CareerOpsAutoScan).toBeDefined();
+    expect(typeof window.CareerOpsAutoScan.start).toBe("function");
+    expect(typeof window.CareerOpsAutoScan.stop).toBe("function");
   });
 
   it("collectCurrentPage sends a POST to the capture server", async () => {
@@ -144,7 +144,7 @@ describe("autoscan content script", () => {
     `;
 
     requireAutoscan();
-    const result = await window.JobSearchAutoScan.collectCurrentPage(fastOptions());
+    const result = await window.CareerOpsAutoScan.collectCurrentPage(fastOptions());
 
     expect(result.collected).toBe(1);
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -166,7 +166,7 @@ describe("autoscan content script", () => {
   it("collectCurrentPage returns empty when no job cards are found", async () => {
     fetchMock.mockResolvedValue({ ok: true, status: 200 });
     requireAutoscan();
-    const result = await window.JobSearchAutoScan.collectCurrentPage(fastOptions());
+    const result = await window.CareerOpsAutoScan.collectCurrentPage(fastOptions());
     expect(result.collected).toBe(0);
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -183,14 +183,14 @@ describe("autoscan content script", () => {
     // Mark card 3 as not visible until the second scroll cycle by making the
     // scraper return an expanding list.
     let visibleCount = 2;
-    window.JobSearchLinkedInScraper.collectJobs = jest.fn(() => {
+    window.CareerOpsLinkedInScraper.collectJobs = jest.fn(() => {
       const cards = Array.from(document.querySelectorAll("[data-occludable-job-id]")).slice(0, visibleCount);
       visibleCount = Math.min(visibleCount + 1, 3);
-      return cards.map((card) => window.JobSearchLinkedInScraper.extractJob(card));
+      return cards.map((card) => window.CareerOpsLinkedInScraper.extractJob(card));
     });
 
     requireAutoscan();
-    const result = await window.JobSearchAutoScan.collectCurrentPage(
+    const result = await window.CareerOpsAutoScan.collectCurrentPage(
       fastOptions({ maxScrollCycles: 4 })
     );
 
@@ -208,7 +208,7 @@ describe("autoscan content script", () => {
     document.body.innerHTML = html;
 
     requireAutoscan();
-    const result = await window.JobSearchAutoScan.collectCurrentPage(
+    const result = await window.CareerOpsAutoScan.collectCurrentPage(
       fastOptions({ batchSize: 2 })
     );
 
@@ -225,7 +225,7 @@ describe("autoscan content script", () => {
 
     requireAutoscan();
 
-    const startPromise = window.JobSearchAutoScan.start({
+    const startPromise = window.CareerOpsAutoScan.start({
       queries: [{ captureServerUrl: "http://localhost:8766" }],
       pacing: {
         batchSize: 1,
@@ -238,10 +238,10 @@ describe("autoscan content script", () => {
       postNavigateWaitMs: 0,
     });
 
-    window.JobSearchAutoScan.stop();
+    window.CareerOpsAutoScan.stop();
     await startPromise;
 
-    expect(window.JobSearchAutoScan.getState().isRunning).toBe(false);
+    expect(window.CareerOpsAutoScan.getState().isRunning).toBe(false);
   });
 
   it("humanLikeScroll calls window.scrollTo progressively", () => {
@@ -256,7 +256,7 @@ describe("autoscan content script", () => {
     });
 
     requireAutoscan();
-    window.JobSearchAutoScan.humanLikeScroll({ steps: 2, stepDelayMs: 0 });
+    window.CareerOpsAutoScan.humanLikeScroll({ steps: 2, stepDelayMs: 0 });
 
     expect(scrollCalls.length).toBeGreaterThan(0);
   });
@@ -269,7 +269,7 @@ describe("autoscan content script", () => {
     `;
 
     requireAutoscan();
-    const result = await window.JobSearchAutoScan.collectCurrentPage(fastOptions());
+    const result = await window.CareerOpsAutoScan.collectCurrentPage(fastOptions());
 
     expect(result.errors).toHaveLength(1);
     expect(result.errors[0].message).toMatch(/connection refused/);

@@ -1,19 +1,19 @@
 const {
-  toWorkflowMarkdown,
-  toWorkflowJsonl,
+  toCareerOpsMarkdown,
+  toCareerOpsJsonl,
   slugifyJobRecord,
   inferRoleTrackHint,
   inferWorkModel,
-} = require("../utils/workflow_exporter");
+} = require("../utils/careerops_exporter");
 
-describe("Job Search exporter", () => {
+describe("CareerOps exporter", () => {
   const baseOptions = {
     capturedAt: "2026-06-18",
   };
   const profileHintOptions = {
     ...baseOptions,
-    workflowProfile: {
-      profileLabel: "Job Search Default Profile",
+    careerOpsProfile: {
+      profileLabel: "CareerOps Default Profile",
       keywords: ["platform", "agent"],
       requiredKeywords: ["platform"],
       locationPreferences: ["Europe"],
@@ -87,12 +87,12 @@ describe("Job Search exporter", () => {
     expect(inferWorkModel({ location: "Flexible" })).toBe("Unknown");
   });
 
-  test("toWorkflowMarkdown creates parser-shaped blocks", () => {
-    const markdown = toWorkflowMarkdown([sampleJob], baseOptions);
+  test("toCareerOpsMarkdown creates parser-shaped blocks", () => {
+    const markdown = toCareerOpsMarkdown([sampleJob], baseOptions);
     const [record] = splitMarkdownRecords(markdown);
 
     expect(record.startsWith("# Acme Labs - Senior Platform Engineer, AI Agents")).toBe(true);
-    expect(record).toContain("source_id: linkedin-manual-extension");
+    expect(record).toContain("source_id: job-search-workflow-capture");
     expect(record).toContain("source_url: <https://www.linkedin.com/jobs/view/123456789/>");
     expect(record).toContain("catalog_root_url: <https://www.linkedin.com/jobs/view/123456789/>");
     expect(record).toContain("captured_at: 2026-06-18");
@@ -100,7 +100,7 @@ describe("Job Search exporter", () => {
     expect(record).toContain("role_title: Senior Platform Engineer, AI Agents");
     expect(record).toContain("location: Remote - Europe");
     expect(record).toContain("work_model: remote");
-    expect(record).toContain("source_class: linkedin_manual_extension_capture");
+    expect(record).toContain("source_class: job_search_workflow_capture");
     expect(record).toContain("capture_method: manual_browser_extension_export");
     expect(record).toContain("## Why Captured");
     expect(record).toContain("## Extracted Facts");
@@ -111,14 +111,14 @@ describe("Job Search exporter", () => {
     expect(record).not.toContain("do-not-export");
   });
 
-  test("toWorkflowMarkdown includes profile hints when provided", () => {
-    const markdown = toWorkflowMarkdown([sampleJob], profileHintOptions);
-    expect(markdown).toContain("Job Search profile hint: strong_match");
-    expect(markdown).toContain("workflow profile fit: strong_match");
+  test("toCareerOpsMarkdown includes profile hints when provided", () => {
+    const markdown = toCareerOpsMarkdown([sampleJob], profileHintOptions);
+    expect(markdown).toContain("CareerOps profile hint: strong_match");
+    expect(markdown).toContain("careerops profile fit: strong_match");
   });
 
-  test("toWorkflowMarkdown joins multiple records with split-safe delimiter", () => {
-    const markdown = toWorkflowMarkdown([
+  test("toCareerOpsMarkdown joins multiple records with split-safe delimiter", () => {
+    const markdown = toCareerOpsMarkdown([
       sampleJob,
       {
         ...sampleJob,
@@ -132,14 +132,14 @@ describe("Job Search exporter", () => {
     expect(records[1].startsWith("# ")).toBe(true);
   });
 
-  test("toWorkflowJsonl emits valid JSON per line with mapped fields", () => {
-    const jsonl = toWorkflowJsonl([sampleJob], profileHintOptions);
+  test("toCareerOpsJsonl emits valid JSON per line with mapped fields", () => {
+    const jsonl = toCareerOpsJsonl([sampleJob], profileHintOptions);
     const lines = jsonl.split("\n");
     expect(lines).toHaveLength(1);
 
     const record = JSON.parse(lines[0]);
     expect(record.record_id).toBe("2026-06-18-acme-labs-senior-platform-engineer-ai-agents");
-    expect(record.source_family).toBe("linkedin_manual_extension_capture");
+    expect(record.source_family).toBe("job_search_workflow_capture");
     expect(record.source_url).toBe("https://www.linkedin.com/jobs/view/123456789/");
     expect(record.canonical_job_url).toBe("https://www.linkedin.com/jobs/view/123456789/");
     expect(record.company).toBe("Acme Labs");
@@ -155,12 +155,12 @@ describe("Job Search exporter", () => {
     expect(record.decision_handoff_state).toBe("pending_triage");
     expect(record.normalized_status).toBe("new");
     expect(record.main_fit_reason).toContain("profile fit=strong_match");
-    expect(record.notes).toContain("workflowProfile=Job Search Default Profile");
+    expect(record.notes).toContain("careerOpsProfile=CareerOps Default Profile");
     expect(record.notes).not.toContain("do-not-export");
   });
 
   test("missing fields use bounded fallbacks and link fallback risk", () => {
-    const markdown = toWorkflowMarkdown([
+    const markdown = toCareerOpsMarkdown([
       {
         title: "",
         company: "",
@@ -168,7 +168,7 @@ describe("Job Search exporter", () => {
         link: "",
       },
     ], baseOptions);
-    const jsonl = toWorkflowJsonl([
+    const jsonl = toCareerOpsJsonl([
       {
         title: "",
         company: "",
@@ -190,8 +190,8 @@ describe("Job Search exporter", () => {
   });
 
   test("secret-like fields are never serialized into markdown or jsonl", () => {
-    const markdown = toWorkflowMarkdown([sampleJob], baseOptions);
-    const jsonl = toWorkflowJsonl([sampleJob], baseOptions);
+    const markdown = toCareerOpsMarkdown([sampleJob], baseOptions);
+    const jsonl = toCareerOpsJsonl([sampleJob], baseOptions);
 
     ["cookie", "token", "session", "browserProfile", "premiumPayload", "do-not-export"].forEach((term) => {
       expect(markdown).not.toContain(term);

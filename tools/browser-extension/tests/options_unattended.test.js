@@ -28,9 +28,9 @@ describe("Options Unattended Scan tab", () => {
       pacing: { delayRangeMs: [6000, 10000] },
     }));
 
-    window.JobSearchProfileUtils = {
+    window.CareerOpsProfileUtils = {
       PROFILE_MODES: { OFF: "off", DEFAULT_FILTERS: "default_filters" },
-      normalizeWorkflowProfile: (profile) => ({
+      normalizeCareerOpsProfile: (profile) => ({
         profileLabel: "",
         roleTracks: [],
         keywords: [],
@@ -42,8 +42,8 @@ describe("Options Unattended Scan tab", () => {
         minSalary: null,
         ...(profile || {}),
       }),
-      createWorkflowProfileTemplate: () => "{}",
-      parseWorkflowProfileInput: (text) => ({ ok: true, rawText: text || "", profile: {} }),
+      createCareerOpsProfileTemplate: () => "{}",
+      parseCareerOpsProfileInput: (text) => ({ ok: true, rawText: text || "", profile: {} }),
     };
     window.buildScanPlan = buildScanPlanMock;
 
@@ -95,7 +95,7 @@ describe("Options Unattended Scan tab", () => {
 
   afterEach(() => {
     jest.resetModules();
-    delete window.JobSearchProfileUtils;
+    delete window.CareerOpsProfileUtils;
     delete window.buildScanPlan;
     delete global.chrome;
   });

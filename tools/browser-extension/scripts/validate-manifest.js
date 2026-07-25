@@ -16,7 +16,6 @@ const REQUIRED_FILES = [
 function validateManifest() {
   console.log("🔍 Validating manifest.json...\n");
 
-  // Read manifest file
   if (!fs.existsSync(MANIFEST_PATH)) {
     console.error("❌ manifest.json file not found!");
     process.exit(1);
@@ -26,20 +25,18 @@ function validateManifest() {
   try {
     const content = fs.readFileSync(MANIFEST_PATH, "utf8");
     manifest = JSON.parse(content);
-    console.log("✅ manifest.json is a valid JSON file");
+    console.log("✅ manifest.json is valid JSON");
   } catch (error) {
     console.error("❌ manifest.json JSON parse error:", error.message);
     process.exit(1);
   }
 
-  // Manifest version check
   if (manifest.manifest_version !== 3) {
-    console.error("❌ Manifest version must be 3!");
+    console.error("❌ manifest_version must be 3!");
     process.exit(1);
   }
-  console.log("✅ Manifest version: 3");
+  console.log("✅ manifest_version: 3");
 
-  // Check required fields
   const requiredFields = ["name", "version", "description"];
   for (const field of requiredFields) {
     if (!manifest[field]) {
@@ -49,17 +46,16 @@ function validateManifest() {
   }
   console.log("✅ All required fields present");
 
-  // Check file existence
   const rootDir = path.join(__dirname, "..");
   let missingFiles = false;
 
   for (const file of REQUIRED_FILES) {
     const filePath = path.join(rootDir, file);
     if (!fs.existsSync(filePath)) {
-      console.error(`❌ Required file not found: ${file}`);
+      console.error(`❌ Required file missing: ${file}`);
       missingFiles = true;
     } else {
-      console.log(`✅ File exists: ${file}`);
+      console.log(`✅ File present: ${file}`);
     }
   }
 
@@ -67,13 +63,12 @@ function validateManifest() {
     process.exit(1);
   }
 
-  // Content scripts check
   if (manifest.content_scripts) {
     for (const script of manifest.content_scripts) {
       for (const jsFile of script.js || []) {
         const scriptPath = path.join(rootDir, jsFile);
         if (!fs.existsSync(scriptPath)) {
-          console.error(`❌ Content script not found: ${jsFile}`);
+          console.error(`❌ Content script missing: ${jsFile}`);
           process.exit(1);
         }
       }
@@ -81,17 +76,16 @@ function validateManifest() {
     console.log("✅ All content scripts present");
   }
 
-  // Background service worker check
   if (manifest.background?.service_worker) {
     const workerPath = path.join(rootDir, manifest.background.service_worker);
     if (!fs.existsSync(workerPath)) {
-      console.error(`❌ Service worker not found: ${manifest.background.service_worker}`);
+      console.error(`❌ Service worker missing: ${manifest.background.service_worker}`);
       process.exit(1);
     }
-    console.log("✅ Service worker exists");
+    console.log("✅ Service worker present");
   }
 
-  console.log("\n🎉 Manifest.json validation successful!");
+  console.log("\n🎉 Manifest validation successful!");
 }
 
 try {

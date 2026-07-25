@@ -93,11 +93,11 @@
     return mode === PROFILE_MODES.EXPORT_HINTS || mode === PROFILE_MODES.DEFAULTS_AND_EXPORT_HINTS;
   }
 
-  function normalizeWorkflowProfile(rawProfile) {
+  function normalizeCareerOpsProfile(rawProfile) {
     const profile = rawProfile && typeof rawProfile === "object" ? rawProfile : {};
 
     return {
-      profileLabel: normalizeWhitespace(profile.profileLabel) || "Job Search Profile",
+      profileLabel: normalizeWhitespace(profile.profileLabel) || "Example CareerOps Profile",
       roleTracks: normalizeStringArray(profile.roleTracks, 6).filter((item) => ALLOWED_ROLE_TRACKS.has(item)),
       keywords: normalizeStringArray(profile.keywords),
       requiredKeywords: normalizeStringArray(profile.requiredKeywords),
@@ -114,12 +114,12 @@
     };
   }
 
-  function parseWorkflowProfileInput(rawInput) {
+  function parseCareerOpsProfileInput(rawInput) {
     const text = normalizeWhitespace(rawInput);
     if (!text) {
       return {
         ok: true,
-        profile: normalizeWorkflowProfile({}),
+        profile: normalizeCareerOpsProfile({}),
         rawText: "",
       };
     }
@@ -128,8 +128,8 @@
       const parsed = JSON.parse(rawInput);
       return {
         ok: true,
-        profile: normalizeWorkflowProfile(parsed),
-        rawText: JSON.stringify(normalizeWorkflowProfile(parsed), null, 2),
+        profile: normalizeCareerOpsProfile(parsed),
+        rawText: JSON.stringify(normalizeCareerOpsProfile(parsed), null, 2),
       };
     } catch (error) {
       return {
@@ -139,9 +139,9 @@
     }
   }
 
-  function createWorkflowProfileTemplate() {
+  function createCareerOpsProfileTemplate() {
     return JSON.stringify({
-      profileLabel: "Job Search Default Profile",
+      profileLabel: "Example CareerOps Profile",
       roleTracks: ["sre_platform", "dual_track"],
       keywords: ["platform", "reliability", "observability", "agent", "developer productivity"],
       requiredKeywords: ["platform"],
@@ -149,12 +149,13 @@
       locationPreferences: ["Remote", "Europe"],
       remoteOnly: true,
       workModelPreferences: ["remote", "hybrid"],
-      companyOrigin: "exclude-outsourcing",
-      minSalary: 80000,
-      maxAgeDays: 14,
+      companyOrigin: null,
+      minSalary: null,
+      maxAgeDays: null,
       preferredScanProfile: "balanced",
       preferredSeniority: ["Senior", "Staff"],
       preferredEmploymentTypes: ["full_time"],
+      note: "This is a fictitious example. Replace all values with your own verified preferences.",
     }, null, 2);
   }
 
@@ -178,7 +179,7 @@
   }
 
   function buildFilterDefaultsFromProfile(profile) {
-    const normalized = normalizeWorkflowProfile(profile);
+    const normalized = normalizeCareerOpsProfile(profile);
 
     return {
       keywords: normalized.keywords.join(", "),
@@ -295,7 +296,7 @@
   function resolvePopupFilters(storedFilters, optionsSettings) {
     const settings = optionsSettings && typeof optionsSettings === "object" ? optionsSettings : {};
     const normalizedProfileMode = normalizeEnum(
-      settings.workflowProfileMode,
+      settings.careerOpsProfileMode,
       new Set(Object.values(PROFILE_MODES)),
       PROFILE_MODES.OFF,
     );
@@ -303,7 +304,7 @@
     let resolved = buildFilterDefaultsFromOptions(settings);
 
     if (profileModeUsesDefaultFilters(normalizedProfileMode)) {
-      resolved = mergeFilterDefaults(resolved, buildFilterDefaultsFromProfile(settings.workflowProfile));
+      resolved = mergeFilterDefaults(resolved, buildFilterDefaultsFromProfile(settings.careerOpsProfile));
     }
 
     return mergeFilterDefaults(resolved, storedFilters, { explicitOverride: true });
@@ -324,8 +325,8 @@
     return parts.join(" ").toLowerCase();
   }
 
-  function evaluateJobAgainstWorkflowProfile(job, profile) {
-    const normalizedProfile = normalizeWorkflowProfile(profile);
+  function evaluateJobAgainstCareerOpsProfile(job, profile) {
+    const normalizedProfile = normalizeCareerOpsProfile(profile);
     const text = buildJobSearchText(job);
     const matchedKeywords = normalizedProfile.keywords.filter((keyword) => text.includes(keyword.toLowerCase()));
     const missingRequiredKeywords = normalizedProfile.requiredKeywords.filter((keyword) => !text.includes(keyword.toLowerCase()));
@@ -381,18 +382,18 @@
 
   const api = {
     PROFILE_MODES,
-    normalizeWorkflowProfile,
-    parseWorkflowProfileInput,
-    createWorkflowProfileTemplate,
+    normalizeCareerOpsProfile,
+    parseCareerOpsProfileInput,
+    createCareerOpsProfileTemplate,
     profileModeUsesDefaultFilters,
     profileModeUsesExportHints,
     buildFilterDefaultsFromOptions,
     buildFilterDefaultsFromProfile,
     resolvePopupFilters,
-    evaluateJobAgainstWorkflowProfile,
+    evaluateJobAgainstCareerOpsProfile,
   };
 
-  globalTarget.JobSearchProfileUtils = api;
+  globalTarget.CareerOpsProfileUtils = api;
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api;
