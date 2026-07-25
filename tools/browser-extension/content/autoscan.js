@@ -1,7 +1,7 @@
 // content/autoscan.js
-// Unattended scan loop for LinkedIn Jobs -> Job Search Workflow capture server
+// Unattended scan loop for LinkedIn Jobs -> CareerOps capture server
 (function () {
-  if (window.__jobSearchAutoScanInitialized) {
+  if (window.__careerOpsAutoScanInitialized) {
     return;
   }
 
@@ -24,7 +24,7 @@
   }
 
   function getScraper() {
-    return window.JobSearchLinkedInScraper || null;
+    return window.CareerOpsLinkedInScraper || null;
   }
 
   function reportStatus(status) {
@@ -332,9 +332,9 @@
     });
   }
 
-  window.__jobSearchAutoScanInitialized = true;
+  window.__careerOpsAutoScanInitialized = true;
 
-  window.JobSearchAutoScan = {
+  window.CareerOpsAutoScan = {
     start,
     stop,
     getState,

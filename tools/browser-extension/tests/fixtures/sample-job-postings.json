@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Senior Platform Engineer",
+    "company": "Example Corp",
+    "location": "Remote, Europe",
+    "description": "Build developer productivity platforms. Remote, Europe. Full-time.",
+    "url": "https://example.com/jobs/senior-platform-engineer",
+    "salary": null
+  },
+  {
+    "title": "Staff Site Reliability Engineer",
+    "company": "Sample Inc",
+    "location": "Berlin, Germany",
+    "description": "Operate observability and incident response for AI infrastructure. Hybrid.",
+    "url": "https://sample.com/jobs/staff-sre",
+    "salary": null
+  },
+  {
+    "title": "Full Stack Engineer",
+    "company": "Demo Startup",
+    "location": "London, UK",
+    "description": "Product engineering for a fast-growing team. Full-time.",
+    "url": "https://demo.example/jobs/fullstack",
+    "salary": null
+  },
+  {
+    "title": "Junior Frontend Developer",
+    "company": "Acme Labs",
+    "location": "Remote",
+    "description": "React and TypeScript UI development. Contract.",
+    "url": "https://acme.example/jobs/junior-frontend",
+    "salary": null
+  },
+  {
+    "title": "DevOps Engineer",
+    "company": "Globex",
+    "location": "On-site / Amsterdam",
+    "description": "CI/CD and cloud infrastructure. Full-time, on-site.",
+    "url": "https://globex.example/jobs/devops",
+    "salary": null
+  }
+]

@@ -66,6 +66,31 @@ The full setup:
 
 The scripts do not overwrite existing user files. Unknown or excessive arguments are rejected with exit code `2` by the Bash entry point and a non-zero exit code by the Windows entry point.
 
+## Browser Extension Setup
+
+After the base setup is complete, install the browser extension in load-unpacked
+mode:
+
+1. Open Chrome and go to `chrome://extensions`.
+2. Enable **Developer mode**.
+3. Click **Load unpacked** and select `tools/browser-extension/`.
+4. Open the extension options to configure default filters, export format, and
+   capture server URL.
+5. Run the extension validation:
+
+   ```bash
+   cd tools/browser-extension
+   npm test
+   npm run lint
+   node scripts/validate-manifest.js
+   ```
+
+See the extension-specific runbooks for more detail:
+
+- `docs/runbooks/browser-extension-install.md`
+- `docs/runbooks/capture-server-setup.md`
+- `docs/integration/job-search-workflow.md`
+
 ## Local Audit Commands
 
 Run these commands from the public repository root:
@@ -74,6 +99,7 @@ Run these commands from the public repository root:
 bash -n scripts/setup.sh
 shellcheck scripts/setup.sh
 python3 -m unittest discover -s tests -v
+python3 -m pytest public/tests/test_linkedin_capture_server.py -q
 markdownlint-cli2 "**/*.md"
 ./scripts/setup.sh --check-only
 ./scripts/setup.sh

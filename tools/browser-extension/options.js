@@ -1,7 +1,7 @@
-// options.js - LinkedIn Job Filter Options Page
+// options.js - Job Search Workflow Capture Options Page
 document.addEventListener("DOMContentLoaded", initOptionsPage);
 
-const profileUtils = window.JobSearchProfileUtils;
+const profileUtils = window.CareerOpsProfileUtils;
 const PROFILE_MODE_VALUES = profileUtils ? new Set(Object.values(profileUtils.PROFILE_MODES)) : new Set(["off"]);
 
 // Default settings configuration
@@ -39,7 +39,7 @@ const DEFAULT_SETTINGS = {
   },
   autoFilename: true,
 
-  // Advanced
+  // Namevanced
   debugMode: "off",
   enableTelemetry: true,
   experimentalFeatures: false,
@@ -64,10 +64,10 @@ const DEFAULT_SETTINGS = {
   unattendedPacingProfile: "conservative",
   unattendedPeriodMinutes: 60,
 
-  // Job Search profile
-  workflowProfileMode: profileUtils ? profileUtils.PROFILE_MODES.OFF : "off",
-  workflowProfileJson: "",
-  workflowProfile: profileUtils ? profileUtils.normalizeWorkflowProfile({}) : {},
+  // CareerOps profile
+  careerOpsProfileMode: profileUtils ? profileUtils.PROFILE_MODES.OFF : "off",
+  careerOpsProfileJson: "",
+  careerOpsProfile: profileUtils ? profileUtils.normalizeCareerOpsProfile({}) : {},
 };
 
 let currentSettings = { ...DEFAULT_SETTINGS };
@@ -75,7 +75,7 @@ let currentSettings = { ...DEFAULT_SETTINGS };
 function normalizeSettings(storedSettings) {
   const settings = storedSettings && typeof storedSettings === "object" ? storedSettings : {};
   const normalizedProfile = profileUtils
-    ? profileUtils.normalizeWorkflowProfile(settings.workflowProfile)
+    ? profileUtils.normalizeCareerOpsProfile(settings.careerOpsProfile)
     : {};
 
   return {
@@ -85,13 +85,13 @@ function normalizeSettings(storedSettings) {
       ...DEFAULT_SETTINGS.exportFields,
       ...(settings.exportFields || {}),
     },
-    workflowProfileMode: PROFILE_MODE_VALUES.has(settings.workflowProfileMode)
-      ? settings.workflowProfileMode
-      : DEFAULT_SETTINGS.workflowProfileMode,
-    workflowProfileJson: typeof settings.workflowProfileJson === "string"
-      ? settings.workflowProfileJson
+    careerOpsProfileMode: PROFILE_MODE_VALUES.has(settings.careerOpsProfileMode)
+      ? settings.careerOpsProfileMode
+      : DEFAULT_SETTINGS.careerOpsProfileMode,
+    careerOpsProfileJson: typeof settings.careerOpsProfileJson === "string"
+      ? settings.careerOpsProfileJson
       : (profileUtils ? JSON.stringify(normalizedProfile, null, 2) : ""),
-    workflowProfile: normalizedProfile,
+    careerOpsProfile: normalizedProfile,
   };
 }
 
@@ -117,7 +117,7 @@ function setupTabNavigation() {
       tabButtons.forEach(btn => btn.classList.remove("active"));
       tabContents.forEach(content => content.classList.remove("active"));
 
-      // Add active class to clicked tab
+      // Named active class to clicked tab
       button.classList.add("active");
       document.getElementById(targetTab).classList.add("active");
     });
@@ -131,7 +131,7 @@ async function loadSettings() {
     currentSettings = normalizeSettings(stored.optionsSettings);
     populateFormFields();
   } catch (error) {
-    console.error("Settings loading error:", error);
+    console.error("Error loading settings:", error);
     showSaveStatus("error", "Error occurred while loading settings");
   }
 }
@@ -180,7 +180,7 @@ function populateFormFields() {
   });
   document.getElementById("auto-filename").checked = currentSettings.autoFilename;
 
-  // Advanced tab
+  // Namevanced tab
   document.getElementById("debug-mode").value = currentSettings.debugMode;
   document.getElementById("enable-telemetry").checked = currentSettings.enableTelemetry;
   document.getElementById("experimental-features").checked = currentSettings.experimentalFeatures;
@@ -207,13 +207,13 @@ function populateFormFields() {
   setMultiCheckboxGroup("unattended-jobtype-", currentSettings.unattendedJobTypes);
   setMultiCheckboxGroup("unattended-exp-", currentSettings.unattendedExperienceLevels);
 
-  // Job Search profile
-  document.getElementById("workflow-profile-mode").value = currentSettings.workflowProfileMode;
-  document.getElementById("workflow-profile-json").value = currentSettings.workflowProfileJson;
-  renderWorkflowProfileSummary(currentSettings.workflowProfile, currentSettings.workflowProfileMode);
+  // CareerOps profile
+  document.getElementById("careerops-profile-mode").value = currentSettings.careerOpsProfileMode;
+  document.getElementById("careerops-profile-json").value = currentSettings.careerOpsProfileJson;
+  renderCareerOpsProfileSummary(currentSettings.careerOpsProfile, currentSettings.careerOpsProfileMode);
 
   // Update range displays
-  updateRangeDisplay("max-results", currentSettings.maxResults + " ilan");
+  updateRangeDisplay("max-results", currentSettings.maxResults + " posting");
   updateRangeDisplay("premium-quota", currentSettings.premiumQuota + " companies/day");
 }
 
@@ -227,7 +227,7 @@ function setupFormElements() {
       let displayText = value;
 
       if (e.target.id === "max-results") {
-        displayText = value + " ilan";
+        displayText = value + " posting";
       } else if (e.target.id === "premium-quota") {
         displayText = value + " companies/day";
       }
@@ -248,11 +248,11 @@ function updateRangeDisplay(inputId, text) {
 function setupEventListeners() {
   // Save all settings button
   document.getElementById("save-all-settings").addEventListener("click", saveAllSettings);
-  document.getElementById("workflow-profile-template").addEventListener("click", loadWorkflowProfileTemplate);
-  document.getElementById("workflow-profile-import").addEventListener("click", importWorkflowProfile);
-  document.getElementById("workflow-profile-clear").addEventListener("click", clearWorkflowProfile);
-  document.getElementById("workflow-profile-json").addEventListener("input", refreshWorkflowProfilePreviewFromTextarea);
-  document.getElementById("workflow-profile-mode").addEventListener("change", refreshWorkflowProfilePreviewFromTextarea);
+  document.getElementById("careerops-profile-template").addEventListener("click", loadCareerOpsProfileTemplate);
+  document.getElementById("careerops-profile-import").addEventListener("click", importCareerOpsProfile);
+  document.getElementById("careerops-profile-clear").addEventListener("click", clearCareerOpsProfile);
+  document.getElementById("careerops-profile-json").addEventListener("input", refreshCareerOpsProfilePreviewFromTextarea);
+  document.getElementById("careerops-profile-mode").addEventListener("change", refreshCareerOpsProfilePreviewFromTextarea);
 
   // Data management buttons
   document.getElementById("export-settings").addEventListener("click", exportSettings);
@@ -285,11 +285,11 @@ async function collectAndSaveSettings(showNotification = true) {
   try {
     showSaveStatus("saving", "Kaydediliyor...");
 
-    const profileParse = profileUtils.parseWorkflowProfileInput(
-      document.getElementById("workflow-profile-json").value,
+    const profileParse = profileUtils.parseCareerOpsProfileInput(
+      document.getElementById("careerops-profile-json").value,
     );
     if (!profileParse.ok) {
-      showSaveStatus("error", "Invalid Job Search profile JSON: " + profileParse.error);
+      showSaveStatus("error", "CareerOps profile JSON invalid: " + profileParse.error);
       return;
     }
 
@@ -328,7 +328,7 @@ async function collectAndSaveSettings(showNotification = true) {
       },
       autoFilename: document.getElementById("auto-filename").checked,
 
-      // Advanced
+      // Namevanced
       debugMode: document.getElementById("debug-mode").value,
       enableTelemetry: document.getElementById("enable-telemetry").checked,
       experimentalFeatures: document.getElementById("experimental-features").checked,
@@ -354,23 +354,23 @@ async function collectAndSaveSettings(showNotification = true) {
       unattendedPacingProfile: document.getElementById("unattended-pacing-profile").value,
       unattendedPeriodMinutes: parseInt(document.getElementById("unattended-period-minutes").value) || 60,
 
-      workflowProfileMode: document.getElementById("workflow-profile-mode").value,
-      workflowProfileJson: profileParse.rawText,
-      workflowProfile: profileParse.profile,
+      careerOpsProfileMode: document.getElementById("careerops-profile-mode").value,
+      careerOpsProfileJson: profileParse.rawText,
+      careerOpsProfile: profileParse.profile,
     });
 
     // Save to storage
     await chrome.storage.local.set({ optionsSettings: newSettings });
     currentSettings = newSettings;
-    renderWorkflowProfileSummary(currentSettings.workflowProfile, currentSettings.workflowProfileMode);
+    renderCareerOpsProfileSummary(currentSettings.careerOpsProfile, currentSettings.careerOpsProfileMode);
 
     if (showNotification) {
       showSaveStatus("success", "Settings saved successfully!");
     }
 
   } catch (error) {
-    console.error("Settings save error:", error);
-    showSaveStatus("error", "Error occurred during save");
+    console.error("Error saving settings:", error);
+    showSaveStatus("error", "Error occurred while saving");
   }
 }
 
@@ -388,7 +388,7 @@ async function exportSettings() {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `linkedin-job-filter-settings-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `job-search-workflow-capture-settings-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
 
     URL.revokeObjectURL(url);
@@ -436,7 +436,7 @@ function importSettings() {
 
 // Reset settings to defaults
 async function resetSettings() {
-  if (confirm("Are you sure you want to reset all settings to default values??")) {
+  if (confirm("Are you sure you want to reset all settings to default values?")) {
     try {
       currentSettings = normalizeSettings(DEFAULT_SETTINGS);
       await chrome.storage.local.set({ optionsSettings: currentSettings });
@@ -444,7 +444,7 @@ async function resetSettings() {
       showSaveStatus("success", "Settings reset");
     } catch (error) {
       console.error("Reset error:", error);
-      showSaveStatus("error", "Reset failed");
+      showSaveStatus("error", "Resetma failed");
     }
   }
 }
@@ -459,26 +459,26 @@ async function clearAllData() {
       showSaveStatus("success", "All data cleared");
     } catch (error) {
       console.error("Clear data error:", error);
-      showSaveStatus("error", "Data cleanup failed");
+      showSaveStatus("error", "Veri temizleme failed");
     }
   }
 }
 
-function refreshWorkflowProfilePreviewFromTextarea() {
-  const mode = document.getElementById("workflow-profile-mode").value;
-  const rawText = document.getElementById("workflow-profile-json").value;
-  const parsed = profileUtils.parseWorkflowProfileInput(rawText);
+function refreshCareerOpsProfilePreviewFromTextarea() {
+  const mode = document.getElementById("careerops-profile-mode").value;
+  const rawText = document.getElementById("careerops-profile-json").value;
+  const parsed = profileUtils.parseCareerOpsProfileInput(rawText);
 
   if (!parsed.ok) {
-    renderWorkflowProfileSummary(null, mode, parsed.error);
+    renderCareerOpsProfileSummary(null, mode, parsed.error);
     return;
   }
 
-  renderWorkflowProfileSummary(parsed.profile, mode);
+  renderCareerOpsProfileSummary(parsed.profile, mode);
 }
 
-function renderWorkflowProfileSummary(profile, mode, parseError = "") {
-  const container = document.getElementById("workflow-profile-summary");
+function renderCareerOpsProfileSummary(profile, mode, parseError = "") {
+  const container = document.getElementById("careerops-profile-summary");
   if (!container) {
     return;
   }
@@ -488,10 +488,10 @@ function renderWorkflowProfileSummary(profile, mode, parseError = "") {
     return;
   }
 
-  const normalizedProfile = profileUtils.normalizeWorkflowProfile(profile);
+  const normalizedProfile = profileUtils.normalizeCareerOpsProfile(profile);
   const modeLabels = {
     off: "Off",
-    default_filters: "Default filters",
+    default_filters: "Default filterler",
     export_hints: "Export hints",
     default_filters_and_export_hints: "Default filters + export hints",
   };
@@ -499,35 +499,35 @@ function renderWorkflowProfileSummary(profile, mode, parseError = "") {
   const summaryItems = [
     `Mod: ${modeLabels[mode] || modeLabels.off}`,
     `Label: ${normalizedProfile.profileLabel}`,
-    `Role tracks: ${normalizedProfile.roleTracks.join(", ") || "none"}`,
-    `Keywords: ${normalizedProfile.keywords.join(", ") || "none"}`,
-    `Required keywords: ${normalizedProfile.requiredKeywords.join(", ") || "none"}`,
-    `Avoid keywords: ${normalizedProfile.avoidKeywords.join(", ") || "none"}`,
-    `Locations: ${normalizedProfile.locationPreferences.join(", ") || "none"}`,
+    `Role tracks: ${normalizedProfile.roleTracks.join(", ") || "yok"}`,
+    `Keywords: ${normalizedProfile.keywords.join(", ") || "yok"}`,
+    `Required keywords: ${normalizedProfile.requiredKeywords.join(", ") || "yok"}`,
+    `Avoid keywords: ${normalizedProfile.avoidKeywords.join(", ") || "yok"}`,
+    `Locations: ${normalizedProfile.locationPreferences.join(", ") || "yok"}`,
     `Remote only: ${normalizedProfile.remoteOnly ? "yes" : "no"}`,
     `Company origin: ${normalizedProfile.companyOrigin}`,
-    `Min salary: ${normalizedProfile.minSalary ?? "none"}`,
-    `Max age days: ${normalizedProfile.maxAgeDays ?? "none"}`,
+    `Min salary: ${normalizedProfile.minSalary ?? "yok"}`,
+    `Max age days: ${normalizedProfile.maxAgeDays ?? "yok"}`,
   ];
 
   container.innerHTML = `<ul>${summaryItems.map((item) => `<li>${item}</li>`).join("")}</ul>`;
 }
 
-function loadWorkflowProfileTemplate() {
-  document.getElementById("workflow-profile-json").value = profileUtils.createWorkflowProfileTemplate();
-  if (document.getElementById("workflow-profile-mode").value === profileUtils.PROFILE_MODES.OFF) {
-    document.getElementById("workflow-profile-mode").value = profileUtils.PROFILE_MODES.DEFAULT_FILTERS;
+function loadCareerOpsProfileTemplate() {
+  document.getElementById("careerops-profile-json").value = profileUtils.createCareerOpsProfileTemplate();
+  if (document.getElementById("careerops-profile-mode").value === profileUtils.PROFILE_MODES.OFF) {
+    document.getElementById("careerops-profile-mode").value = profileUtils.PROFILE_MODES.DEFAULT_FILTERS;
   }
-  refreshWorkflowProfilePreviewFromTextarea();
+  refreshCareerOpsProfilePreviewFromTextarea();
 }
 
-function clearWorkflowProfile() {
-  document.getElementById("workflow-profile-json").value = "";
-  document.getElementById("workflow-profile-mode").value = profileUtils.PROFILE_MODES.OFF;
-  refreshWorkflowProfilePreviewFromTextarea();
+function clearCareerOpsProfile() {
+  document.getElementById("careerops-profile-json").value = "";
+  document.getElementById("careerops-profile-mode").value = profileUtils.PROFILE_MODES.OFF;
+  refreshCareerOpsProfilePreviewFromTextarea();
 }
 
-function importWorkflowProfile() {
+function importCareerOpsProfile() {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = ".json";
@@ -540,20 +540,20 @@ function importWorkflowProfile() {
 
     try {
       const text = await file.text();
-      const parsed = profileUtils.parseWorkflowProfileInput(text);
+      const parsed = profileUtils.parseCareerOpsProfileInput(text);
       if (!parsed.ok) {
         throw new Error(parsed.error);
       }
 
-      document.getElementById("workflow-profile-json").value = parsed.rawText;
-      if (document.getElementById("workflow-profile-mode").value === profileUtils.PROFILE_MODES.OFF) {
-        document.getElementById("workflow-profile-mode").value = profileUtils.PROFILE_MODES.DEFAULT_FILTERS;
+      document.getElementById("careerops-profile-json").value = parsed.rawText;
+      if (document.getElementById("careerops-profile-mode").value === profileUtils.PROFILE_MODES.OFF) {
+        document.getElementById("careerops-profile-mode").value = profileUtils.PROFILE_MODES.DEFAULT_FILTERS;
       }
-      refreshWorkflowProfilePreviewFromTextarea();
-      showSaveStatus("success", "Job Search profile imported. Don't forget to save.");
+      refreshCareerOpsProfilePreviewFromTextarea();
+      showSaveStatus("success", "CareerOps profile imported. Don't forget to save.");
     } catch (error) {
-      console.error("Job Search profile import error:", error);
-      showSaveStatus("error", "Job Search profile import failed: " + error.message);
+      console.error("CareerOps profile import error:", error);
+      showSaveStatus("error", "CareerOps profile import failed: " + error.message);
     }
   };
 
@@ -579,10 +579,10 @@ async function updatePerformanceStats() {
     });
 
   } catch (error) {
-    console.error("Stats update error:", error);
-    document.getElementById("processed-today").textContent = "Hata";
-    document.getElementById("premium-used").textContent = "Hata";
-    document.getElementById("storage-usage").textContent = "Hata";
+    console.error("Error updating stats:", error);
+    document.getElementById("processed-today").textContent = "Error";
+    document.getElementById("premium-used").textContent = "Error";
+    document.getElementById("storage-usage").textContent = "Error";
   }
 }
 
@@ -595,7 +595,7 @@ function updateSystemInfo() {
   // Browser detection
   const isChrome = /Chrome/.test(navigator.userAgent);
   const isBrave = navigator.brave !== undefined;
-  let browserInfo = "Bilinmeyen";
+  let browserInfo = "Unknown";
 
   if (isBrave) {
     browserInfo = "Brave";
@@ -670,9 +670,9 @@ async function startUnattendedScan() {
     });
 
     if (response?.success) {
-      showUnattendedStatus("success", `Unattended scan started: ${plan.queries.length} queries.`);
+      showUnattendedStatus("success", `Unattended scan started: ${plan.queries.length} sorgu.`);
     } else {
-      showUnattendedStatus("error", "Start failed: " + (response?.error || "Unknown error"));
+      showUnattendedStatus("error", "Startma failed: " + (response?.error || "Unknown error"));
     }
   } catch (error) {
     console.error("startUnattendedScan error:", error);
@@ -686,7 +686,7 @@ async function stopUnattendedScan() {
     if (response?.success) {
       showUnattendedStatus("success", "Unattended scan durduruldu.");
     } else {
-      showUnattendedStatus("error", "Stop failed: " + (response?.error || "Unknown error"));
+      showUnattendedStatus("error", "Stopma failed: " + (response?.error || "Unknown error"));
     }
   } catch (error) {
     console.error("stopUnattendedScan error:", error);

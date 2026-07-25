@@ -345,7 +345,7 @@ describe("DOM Integration Tests", () => {
     test("should render job results list", () => {
       const jobs = [
         { title: "Developer", company: "Company A", location: "Berlin" },
-        { title: "Engineer", company: "Company B", location: "Munich" },
+        { title: "Engineer", company: "Company B", location: "London" },
       ];
 
       const renderJobs = (jobList) => {
@@ -390,17 +390,17 @@ describe("DOM Integration Tests", () => {
     });
 
     test("should update result count", () => {
-      document.body.innerHTML = `<span id="resultCount">0 ilan bulundu</span>`;
+      document.body.innerHTML = `<span id="resultCount">0 jobs found</span>`;
 
       const updateCount = (count) => {
-        document.getElementById("resultCount").textContent = `${count} ilan bulundu`;
+        document.getElementById("resultCount").textContent = `${count} jobs found`;
       };
 
       updateCount(15);
-      expect(document.getElementById("resultCount").textContent).toBe("15 ilan bulundu");
+      expect(document.getElementById("resultCount").textContent).toBe("15 jobs found");
 
       updateCount(0);
-      expect(document.getElementById("resultCount").textContent).toBe("0 ilan bulundu");
+      expect(document.getElementById("resultCount").textContent).toBe("0 jobs found");
     });
   });
 

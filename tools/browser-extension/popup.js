@@ -6,7 +6,7 @@ let currentJobs = [];
 let currentOptionsSettings = null;
 const MAX_KEYWORD_ITEMS = 50;
 const logger = new Logger("Popup");
-const profileUtils = window.JobSearchProfileUtils;
+const profileUtils = window.CareerOpsProfileUtils;
 
 function initPopup() {
   logger.info("Popup initializing...");
@@ -26,14 +26,14 @@ function initPopup() {
   const saveButton = document.getElementById("save-filters");
   const downloadCSVButton = document.getElementById("download-csv");
   const downloadJSONButton = document.getElementById("download-json");
-  const downloadWorkflowMarkdownButton = document.getElementById("download-workflow-markdown");
-  const downloadWorkflowJsonlButton = document.getElementById("download-workflow-jsonl");
-  const copyWorkflowMarkdownButton = document.getElementById("copy-workflow-markdown");
+  const downloadCareerOpsMarkdownButton = document.getElementById("download-careerops-markdown");
+  const downloadCareerOpsJsonlButton = document.getElementById("download-careerops-jsonl");
+  const copyCareerOpsMarkdownButton = document.getElementById("copy-careerops-markdown");
   const statusBadge = document.getElementById("status");
   const jobList = document.getElementById("job-list");
   const telemetryContainer = document.getElementById("telemetry");
 
-  // Debug panel setup
+  // Debug panel control
   setupDebugPanel();
 
   loadFilters({
@@ -72,11 +72,11 @@ function initPopup() {
       maxAgeInput,
     );
 
-    logger.debug("Toplanan filtreler:", filters);
+    logger.debug("Toplanan filterler:", filters);
 
     const validation = validateKeywordFilters(filters, statusBadge);
     if (!validation.ok) {
-      logger.warn("Filter validation failed", { validation });
+      logger.warn("Filter validasyonu failed", { validation });
       return;
     }
 
@@ -108,31 +108,31 @@ function initPopup() {
     downloadJSON(currentJobs, statusBadge);
   });
 
-  downloadWorkflowMarkdownButton.addEventListener("click", () => {
+  downloadCareerOpsMarkdownButton.addEventListener("click", () => {
     if (!currentJobs.length) {
-      setStatus(statusBadge, "empty", "No Job Search records to download.");
+      setStatus(statusBadge, "empty", "No CareerOps record to download.");
       return;
     }
-    downloadWorkflowMarkdown(currentJobs, statusBadge);
+    downloadCareerOpsMarkdown(currentJobs, statusBadge);
   });
 
-  downloadWorkflowJsonlButton.addEventListener("click", () => {
+  downloadCareerOpsJsonlButton.addEventListener("click", () => {
     if (!currentJobs.length) {
-      setStatus(statusBadge, "empty", "No Job Search records to download.");
+      setStatus(statusBadge, "empty", "No CareerOps record to download.");
       return;
     }
-    downloadWorkflowJsonl(currentJobs, statusBadge);
+    downloadCareerOpsJsonl(currentJobs, statusBadge);
   });
 
-  copyWorkflowMarkdownButton.addEventListener("click", async () => {
+  copyCareerOpsMarkdownButton.addEventListener("click", async () => {
     if (!currentJobs.length) {
-      setStatus(statusBadge, "empty", "No Job Search records to copy.");
+      setStatus(statusBadge, "empty", "No CareerOps record to copy.");
       return;
     }
-    await copyWorkflowMarkdown(currentJobs, statusBadge);
+    await copyCareerOpsMarkdown(currentJobs, statusBadge);
   });
 
-  // Auto-save when scan speed changes for manual refreshes.
+  // Auto-save when scan speed is changed for manual refreshes.
   [
     keywordInput,
     locationInput,
@@ -269,7 +269,7 @@ function loadFilters({
   chrome.storage.local.get(["filters", "optionsSettings"], (result) => {
     if (chrome.runtime.lastError) {
       console.error("Error loading filters", chrome.runtime.lastError);
-      setStatus(statusBadge, "error", "Failed to load filters.");
+      setStatus(statusBadge, "error", "Could not load filters.");
       return;
     }
 
@@ -303,7 +303,7 @@ function storeFilters(filters, statusBadge, showMessage = true) {
   chrome.storage.local.set({ filters }, () => {
     if (chrome.runtime.lastError) {
       console.error("Error saving filters", chrome.runtime.lastError);
-      setStatus(statusBadge, "error", "Filtreler kaydedilemedi.");
+      setStatus(statusBadge, "error", "Filters could not be saved.");
       return;
     }
 
@@ -315,7 +315,7 @@ function storeFilters(filters, statusBadge, showMessage = true) {
 
 function requestJobScan(filters, statusBadge, jobList) {
   logger.info("Starting job scan...", { filters });
-  setStatus(statusBadge, "loading", "Job scan started...");
+  setStatus(statusBadge, "loading", "Job posting scan started...");
   renderJobs(jobList, []);
 
   try {
@@ -326,27 +326,27 @@ function requestJobScan(filters, statusBadge, jobList) {
       filters,
     }, (response) => {
       try {
-        logger.debug("Received response from service worker", { response });
+        logger.debug("Response received from service worker", { response });
 
         if (chrome.runtime.lastError) {
           const error = chrome.runtime.lastError.message;
-          logger.error("Failed to communicate with service worker", { error });
-          console.error("Failed to communicate with service worker", chrome.runtime.lastError);
+          logger.error("Could not communicate with service worker", { error });
+          console.error("Could not communicate with service worker", chrome.runtime.lastError);
           setStatus(statusBadge, "error", "Service worker did not respond: " + error);
           return;
         }
 
         if (!response) {
-          logger.error("No response from service worker");
-          setStatus(statusBadge, "error", "No response from service worker.");
+          logger.error("Could not get response from service worker");
+          setStatus(statusBadge, "error", "Could not get response from service worker.");
           return;
         }
 
         if (!response.success) {
-          const errorMsg = response.error || "Unknown error occurred";
+          const errorMsg = response.error || "An unknown error occurred";
           logger.error("Scan error", { errorMsg, response });
           console.error("Scan error:", errorMsg);
-          setStatus(statusBadge, "error", "Hata: " + errorMsg);
+          setStatus(statusBadge, "error", "Error: " + errorMsg);
           return;
         }
 
@@ -359,7 +359,7 @@ function requestJobScan(filters, statusBadge, jobList) {
         }
 
         const processedAt = response.metadata?.processedAt ? new Date(response.metadata.processedAt) : new Date();
-        const info = `${currentJobs.length} ilan bulundu (${processedAt.toLocaleTimeString("tr-TR")})`;
+        const info = `${currentJobs.length} posting found (${processedAt.toLocaleTimeString("tr-TR")})`;
         setStatus(statusBadge, "success", info);
 
         // Telemetry rendering with error handling
@@ -380,7 +380,7 @@ function requestJobScan(filters, statusBadge, jobList) {
 
       } catch (responseError) {
         console.error("Response processing error:", responseError);
-        setStatus(statusBadge, "error", "Failed to process response: " + responseError.message);
+        setStatus(statusBadge, "error", "Response could not be processed: " + responseError.message);
       }
     });
   } catch (error) {
@@ -401,7 +401,7 @@ function renderJobs(jobList, jobs) {
 
   jobs.forEach((job) => {
     const listItem = document.createElement("li");
-    const title = job.title || "Untitled job";
+    const title = job.title || "Namesiz posting";
     const company = job.company ? ` • ${job.company}` : "";
     const location = job.location ? ` • ${job.location}` : "";
     const workplace = job.workplaceType ? ` • ${job.workplaceType}` : "";
@@ -458,8 +458,8 @@ function downloadCSV(jobs, statusBadge) {
 
     setStatus(statusBadge, "success", "CSV indirildi.");
   } catch (error) {
-    console.error("Failed to create CSV", error);
-    setStatus(statusBadge, "error", "CSV download failed.");
+    console.error("Could not create CSV", error);
+    setStatus(statusBadge, "error", "CSV indirme failed oldu.");
   }
 }
 
@@ -473,29 +473,29 @@ function downloadJSON(jobs, statusBadge) {
 
     setStatus(statusBadge, "success", "JSON indirildi.");
   } catch (error) {
-    console.error("Failed to create JSON", error);
-    setStatus(statusBadge, "error", "JSON download failed.");
+    console.error("Could not create JSON", error);
+    setStatus(statusBadge, "error", "JSON indirme failed oldu.");
   }
 }
 
-function getJobSearchExporter() {
-  return window.JobSearchExporter;
+function getCareerOpsExporter() {
+  return window.CareerOpsExporter;
 }
 
-function getWorkflowCaptureDate() {
+function getCareerOpsCaptureDate() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function buildWorkflowOptions() {
+function buildCareerOpsOptions() {
   const options = {
-    capturedAt: getWorkflowCaptureDate(),
+    capturedAt: getCareerOpsCaptureDate(),
   };
 
   if (profileUtils && currentOptionsSettings) {
-    const mode = currentOptionsSettings.workflowProfileMode;
+    const mode = currentOptionsSettings.careerOpsProfileMode;
     if (profileUtils.profileModeUsesExportHints(mode)) {
-      options.workflowProfile = currentOptionsSettings.workflowProfile;
-      options.workflowProfileMode = mode;
+      options.careerOpsProfile = currentOptionsSettings.careerOpsProfile;
+      options.careerOpsProfileMode = mode;
     }
   }
 
@@ -512,55 +512,55 @@ function downloadTextFile(content, filename, mimeType) {
   setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
-function downloadWorkflowMarkdown(jobs, statusBadge) {
-  const exporter = getJobSearchExporter();
+function downloadCareerOpsMarkdown(jobs, statusBadge) {
+  const exporter = getCareerOpsExporter();
   if (!exporter) {
-    setStatus(statusBadge, "error", "Job Search exporter could not be loaded.");
+    setStatus(statusBadge, "error", "CareerOps exporter could not be loaded.");
     return;
   }
 
   try {
-    const options = buildWorkflowOptions();
-    const markdown = exporter.toWorkflowMarkdown(jobs, options);
-    downloadTextFile(markdown, `workflow-jobs-${options.capturedAt}.md`, "text/markdown");
-    setStatus(statusBadge, "success", "Job Search Markdown indirildi.");
+    const options = buildCareerOpsOptions();
+    const markdown = exporter.toCareerOpsMarkdown(jobs, options);
+    downloadTextFile(markdown, `careerops-jobs-${options.capturedAt}.md`, "text/markdown");
+    setStatus(statusBadge, "success", "CareerOps Markdown indirildi.");
   } catch (error) {
-    console.error("Failed to create Job Search Markdown", error);
-    setStatus(statusBadge, "error", "Job Search Markdown download failed.");
+    console.error("Could not create CareerOps Markdown", error);
+    setStatus(statusBadge, "error", "CareerOps Markdown indirme failed oldu.");
   }
 }
 
-function downloadWorkflowJsonl(jobs, statusBadge) {
-  const exporter = getJobSearchExporter();
+function downloadCareerOpsJsonl(jobs, statusBadge) {
+  const exporter = getCareerOpsExporter();
   if (!exporter) {
-    setStatus(statusBadge, "error", "Job Search exporter could not be loaded.");
+    setStatus(statusBadge, "error", "CareerOps exporter could not be loaded.");
     return;
   }
 
   try {
-    const options = buildWorkflowOptions();
-    const jsonl = exporter.toWorkflowJsonl(jobs, options);
+    const options = buildCareerOpsOptions();
+    const jsonl = exporter.toCareerOpsJsonl(jobs, options);
     downloadTextFile(
       jsonl,
-      `workflow-normalized-postings-${options.capturedAt}.jsonl`,
+      `careerops-normalized-postings-${options.capturedAt}.jsonl`,
       "application/x-ndjson",
     );
-    setStatus(statusBadge, "success", "Job Search JSONL indirildi.");
+    setStatus(statusBadge, "success", "CareerOps JSONL indirildi.");
   } catch (error) {
-    console.error("Failed to create Job Search JSONL", error);
-    setStatus(statusBadge, "error", "Job Search JSONL download failed.");
+    console.error("Could not create CareerOps JSONL", error);
+    setStatus(statusBadge, "error", "CareerOps JSONL indirme failed oldu.");
   }
 }
 
-async function copyWorkflowMarkdown(jobs, statusBadge) {
-  const exporter = getJobSearchExporter();
+async function copyCareerOpsMarkdown(jobs, statusBadge) {
+  const exporter = getCareerOpsExporter();
   if (!exporter) {
-    setStatus(statusBadge, "error", "Job Search exporter could not be loaded.");
+    setStatus(statusBadge, "error", "CareerOps exporter could not be loaded.");
     return;
   }
 
   try {
-    const markdown = exporter.toWorkflowMarkdown(jobs, buildWorkflowOptions());
+    const markdown = exporter.toCareerOpsMarkdown(jobs, buildCareerOpsOptions());
 
     if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(markdown);
@@ -576,10 +576,10 @@ async function copyWorkflowMarkdown(jobs, statusBadge) {
       document.body.removeChild(textarea);
     }
 
-    setStatus(statusBadge, "success", "Job Search Markdown copied to clipboard.");
+    setStatus(statusBadge, "success", "CareerOps Markdown copied to clipboard.");
   } catch (error) {
-    console.error("Failed to copy Job Search Markdown", error);
-    setStatus(statusBadge, "error", "Job Search Markdown copy failed.");
+    console.error("Could not copy CareerOps Markdown", error);
+    setStatus(statusBadge, "error", "CareerOps Markdown kopyalama failed oldu.");
   }
 }
 
@@ -649,7 +649,7 @@ function setupDebugPanel() {
     logger.info("Debug panel made visible");
   }
 
-  // Toggle log visibility
+  // Toggle logs show/hide
   let logsVisible = false;
   if (toggleButton) {
     toggleButton.addEventListener("click", async () => {
@@ -674,10 +674,10 @@ function setupDebugPanel() {
   // Clear logs
   if (clearButton) {
     clearButton.addEventListener("click", () => {
-      if (confirm("Are you sure you want to clear all debug logs??")) {
-        logger.info("Logs are being cleared...");
+      if (confirm("Are you sure you want to clear all debug logs?")) {
+        logger.info("Loglar temizleniyor...");
         Logger.clearLogs();
-        debugLogsContainer.innerHTML = "<p style=\"color: #6c757d;\">Logs cleared.</p>";
+        debugLogsContainer.innerHTML = "<p style=\"color: #6c757d;\">Loglar temizlendi.</p>";
       }
     });
   }
@@ -698,7 +698,7 @@ async function renderDebugLogs(container) {
   const logs = await Logger.getLogs();
 
   if (logs.length === 0) {
-    container.innerHTML = "<p style=\"color: #6c757d;\">No log entries yet.</p>";
+    container.innerHTML = "<p style=\"color: #6c757d;\">No log records yet.</p>";
     return;
   }
 
@@ -729,7 +729,7 @@ function refreshTelemetry(container) {
     }
 
     if (!response?.success) {
-      renderTelemetryError(container, response?.error ?? "Failed to get telemetry");
+      renderTelemetryError(container, response?.error ?? "Telemetry unavailable");
       return;
     }
 
@@ -760,16 +760,16 @@ function renderTelemetry(container, telemetry, metadata = {}) {
 
   container.innerHTML = `
     <h4>Daily Profile Status</h4>
-    <p class="telemetry__stat"><strong>Aktif profil:</strong> ${lastProfile}</p>
+    <p class="telemetry__stat"><strong>Active profile:</strong> ${lastProfile}</p>
     <p class="telemetry__stat"><strong>Tasks processed today:</strong> ${processedToday}</p>
-    <p class="telemetry__stat"><strong>Son gecikme:</strong> ${delayInfo}</p>
+    <p class="telemetry__stat"><strong>Last gecikme:</strong> ${delayInfo}</p>
     <p class="telemetry__stat"><strong>Profile range:</strong> ${throttleRange}</p>
-    <p class="telemetry__stat"><strong>Last processed time:</strong> ${lastProcessed}</p>
+    <p class="telemetry__stat"><strong>Last processing time:</strong> ${lastProcessed}</p>
     <hr>
     <p class="telemetry__stat"><strong>Premium toplam kota:</strong> ${premiumLimit}</p>
     <p class="telemetry__stat"><strong>Premium used:</strong> ${premiumUsed}</p>
-    <p class="telemetry__stat"><strong>Remaining Premium quota:</strong> ${premiumRemaining}</p>
-    <p class="telemetry__stat"><strong>Last Premium request:</strong> ${premiumLast}</p>
+    <p class="telemetry__stat"><strong>Kalan Premium kota:</strong> ${premiumRemaining}</p>
+    <p class="telemetry__stat"><strong>Last premium request:</strong> ${premiumLast}</p>
   `;
 }
 
@@ -780,7 +780,7 @@ function renderTelemetryError(container, message) {
 
   container.innerHTML = `
     <h4>Daily Profile Status</h4>
-    <p class="telemetry__stat">Failed to load telemetry: ${message}</p>
+    <p class="telemetry__stat">Telemetry could not be loaded: ${message}</p>
   `;
 }
 
@@ -798,11 +798,11 @@ function formatRelativeTimestamp(value) {
   const diffMinutes = Math.floor(diffMs / (1000 * 60));
 
   if (diffMinutes < 1) {
-    return "Just now";
+    return "Now";
   }
 
   if (diffMinutes < 60) {
-    return `${diffMinutes} min ago`;
+    return `${diffMinutes} minutes ago`;
   }
 
   const diffHours = Math.floor(diffMinutes / 60);
@@ -815,7 +815,7 @@ function formatRelativeTimestamp(value) {
     return `${diffDays} days ago`;
   }
 
-  return new Date(timestamp).toLocaleString("en-US");
+  return new Date(timestamp).toLocaleString("tr-TR");
 }
 
 function normalizeKeywordValue(value) {
@@ -868,12 +868,12 @@ function validateKeywordFilters(filters, statusBadge, options = {}) {
   const sanitizedBlacklist = sanitizeKeywordList(blacklist);
 
   if (!skipLimits && sanitizedWhitelist.truncated && !silent) {
-    setStatus(statusBadge, "error", `Whitelist can contain at most ${MAX_KEYWORD_ITEMS} items.`);
+    setStatus(statusBadge, "error", `Whitelist can contain maximum ${MAX_KEYWORD_ITEMS} items.`);
     return { ok: false, whitelist: [], blacklist: [] };
   }
 
   if (!skipLimits && sanitizedBlacklist.truncated && !silent) {
-    setStatus(statusBadge, "error", `Blacklist can contain at most ${MAX_KEYWORD_ITEMS} items.`);
+    setStatus(statusBadge, "error", `Blacklist can contain maximum ${MAX_KEYWORD_ITEMS} items.`);
     return { ok: false, whitelist: [], blacklist: [] };
   }
 

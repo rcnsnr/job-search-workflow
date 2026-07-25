@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkedIn Job Filter</title>
+    <title>Job Search Workflow Capture</title>
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <h3>Filtered Job Listings</h3>
+    <h3>Filtered Job Postings</h3>
     <div class="layout">
         <section class="panel panel--filters">
             <div class="panel__section grid-2">
@@ -18,7 +18,7 @@
                 </div>
                 <div class="field">
                     <h4>Location</h4>
-                    <input id="location-input" type="text" placeholder="Example: Remote, Istanbul...">
+                    <input id="location-input" type="text" placeholder="e.g. Remote, Berlin...">
                 </div>
             </div>
 
@@ -29,22 +29,22 @@
                 </div>
                 <div class="field">
                     <h4>Experience Level</h4>
-                    <input id="experience-input" type="text" placeholder="Example: Entry level, Mid-senior...">
+                    <input id="experience-input" type="text" placeholder="e.g. Entry level, Mid-senior...">
                 </div>
             </div>
 
             <div class="panel__section grid-2">
                 <div class="field">
                     <h4>Industry</h4>
-                    <input id="industry-input" type="text" placeholder="Example: Software, Finance...">
+                    <input id="industry-input" type="text" placeholder="e.g. Software, Finance...">
                 </div>
                 <div class="field">
                     <h4>Company Source</h4>
                     <select id="company-origin">
-                        <option value="any">Any</option>
-                        <option value="direct">Direct employers only</option>
-                        <option value="exclude-outsourcing">Exclude agencies/consultancies</option>
-                        <option value="outsourcing">Agencies/consultancies only</option>
+                        <option value="any">All</option>
+                        <option value="direct">Direct employer only</option>
+                        <option value="exclude-outsourcing">Exclude recruiters/agencies</option>
+                        <option value="outsourcing">Recruiter/agency only</option>
                     </select>
                 </div>
             </div>
@@ -52,14 +52,14 @@
             <div class="panel__section grid-2">
                 <div class="field">
                     <h4>Minimum Salary (para birimi dahil)</h4>
-                    <input id="min-salary-input" type="number" min="0" step="100" placeholder="Example: 50000">
+                    <input id="min-salary-input" type="number" min="0" step="100" placeholder="e.g. 50000">
                 </div>
                 <div class="field">
                     <h4>Speed Profile</h4>
                     <select id="profile-input">
-                        <option value="conservative">Conservative (6-10 sec)</option>
-                        <option value="balanced" selected>Balanced (4-6 sec)</option>
-                        <option value="aggressive">Aggressive (2-4 sec)</option>
+                        <option value="conservative">Conservative (6-10 sn)</option>
+                        <option value="balanced" selected>Balanced (4-6 sn)</option>
+                        <option value="aggressive">Aggressive (2-4 sn)</option>
                     </select>
                 </div>
             </div>
@@ -67,21 +67,21 @@
             <div class="panel__section grid-2">
                 <label class="checkbox">
                     <input id="remote-only" type="checkbox">
-                    Remote positions only
+                    Remote-only positions
                 </label>
                 <div class="field">
-                    <h4>Job Age (days)</h4>
-                    <input id="max-age-input" type="number" min="0" placeholder="Example: 7 (empty = unlimited)">
+                    <h4>Job posting age (days)</h4>
+                    <input id="max-age-input" type="number" min="0" placeholder="e.g. 7 (empty = unlimited)">
                 </div>
             </div>
 
             <div class="panel__section">
-                <h4>Keyword Whitelist</h4>
+                <h4>Keyword Allowlist</h4>
                 <textarea id="keyword-whitelist" rows="3" placeholder="One word per line"></textarea>
             </div>
 
             <div class="panel__section">
-                <h4>Keyword Blacklist</h4>
+                <h4>Keyword Blocklist</h4>
                 <textarea id="keyword-blacklist" rows="3" placeholder="One word per line"></textarea>
             </div>
         </section>
@@ -90,13 +90,13 @@
             <div class="panel__section">
                 <div class="button-row">
                     <button id="save-filters">Save Filters and Scan</button>
-                    <button id="download-csv">Download CSV</button>
-                    <button id="download-json">Download JSON</button>
+                    <button id="download-csv">Download as CSV</button>
+                    <button id="download-json">Download as JSON</button>
                 </div>
                 <div class="button-row button-row--compact">
-                    <button id="download-workflow-markdown">Download Markdown</button>
-                    <button id="download-workflow-jsonl">Download JSONL</button>
-                    <button id="copy-workflow-markdown">Copy Markdown</button>
+                    <button id="download-careerops-markdown">Download CareerOps Markdown</button>
+                    <button id="download-careerops-jsonl">Download CareerOps JSONL</button>
+                    <button id="copy-careerops-markdown">Copy Markdown</button>
                 </div>
             </div>
             <div id="status" class="status panel__section">Ready</div>
@@ -122,8 +122,8 @@
     </div>
 
     <script src="utils/logger.js"></script>
-    <script src="utils/workflow_profile.js"></script>
-    <script src="utils/workflow_exporter.js"></script>
+    <script src="utils/careerops_profile.js"></script>
+    <script src="utils/careerops_exporter.js"></script>
     <script src="popup.js"></script>
 </body>
 </html>

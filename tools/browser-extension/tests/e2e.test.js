@@ -48,7 +48,7 @@ const resolveBrowserExecutable = () => {
   return null;
 };
 
-// Check login status (without changing page)
+// Check login state (without page change)
 const checkLoginStatus = async (page) => {
   const url = page.url();
   return !url.includes("/login") && !url.includes("/authwall") && url.includes("linkedin.com");
@@ -60,7 +60,7 @@ const waitForManualLogin = async (page) => {
   console.log("🔐 LINKEDIN LOGIN REQUIRED");
   console.log("=".repeat(60));
   console.log("1. Log in to LinkedIn in the opened browser");
-  console.log("2. After login completes, tests will continue automatically");
+  console.log("2. After login, tests will continue automatically");
   console.log("3. Timeout: 3 minutes");
   console.log("=".repeat(60) + "\n");
 
@@ -83,7 +83,7 @@ const waitForManualLogin = async (page) => {
     }
     
     const remaining = Math.round((timeout - (Date.now() - startTime)) / 1000);
-    console.log(`⏳ Login bekleniyor... (${remaining}s)`);
+    console.log(`⏳ Login pending... (${remaining}s)`);
   }
   
   throw new Error("Login timeout");
@@ -114,7 +114,7 @@ beforeAll(async () => {
     );
   }
 
-  // Launch browser
+  // Browser starting
   browser = await puppeteer.launch({
     headless: false,
     executablePath,
@@ -148,7 +148,7 @@ beforeAll(async () => {
   if (!loggedIn) {
     await waitForManualLogin(mainPage);
   } else {
-    console.log("✅ Using existing session\n");
+    console.log("✅ Existing session used\n");
   }
 
   isAuthenticated = true;
@@ -156,7 +156,7 @@ beforeAll(async () => {
   // Go to Jobs page
   console.log("📋 Navigating to Jobs page...\n");
   await mainPage.goto(LINKEDIN_JOBS_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
-  await new Promise((r) => setTimeout(r, 3000)); // Wait for page to load
+  await new Promise((r) => setTimeout(r, 3000)); // Wait for page load
 });
 
 // Teardown
@@ -207,7 +207,7 @@ describe("Popup Functionality", () => {
 
   test("should open popup page", async () => {
     const title = await popupPage.$eval("h3", (el) => el.textContent);
-    expect(title).toContain("Filtered Job Listings");
+    expect(title).toContain("Filtered Job Postings");
     console.log("✅ Popup opened");
   });
 
@@ -229,7 +229,7 @@ describe("Popup Functionality", () => {
   });
 
   test("should accept filter values", async () => {
-    // Clear first
+    // Before temizle
     await popupPage.$eval("#keyword-input", (el) => (el.value = ""));
     await popupPage.$eval("#location-input", (el) => (el.value = ""));
 
@@ -256,7 +256,7 @@ describe("LinkedIn Page Integration", () => {
   });
 
   test("should find job cards on page", async () => {
-    // Wait for page to fully load
+    // Wait for full page load
     await new Promise((r) => setTimeout(r, 2000));
 
     const result = await mainPage.evaluate(() => {
@@ -279,12 +279,12 @@ describe("LinkedIn Page Integration", () => {
       return { count: 0, selector: null };
     });
 
-    console.log(`📊 ${result.count} job card bulundu (${result.selector})`);
+    console.log(`📊 ${result.count} job card found (${result.selector})`);
     expect(result.count).toBeGreaterThan(0);
   });
 
   test("should have content script markers", async () => {
-    // Check markers added to DOM by content script
+    // Check markers added by content script to DOM
     const markers = await mainPage.evaluate(() => {
       return {
         // Any element or attribute added by the extension
@@ -294,7 +294,7 @@ describe("LinkedIn Page Integration", () => {
       };
     });
 
-    console.log("📋 Page state:", markers);
+    console.log("📋 Sayfa durumu:", markers);
     expect(markers.hasJobList || markers.hasJobCards).toBe(true);
   });
 });

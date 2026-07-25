@@ -1,0 +1,134 @@
+name: Setup Audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Linux setup and tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install audit tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck
+          npm install --global markdownlint-cli2@0.20.0
+
+      - name: Static checks
+        run: |
+          bash -n scripts/setup.sh
+          shellcheck scripts/setup.sh
+          markdownlint-cli2 "**/*.md"
+
+      - name: Behavior tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Full setup smoke test
+        run: ./scripts/setup.sh
+
+  extension:
+    name: Browser extension lint, test and manifest validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install extension dependencies
+        run: |
+          cd tools/browser-extension
+          npm ci
+
+      - name: Extension static checks
+        run: |
+          cd tools/browser-extension
+          npm run lint
+          node scripts/validate-manifest.js
+
+      - name: Extension unit and DOM tests
+        run: |
+          cd tools/browser-extension
+          npm test
+
+      - name: PII / private-reference scan
+        run: python3 public/scripts/scan_pii.py
+
+      - name: LinkedIn brand check
+        run: python3 public/scripts/check_linkedin_brand.py
+
+  capture-server:
+    name: Capture server Python tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install fastapi pydantic pyyaml uvicorn httpx pytest
+
+      - name: Run capture server tests
+        run: python3 -m pytest public/tests/test_linkedin_capture_server.py -q
+
+      - name: Python compile check
+        run: |
+          python3 -m py_compile public/scripts/linkedin_capture_server.py
+          python3 -m py_compile public/scripts/scan_pii.py
+          python3 -m py_compile public/scripts/check_linkedin_brand.py
+
+  windows:
+    name: Windows setup smoke test
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Full setup smoke test
+        shell: cmd
+        run: scripts\setup.bat

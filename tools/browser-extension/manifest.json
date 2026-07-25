@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Job Search Workflow — LinkedIn Capture",
+  "name": "Job Search Workflow Capture",
   "version": "2.0.0",
-  "description": "LinkedIn Jobs capture extension for job-search-workflow. Unattended scan + local FastAPI server companion. Captures job postings to inbox/jobs/ directory.",
+  "description": "A job-posting capture companion for the CareerOps job-search workflow. Supports manual export and unattended local capture.",
   "permissions": [
     "activeTab",
     "scripting",
