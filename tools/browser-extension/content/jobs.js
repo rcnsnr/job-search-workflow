@@ -980,7 +980,7 @@
     return "";
   }
 
-  window.CareerOpsLinkedInScraper = {
+  window.WorkflowLinkedInScraper = {
     getJobCards,
     extractJob,
     collectJobs,

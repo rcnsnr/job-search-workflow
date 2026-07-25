@@ -78,8 +78,8 @@ job-search-workflow-capture/
 │   └── autoscan.js       # Unattended scan content script
 ├── service_worker.js     # Background alarms, state, and message passing
 ├── utils/
-│   ├── careerops_exporter.js  # Job Search Workflow Markdown/JSONL export
-│   ├── careerops_profile.js   # Profile schema and validation
+│   ├── workflow_exporter.js  # Job Search Workflow Markdown/JSONL export
+│   ├── workflow_profile.js   # Profile schema and validation
 │   ├── logger.js              # Debug logging
 │   └── scan_planner.js        # Pacing profiles and query planning
 ├── scripts/

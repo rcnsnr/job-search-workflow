@@ -61,32 +61,32 @@
                 </div>
 
                 <div class="card">
-                    <h2>CareerOps Profile</h2>
+                    <h2>Workflow Profile</h2>
 
                     <div class="form-group">
-                        <label for="careerops-profile-mode">Usage Mode</label>
-                        <select id="careerops-profile-mode">
+                        <label for="workflow-profile-mode">Usage Mode</label>
+                        <select id="workflow-profile-mode">
                             <option value="off">Off</option>
                             <option value="default_filters">Default filters only</option>
                             <option value="export_hints">Sadece export hint metadata</option>
                             <option value="default_filters_and_export_hints">Default filters + export hints</option>
                         </select>
-                        <small>CareerOps profile is local only; no automatic data pull from a sibling repo.</small>
+                        <small>Workflow profile is local only; no automatic data pull from a sibling repo.</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="careerops-profile-json">Profile JSON</label>
-                        <textarea id="careerops-profile-json" rows="12" placeholder='{\n  "profileLabel": "CareerOps Default Profile",\n  "roleTracks": ["sre_platform"],\n  "keywords": ["platform", "reliability"]\n}'></textarea>
+                        <label for="workflow-profile-json">Profile JSON</label>
+                        <textarea id="workflow-profile-json" rows="12" placeholder='{\n  "profileLabel": "Example Workflow Profile",\n  "roleTracks": ["sre_platform"],\n  "keywords": ["platform", "reliability"]\n}'></textarea>
                         <small>Paste only structured, non-sensitive metadata. Do not add private notes, tokens, sessions, or cookies.</small>
                     </div>
 
                     <div class="button-group button-group--compact">
-                        <button class="btn btn-secondary" id="careerops-profile-template" type="button">Load Template</button>
-                        <button class="btn btn-secondary" id="careerops-profile-import" type="button">Import JSON File</button>
-                        <button class="btn btn-warning" id="careerops-profile-clear" type="button">Profile Clear</button>
+                        <button class="btn btn-secondary" id="workflow-profile-template" type="button">Load Template</button>
+                        <button class="btn btn-secondary" id="workflow-profile-import" type="button">Import JSON File</button>
+                        <button class="btn btn-warning" id="workflow-profile-clear" type="button">Profile Clear</button>
                     </div>
 
-                    <div class="profile-summary" id="careerops-profile-summary">
+                    <div class="profile-summary" id="workflow-profile-summary">
                         <p>No profile loaded yet.</p>
                     </div>
                 </div>
@@ -268,7 +268,7 @@
                     <div class="form-group">
                         <label for="capture-server-url">Capture Server URL</label>
                         <input type="url" id="capture-server-url" value="http://localhost:8766" placeholder="http://localhost:8766">
-                        <small>CareerOps capture server adresi</small>
+                        <small>Capture server address</small>
                     </div>
 
                     <div class="form-group">
@@ -487,7 +487,7 @@
     </div>
 
     <script src="utils/scan_planner.js"></script>
-    <script src="utils/careerops_profile.js"></script>
+    <script src="utils/workflow_profile.js"></script>
     <script src="options.js"></script>
 </body>
 </html>

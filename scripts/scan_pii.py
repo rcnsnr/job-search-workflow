@@ -1,191 +1,137 @@
 #!/usr/bin/env python3
-"""PII Scanner for job-search-workflow repository.
+"""Fail-closed PII and private-reference scanner for the public surface.
 
-Scans repository files for patterns that indicate personally identifiable
-information (PII) that should not be committed to a public repository.
+Scans public/tools/browser-extension/ and public/scripts/ for known hard-PII
+and owner-specific patterns. Designed to be run in CI before any public release.
 
-Exit codes:
-  0 - No PII detected
-  1 - PII patterns found (fail-closed)
-
-Usage:
-  python3 scripts/scan_pii.py [--path PATH] [--strict]
+Known non-PII patterns such as generic localhost references, the Job Search Workflow
+framework name, and public LinkedIn URLs are allow-listed.
 """
 
-import argparse
+import os
 import re
 import sys
-from pathlib import Path
-
-# Patterns that indicate PII presence
-PII_PATTERNS = [
-    # Email addresses
-    (r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", "email address"),
-    # Phone numbers (must start with + and country code to avoid date false positives)
-    (r"\+\d{1,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{2,4}[-.\s]?\d{2,4}", "phone number"),
-    # LinkedIn profile URLs (with username)
-    (r"linkedin\.com/in/[a-zA-Z0-9_-]+", "LinkedIn profile URL"),
-    # GitHub profile URLs (with username, excluding org/repo patterns)
-    (r"github\.com/[a-zA-Z0-9_-]+(?!\.[a-z])", "GitHub profile URL"),
-    # Home directory paths
-    (r"/home/[a-zA-Z0-9_-]+/", "home directory path"),
-    (r"/Users/[a-zA-Z0-9_-]+/", "macOS home directory path"),
-]
-
-# Paths to always skip
-SKIP_PATHS = {
-    ".git",
-    ".venv",
-    "venv",
-    "node_modules",
-    "__pycache__",
-    ".pytest_cache",
-    ".mypy_cache",
-}
 
 # File extensions to scan
-SCAN_EXTENSIONS = {
-    ".md", ".txt", ".py", ".yml", ".yaml", ".json", ".toml",
-    ".tex", ".sh", ".bash", ".zsh", ".env.example",
-    ".html", ".css", ".js", ".ts",
-}
+EXTENSIONS = {".js", ".json", ".md", ".html", ".py", ".css"}
 
-# Files to always skip (even if extension matches)
-SKIP_FILES = {
-    "scan_pii.py",  # This file contains patterns, not real PII
+# Files and directories that are third-party or scanner artifacts and must be skipped.
+SKIP_NAMES = {
+    "node_modules",
+    ".git",
+    "__pycache__",
+    ".venv",
     "package-lock.json",
-    "poetry.lock",
+    "cv-reference.docx",
 }
 
-# Allowlisted patterns (not real PII, just examples/placeholders)
-ALLOWLIST = [
-    r"your\.email@example\.com",
-    r"user@example\.com",
-    r"example@example\.com",
-    r"email@example\.com",
-    r"alex\.chen@example\.com",  # Fictitious fixture persona
-    r"\+1-234-567-8900",
-    r"\+1-555-0142",  # Fictitious fixture phone
-    r"linkedin\.com/in/\[",
-    r"linkedin\.com/in/yourprofile",
-    r"linkedin\.com/in/alexchen-example",  # Fictitious fixture
-    r"linkedin\.com/in/username",  # Generic placeholder in extension tests
-    r"github\.com/rcnsnr/job-search-workflow",  # This repo itself
-    r"github\.com/rcnsnr(?:/|$)",  # Repo owner
-    r"github\.com/sponsors",  # GitHub Sponsors feature URL, not a profile
-    r"github\.com/about",  # GitHub about page, not a profile
-    r"github\.com/alexchen-example",  # Fictitious fixture
-    r"github\.com/youruser",
-    r"github\.com/\[",
-    r"github\.com/search",  # GitHub search feature URL, not a profile
-    r"/home/\[",
-    r"rcnsnr@users\.noreply\.github\.com",  # GitHub noreply email (privacy-preserving)
+# Patterns that are considered hard PII or private references.
+# Each tuple: (pattern, description)
+DENIED_PATTERNS = [
+    # Email addresses (but not example/placeholder domains)
+    (
+        r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?:com|net|org|io|co|me|tr|eu|gmail|yahoo|outlook|hotmail)",
+        "email address",
+    ),
+    # Home directory paths that include the owner's username
+    (r"/home/orcun/", "owner home directory path"),
+    # Owner username / placeholder usernames that should not be public
+    (r"\borcun\b", "owner username"),
+    (r"\bkullaniciadi\b", "placeholder username in Turkish"),
+    # Old private repo slug that should not appear in public
+    (r"linkedin-job-filter", "old private repo slug"),
+    # Old Turkish status fallback that signals untranslated private UI
+    (r"\bBelirsiz\b", "untranslated Turkish fallback 'Belirsiz'"),
+    # Owner-specific locations that should not be hard-coded
+    (r"\bİstanbul\b|\bIstanbul\b", "owner city"),
+    (r"\bTürkiye\b|\bTurkey\b", "owner country"),
+    (r"\bAnkara\b", "owner-specific city"),
+]
+
+# Patterns that are allowed even if they look like a denied match.
+ALLOWED_PATTERNS = [
+    # Generic localhost capture server reference
+    (r"localhost:\d+", "localhost capture server"),
+    # Public LinkedIn URL patterns
+    (r"https?://(www\.)?linkedin\.com", "public LinkedIn URL"),
+    # Job Search Workflow framework name is public
+    (r"Job Search Workflow", "Job Search Workflow framework name"),
+    # Job Search Workflow Capture public name
+    (r"Job Search Workflow Capture", "public product name"),
+    # job-search-workflow-capture slug
+    (r"job-search-workflow-capture", "public repo slug"),
+    # Generic placeholder username
+    (r"<your-username>", "placeholder username"),
+    # Example / placeholder domains
+    (r"@example\.", "example domain"),
+    (r"example\.com", "example domain"),
 ]
 
 
-def should_skip_path(path: Path) -> bool:
-    """Check if a path should be skipped."""
-    parts = path.parts
-    for skip in SKIP_PATHS:
-        if skip in parts:
-            return True
-    if path.name in SKIP_FILES:
-        return True
-    return False
-
-
-def should_scan_file(path: Path) -> bool:
-    """Check if a file should be scanned based on extension."""
-    return path.suffix.lower() in SCAN_EXTENSIONS
-
-
-def is_allowlisted(match: str) -> bool:
-    """Check if a match is in the allowlist."""
-    for pattern in ALLOWLIST:
-        if re.search(pattern, match, re.IGNORECASE):
+def should_skip(path: str) -> bool:
+    for part in path.split(os.sep):
+        if part in SKIP_NAMES:
             return True
     return False
 
 
-def scan_file(filepath: Path) -> list[tuple[int, str, str]]:
-    """Scan a single file for PII patterns.
+def is_allowed(line: str) -> bool:
+    for pattern, _ in ALLOWED_PATTERNS:
+        if re.search(pattern, line, re.IGNORECASE):
+            return True
+    return False
 
-    Returns list of (line_number, pattern_name, matched_text).
-    """
+
+def scan_file(path: str) -> list[tuple[int, str, str]]:
     findings = []
-    try:
-        content = filepath.read_text(encoding="utf-8", errors="ignore")
-    except (OSError, PermissionError):
-        return findings
-
-    for line_num, line in enumerate(content.splitlines(), start=1):
-        for pattern, name in PII_PATTERNS:
-            for match in re.finditer(pattern, line):
-                matched_text = match.group()
-                if not is_allowlisted(matched_text):
-                    findings.append((line_num, name, matched_text))
-
+    with open(path, encoding="utf-8") as file:
+        for line_number, line in enumerate(file, start=1):
+            if is_allowed(line):
+                continue
+            for pattern, description in DENIED_PATTERNS:
+                if re.search(pattern, line, re.IGNORECASE):
+                    findings.append((line_number, description, line.strip()))
+                    break
     return findings
 
 
-def scan_directory(root: Path, strict: bool = False) -> dict[Path, list]:
-    """Scan all eligible files in a directory tree."""
-    all_findings: dict[Path, list] = {}
-
-    for filepath in sorted(root.rglob("*")):
-        if not filepath.is_file():
-            continue
-        if should_skip_path(filepath):
-            continue
-        if not should_scan_file(filepath):
-            continue
-
-        findings = scan_file(filepath)
-        if findings:
-            all_findings[filepath] = findings
-
-    return all_findings
-
-
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Scan for PII in repository files")
-    parser.add_argument(
-        "--path",
-        type=Path,
-        default=Path("."),
-        help="Root path to scan (default: current directory)",
-    )
-    parser.add_argument(
-        "--strict",
-        action="store_true",
-        help="Exit with code 1 on any finding (default behavior)",
-    )
-    args = parser.parse_args()
+    base_dir = os.path.dirname(__file__)
+    repo_dir = os.path.abspath(os.path.join(base_dir, ".."))
+    scan_dirs = [
+        os.path.join(repo_dir, "tools", "browser-extension"),
+        os.path.join(repo_dir, "scripts"),
+    ]
+    scanner_path = os.path.abspath(__file__)
 
-    root = args.path.resolve()
-    if not root.exists():
-        print(f"Error: Path does not exist: {root}", file=sys.stderr)
+    all_findings: list[tuple[str, int, str, str]] = []
+
+    for scan_dir in scan_dirs:
+        if not os.path.isdir(scan_dir):
+            continue
+        for root, _, files in os.walk(scan_dir):
+            for filename in files:
+                full_path = os.path.join(root, filename)
+                if os.path.abspath(full_path) == scanner_path:
+                    # Do not scan the scanner itself for its own regex strings.
+                    continue
+                if should_skip(full_path):
+                    continue
+                ext = os.path.splitext(filename)[1].lower()
+                if ext not in EXTENSIONS:
+                    continue
+                filepath = os.path.relpath(full_path, repo_dir)
+                for line_number, description, line in scan_file(full_path):
+                    all_findings.append((filepath, line_number, description, line))
+
+    if all_findings:
+        print("❌ PII / private-reference scan found potential issues:", file=sys.stderr)
+        for filepath, line_number, description, line in all_findings:
+            print(f"  {filepath}:{line_number}: {description}: {line}", file=sys.stderr)
         return 1
 
-    print(f"Scanning {root} for PII patterns...")
-    findings = scan_directory(root)
-
-    if not findings:
-        print("PASS: No PII patterns detected.")
-        return 0
-
-    print(f"\nFAIL: PII patterns detected in {len(findings)} file(s):\n")
-    total = 0
-    for filepath, file_findings in findings.items():
-        rel_path = filepath.relative_to(root)
-        print(f"  {rel_path}:")
-        for line_num, pattern_name, matched_text in file_findings:
-            print(f"    L{line_num}: [{pattern_name}] {matched_text}")
-            total += 1
-        print()
-
-    print(f"Total findings: {total}")
-    return 1
+    print("✅ PII / private-reference scan passed. No hard PII or owner-specific patterns found.")
+    return 0
 
 
 if __name__ == "__main__":

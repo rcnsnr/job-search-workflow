@@ -13,7 +13,7 @@ if "%~1"=="-h" goto help
 if not "%~2"=="" goto invalid_args
 if not "%~1"=="" if not "%~1"=="--check-only" goto invalid_args
 
-echo Starting the CareerOps Public Framework setup check...
+echo Starting the Job Search Workflow Public Framework setup check...
 echo Repository root: %CD%
 
 if not exist README.md (

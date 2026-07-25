@@ -93,11 +93,11 @@
     return mode === PROFILE_MODES.EXPORT_HINTS || mode === PROFILE_MODES.DEFAULTS_AND_EXPORT_HINTS;
   }
 
-  function normalizeCareerOpsProfile(rawProfile) {
+  function normalizeWorkflowProfile(rawProfile) {
     const profile = rawProfile && typeof rawProfile === "object" ? rawProfile : {};
 
     return {
-      profileLabel: normalizeWhitespace(profile.profileLabel) || "Example CareerOps Profile",
+      profileLabel: normalizeWhitespace(profile.profileLabel) || "Example Workflow Profile",
       roleTracks: normalizeStringArray(profile.roleTracks, 6).filter((item) => ALLOWED_ROLE_TRACKS.has(item)),
       keywords: normalizeStringArray(profile.keywords),
       requiredKeywords: normalizeStringArray(profile.requiredKeywords),
@@ -114,12 +114,12 @@
     };
   }
 
-  function parseCareerOpsProfileInput(rawInput) {
+  function parseWorkflowProfileInput(rawInput) {
     const text = normalizeWhitespace(rawInput);
     if (!text) {
       return {
         ok: true,
-        profile: normalizeCareerOpsProfile({}),
+        profile: normalizeWorkflowProfile({}),
         rawText: "",
       };
     }
@@ -128,8 +128,8 @@
       const parsed = JSON.parse(rawInput);
       return {
         ok: true,
-        profile: normalizeCareerOpsProfile(parsed),
-        rawText: JSON.stringify(normalizeCareerOpsProfile(parsed), null, 2),
+        profile: normalizeWorkflowProfile(parsed),
+        rawText: JSON.stringify(normalizeWorkflowProfile(parsed), null, 2),
       };
     } catch (error) {
       return {
@@ -139,9 +139,9 @@
     }
   }
 
-  function createCareerOpsProfileTemplate() {
+  function createWorkflowProfileTemplate() {
     return JSON.stringify({
-      profileLabel: "Example CareerOps Profile",
+      profileLabel: "Example Workflow Profile",
       roleTracks: ["sre_platform", "dual_track"],
       keywords: ["platform", "reliability", "observability", "agent", "developer productivity"],
       requiredKeywords: ["platform"],
@@ -179,7 +179,7 @@
   }
 
   function buildFilterDefaultsFromProfile(profile) {
-    const normalized = normalizeCareerOpsProfile(profile);
+    const normalized = normalizeWorkflowProfile(profile);
 
     return {
       keywords: normalized.keywords.join(", "),
@@ -296,7 +296,7 @@
   function resolvePopupFilters(storedFilters, optionsSettings) {
     const settings = optionsSettings && typeof optionsSettings === "object" ? optionsSettings : {};
     const normalizedProfileMode = normalizeEnum(
-      settings.careerOpsProfileMode,
+      settings.workflowProfileMode,
       new Set(Object.values(PROFILE_MODES)),
       PROFILE_MODES.OFF,
     );
@@ -304,7 +304,7 @@
     let resolved = buildFilterDefaultsFromOptions(settings);
 
     if (profileModeUsesDefaultFilters(normalizedProfileMode)) {
-      resolved = mergeFilterDefaults(resolved, buildFilterDefaultsFromProfile(settings.careerOpsProfile));
+      resolved = mergeFilterDefaults(resolved, buildFilterDefaultsFromProfile(settings.workflowProfile));
     }
 
     return mergeFilterDefaults(resolved, storedFilters, { explicitOverride: true });
@@ -325,8 +325,8 @@
     return parts.join(" ").toLowerCase();
   }
 
-  function evaluateJobAgainstCareerOpsProfile(job, profile) {
-    const normalizedProfile = normalizeCareerOpsProfile(profile);
+  function evaluateJobAgainstWorkflowProfile(job, profile) {
+    const normalizedProfile = normalizeWorkflowProfile(profile);
     const text = buildJobSearchText(job);
     const matchedKeywords = normalizedProfile.keywords.filter((keyword) => text.includes(keyword.toLowerCase()));
     const missingRequiredKeywords = normalizedProfile.requiredKeywords.filter((keyword) => !text.includes(keyword.toLowerCase()));
@@ -382,18 +382,18 @@
 
   const api = {
     PROFILE_MODES,
-    normalizeCareerOpsProfile,
-    parseCareerOpsProfileInput,
-    createCareerOpsProfileTemplate,
+    normalizeWorkflowProfile,
+    parseWorkflowProfileInput,
+    createWorkflowProfileTemplate,
     profileModeUsesDefaultFilters,
     profileModeUsesExportHints,
     buildFilterDefaultsFromOptions,
     buildFilterDefaultsFromProfile,
     resolvePopupFilters,
-    evaluateJobAgainstCareerOpsProfile,
+    evaluateJobAgainstWorkflowProfile,
   };
 
-  globalTarget.CareerOpsProfileUtils = api;
+  globalTarget.WorkflowProfileUtils = api;
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api;

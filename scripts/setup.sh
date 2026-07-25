@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# CareerOps Public Framework - scripts/setup.sh
+# Job Search Workflow Public Framework - scripts/setup.sh
 # Usage: ./scripts/setup.sh [--check-only]
 #
 # Checks prerequisites, creates missing local directories and sample fixtures,
@@ -43,7 +43,7 @@ MISSING_OPTIONAL=()
 
 cd "$REPO_ROOT"
 
-echo "Starting the CareerOps Public Framework setup check..."
+echo "Starting the Job Search Workflow Public Framework setup check..."
 echo "Repository root: $REPO_ROOT"
 
 for file in "${REQUIRED_FILES[@]}"; do

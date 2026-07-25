@@ -6,7 +6,7 @@ let currentJobs = [];
 let currentOptionsSettings = null;
 const MAX_KEYWORD_ITEMS = 50;
 const logger = new Logger("Popup");
-const profileUtils = window.CareerOpsProfileUtils;
+const profileUtils = window.WorkflowProfileUtils;
 
 function initPopup() {
   logger.info("Popup initializing...");
@@ -26,9 +26,9 @@ function initPopup() {
   const saveButton = document.getElementById("save-filters");
   const downloadCSVButton = document.getElementById("download-csv");
   const downloadJSONButton = document.getElementById("download-json");
-  const downloadCareerOpsMarkdownButton = document.getElementById("download-careerops-markdown");
-  const downloadCareerOpsJsonlButton = document.getElementById("download-careerops-jsonl");
-  const copyCareerOpsMarkdownButton = document.getElementById("copy-careerops-markdown");
+  const downloadWorkflowMarkdownButton = document.getElementById("download-workflow-markdown");
+  const downloadWorkflowJsonlButton = document.getElementById("download-workflow-jsonl");
+  const copyWorkflowMarkdownButton = document.getElementById("copy-workflow-markdown");
   const statusBadge = document.getElementById("status");
   const jobList = document.getElementById("job-list");
   const telemetryContainer = document.getElementById("telemetry");
@@ -108,28 +108,28 @@ function initPopup() {
     downloadJSON(currentJobs, statusBadge);
   });
 
-  downloadCareerOpsMarkdownButton.addEventListener("click", () => {
+  downloadWorkflowMarkdownButton.addEventListener("click", () => {
     if (!currentJobs.length) {
-      setStatus(statusBadge, "empty", "No CareerOps record to download.");
+      setStatus(statusBadge, "empty", "No record to download.");
       return;
     }
-    downloadCareerOpsMarkdown(currentJobs, statusBadge);
+    downloadWorkflowMarkdown(currentJobs, statusBadge);
   });
 
-  downloadCareerOpsJsonlButton.addEventListener("click", () => {
+  downloadWorkflowJsonlButton.addEventListener("click", () => {
     if (!currentJobs.length) {
-      setStatus(statusBadge, "empty", "No CareerOps record to download.");
+      setStatus(statusBadge, "empty", "No record to download.");
       return;
     }
-    downloadCareerOpsJsonl(currentJobs, statusBadge);
+    downloadWorkflowJsonl(currentJobs, statusBadge);
   });
 
-  copyCareerOpsMarkdownButton.addEventListener("click", async () => {
+  copyWorkflowMarkdownButton.addEventListener("click", async () => {
     if (!currentJobs.length) {
-      setStatus(statusBadge, "empty", "No CareerOps record to copy.");
+      setStatus(statusBadge, "empty", "No record to copy.");
       return;
     }
-    await copyCareerOpsMarkdown(currentJobs, statusBadge);
+    await copyWorkflowMarkdown(currentJobs, statusBadge);
   });
 
   // Auto-save when scan speed is changed for manual refreshes.
@@ -478,24 +478,24 @@ function downloadJSON(jobs, statusBadge) {
   }
 }
 
-function getCareerOpsExporter() {
-  return window.CareerOpsExporter;
+function getWorkflowExporter() {
+  return window.WorkflowExporter;
 }
 
-function getCareerOpsCaptureDate() {
+function getWorkflowCaptureDate() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function buildCareerOpsOptions() {
+function buildWorkflowOptions() {
   const options = {
-    capturedAt: getCareerOpsCaptureDate(),
+    capturedAt: getWorkflowCaptureDate(),
   };
 
   if (profileUtils && currentOptionsSettings) {
-    const mode = currentOptionsSettings.careerOpsProfileMode;
+    const mode = currentOptionsSettings.workflowProfileMode;
     if (profileUtils.profileModeUsesExportHints(mode)) {
-      options.careerOpsProfile = currentOptionsSettings.careerOpsProfile;
-      options.careerOpsProfileMode = mode;
+      options.workflowProfile = currentOptionsSettings.workflowProfile;
+      options.workflowProfileMode = mode;
     }
   }
 
@@ -512,55 +512,55 @@ function downloadTextFile(content, filename, mimeType) {
   setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
-function downloadCareerOpsMarkdown(jobs, statusBadge) {
-  const exporter = getCareerOpsExporter();
+function downloadWorkflowMarkdown(jobs, statusBadge) {
+  const exporter = getWorkflowExporter();
   if (!exporter) {
-    setStatus(statusBadge, "error", "CareerOps exporter could not be loaded.");
+    setStatus(statusBadge, "error", "Workflow exporter could not be loaded.");
     return;
   }
 
   try {
-    const options = buildCareerOpsOptions();
-    const markdown = exporter.toCareerOpsMarkdown(jobs, options);
-    downloadTextFile(markdown, `careerops-jobs-${options.capturedAt}.md`, "text/markdown");
-    setStatus(statusBadge, "success", "CareerOps Markdown indirildi.");
+    const options = buildWorkflowOptions();
+    const markdown = exporter.toWorkflowMarkdown(jobs, options);
+    downloadTextFile(markdown, `workflow-jobs-${options.capturedAt}.md`, "text/markdown");
+    setStatus(statusBadge, "success", "Workflow Markdown downloaded.");
   } catch (error) {
-    console.error("Could not create CareerOps Markdown", error);
-    setStatus(statusBadge, "error", "CareerOps Markdown indirme failed oldu.");
+    console.error("Could not create Workflow Markdown", error);
+    setStatus(statusBadge, "error", "Could not download Workflow Markdown.");
   }
 }
 
-function downloadCareerOpsJsonl(jobs, statusBadge) {
-  const exporter = getCareerOpsExporter();
+function downloadWorkflowJsonl(jobs, statusBadge) {
+  const exporter = getWorkflowExporter();
   if (!exporter) {
-    setStatus(statusBadge, "error", "CareerOps exporter could not be loaded.");
+    setStatus(statusBadge, "error", "Workflow exporter could not be loaded.");
     return;
   }
 
   try {
-    const options = buildCareerOpsOptions();
-    const jsonl = exporter.toCareerOpsJsonl(jobs, options);
+    const options = buildWorkflowOptions();
+    const jsonl = exporter.toWorkflowJsonl(jobs, options);
     downloadTextFile(
       jsonl,
-      `careerops-normalized-postings-${options.capturedAt}.jsonl`,
+      `workflow-normalized-postings-${options.capturedAt}.jsonl`,
       "application/x-ndjson",
     );
-    setStatus(statusBadge, "success", "CareerOps JSONL indirildi.");
+    setStatus(statusBadge, "success", "Workflow JSONL downloaded.");
   } catch (error) {
-    console.error("Could not create CareerOps JSONL", error);
-    setStatus(statusBadge, "error", "CareerOps JSONL indirme failed oldu.");
+    console.error("Could not create Workflow JSONL", error);
+    setStatus(statusBadge, "error", "Could not download Workflow JSONL.");
   }
 }
 
-async function copyCareerOpsMarkdown(jobs, statusBadge) {
-  const exporter = getCareerOpsExporter();
+async function copyWorkflowMarkdown(jobs, statusBadge) {
+  const exporter = getWorkflowExporter();
   if (!exporter) {
-    setStatus(statusBadge, "error", "CareerOps exporter could not be loaded.");
+    setStatus(statusBadge, "error", "Workflow exporter could not be loaded.");
     return;
   }
 
   try {
-    const markdown = exporter.toCareerOpsMarkdown(jobs, buildCareerOpsOptions());
+    const markdown = exporter.toWorkflowMarkdown(jobs, buildWorkflowOptions());
 
     if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(markdown);
@@ -576,10 +576,10 @@ async function copyCareerOpsMarkdown(jobs, statusBadge) {
       document.body.removeChild(textarea);
     }
 
-    setStatus(statusBadge, "success", "CareerOps Markdown copied to clipboard.");
+    setStatus(statusBadge, "success", "Workflow Markdown copied to clipboard.");
   } catch (error) {
-    console.error("Could not copy CareerOps Markdown", error);
-    setStatus(statusBadge, "error", "CareerOps Markdown kopyalama failed oldu.");
+    console.error("Could not copy Workflow Markdown", error);
+    setStatus(statusBadge, "error", "Could not copy Workflow Markdown.");
   }
 }
 
