@@ -294,11 +294,11 @@
     return result;
   }
 
-  function normalizeCareerOpsProfile(profile) {
+  function normalizeWorkflowProfile(profile) {
     const source = profile && typeof profile === "object" ? profile : {};
 
     return {
-      profileLabel: normalizeWhitespace(source.profileLabel) || "Example CareerOps Profile",
+      profileLabel: normalizeWhitespace(source.profileLabel) || "Example Workflow Profile",
       keywords: normalizeProfileArray(source.keywords),
       requiredKeywords: normalizeProfileArray(source.requiredKeywords),
       avoidKeywords: normalizeProfileArray(source.avoidKeywords),
@@ -309,7 +309,7 @@
   }
 
   function evaluateJobAgainstProfile(job, profile) {
-    const normalizedProfile = normalizeCareerOpsProfile(profile);
+    const normalizedProfile = normalizeWorkflowProfile(profile);
     const text = buildSearchText(job);
     const matchedKeywords = normalizedProfile.keywords.filter((keyword) => text.includes(keyword.toLowerCase()));
     const missingRequiredKeywords = normalizedProfile.requiredKeywords.filter((keyword) => !text.includes(keyword.toLowerCase()));
@@ -394,7 +394,7 @@
       parts.push(`aiWorkflowSignal=${context.aiAssistedWorkflowSignal}`);
     }
     if (context.profileHint) {
-      parts.push(`careerOpsProfile=${context.profileHint.profileLabel}`);
+      parts.push(`workflowProfile=${context.profileHint.profileLabel}`);
       parts.push(`profileFit=${context.profileHint.fitLabel}`);
     }
 
@@ -434,12 +434,12 @@
     facts.push(`capture method: ${context.captureMethod}`);
     facts.push(`source policy state: ${context.sourcePolicyState}`);
     if (context.profileHint) {
-      facts.push(`careerops profile fit: ${context.profileHint.fitLabel}`);
+      facts.push(`profile fit: ${context.profileHint.fitLabel}`);
       context.profileHint.reasons.forEach((reason) => {
-        facts.push(`careerops profile reason: ${reason}`);
+        facts.push(`profile reason: ${reason}`);
       });
       context.profileHint.risks.forEach((risk) => {
-        facts.push(`careerops profile risk: ${risk}`);
+        facts.push(`profile risk: ${risk}`);
       });
     }
 
@@ -457,7 +457,7 @@
       why.push(`Company origin classification seen during capture: ${readText(job, "companyOrigin")}.`);
     }
     if (context.profileHint) {
-      why.push(`CareerOps profile hint: ${context.profileHint.fitLabel} (${context.profileHint.profileLabel}).`);
+      why.push(`Profile hint: ${context.profileHint.fitLabel} (${context.profileHint.profileLabel}).`);
     }
 
     return why;
@@ -492,8 +492,8 @@
     const normalizedStatus = safeText(options.normalizedStatus, DEFAULT_NORMALIZED_STATUS);
     const roleFamilyTags = inferRoleFamilyTags(job, roleTrackHint);
     const aiAssistedWorkflowSignal = inferAiWorkflowSignal(job);
-    const profileHint = options.careerOpsProfile
-      ? evaluateJobAgainstProfile(job, options.careerOpsProfile)
+    const profileHint = options.workflowProfile
+      ? evaluateJobAgainstProfile(job, options.workflowProfile)
       : null;
     const context = {
       capturedAt,
@@ -583,18 +583,18 @@
       "- Status: Unknown",
       "- Applied at: Unknown",
       "- Materials used: Unknown",
-      "- Tracking note: Manual download/copy export only; move into CareerOps repo manually if needed.",
+      "- Tracking note: Manual download/copy export only; move into Job Search Workflow repo manually if needed.",
     ];
 
     return lines.join("\n");
   }
 
-  function toCareerOpsMarkdown(jobs, options = {}) {
+  function toWorkflowMarkdown(jobs, options = {}) {
     const records = Array.isArray(jobs) ? jobs : [];
     return records.map((job) => formatMarkdownJob(job, options)).join("\n\n---\n\n");
   }
 
-  function toCareerOpsJsonl(jobs, options = {}) {
+  function toWorkflowJsonl(jobs, options = {}) {
     const records = Array.isArray(jobs) ? jobs : [];
     return records.map((job) => {
       const context = buildExportContext(job, options);
@@ -635,14 +635,14 @@
   }
 
   const api = {
-    toCareerOpsMarkdown,
-    toCareerOpsJsonl,
+    toWorkflowMarkdown,
+    toWorkflowJsonl,
     slugifyJobRecord,
     inferRoleTrackHint,
     inferWorkModel,
   };
 
-  globalTarget.CareerOpsExporter = api;
+  globalTarget.WorkflowExporter = api;
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api;

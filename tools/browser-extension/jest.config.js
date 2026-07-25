@@ -6,8 +6,8 @@ module.exports = {
       testEnvironment: "node",
       testMatch: [
         "**/tests/filters.test.js",
-        "**/tests/careerops_profile.test.js",
-        "**/tests/careerops_exporter.test.js",
+        "**/tests/workflow_profile.test.js",
+        "**/tests/workflow_exporter.test.js",
         "**/tests/scan_planner.test.js",
         "**/tests/service_worker_alarms.test.js",
       ],

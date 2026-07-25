@@ -15,7 +15,7 @@ SETUP_SH = SOURCE_ROOT / "scripts" / "setup.sh"
 
 class SetupScriptTests(unittest.TestCase):
     def make_repo(self) -> Path:
-        root = Path(tempfile.mkdtemp(prefix="careerops-public-setup-"))
+        root = Path(tempfile.mkdtemp(prefix="workflow-public-setup-"))
         self.addCleanup(shutil.rmtree, root, True)
         (root / "scripts").mkdir()
         shutil.copy2(SETUP_SH, root / "scripts" / "setup.sh")

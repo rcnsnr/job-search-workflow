@@ -1,5 +1,5 @@
 // content/autoscan.js
-// Unattended scan loop for LinkedIn Jobs -> CareerOps capture server
+// Unattended scan loop for LinkedIn Jobs -> Workflow capture server
 (function () {
   if (window.__careerOpsAutoScanInitialized) {
     return;
@@ -24,7 +24,7 @@
   }
 
   function getScraper() {
-    return window.CareerOpsLinkedInScraper || null;
+    return window.WorkflowLinkedInScraper || null;
   }
 
   function reportStatus(status) {
@@ -334,7 +334,7 @@
 
   window.__careerOpsAutoScanInitialized = true;
 
-  window.CareerOpsAutoScan = {
+  window.WorkflowAutoScan = {
     start,
     stop,
     getState,

@@ -1,19 +1,19 @@
 const {
-  toCareerOpsMarkdown,
-  toCareerOpsJsonl,
+  toWorkflowMarkdown,
+  toWorkflowJsonl,
   slugifyJobRecord,
   inferRoleTrackHint,
   inferWorkModel,
-} = require("../utils/careerops_exporter");
+} = require("../utils/workflow_exporter");
 
-describe("CareerOps exporter", () => {
+describe("Workflow exporter", () => {
   const baseOptions = {
     capturedAt: "2026-06-18",
   };
   const profileHintOptions = {
     ...baseOptions,
-    careerOpsProfile: {
-      profileLabel: "CareerOps Default Profile",
+    workflowProfile: {
+      profileLabel: "Example Workflow Profile",
       keywords: ["platform", "agent"],
       requiredKeywords: ["platform"],
       locationPreferences: ["Europe"],
@@ -87,8 +87,8 @@ describe("CareerOps exporter", () => {
     expect(inferWorkModel({ location: "Flexible" })).toBe("Unknown");
   });
 
-  test("toCareerOpsMarkdown creates parser-shaped blocks", () => {
-    const markdown = toCareerOpsMarkdown([sampleJob], baseOptions);
+  test("toWorkflowMarkdown creates parser-shaped blocks", () => {
+    const markdown = toWorkflowMarkdown([sampleJob], baseOptions);
     const [record] = splitMarkdownRecords(markdown);
 
     expect(record.startsWith("# Acme Labs - Senior Platform Engineer, AI Agents")).toBe(true);
@@ -111,14 +111,14 @@ describe("CareerOps exporter", () => {
     expect(record).not.toContain("do-not-export");
   });
 
-  test("toCareerOpsMarkdown includes profile hints when provided", () => {
-    const markdown = toCareerOpsMarkdown([sampleJob], profileHintOptions);
-    expect(markdown).toContain("CareerOps profile hint: strong_match");
-    expect(markdown).toContain("careerops profile fit: strong_match");
+  test("toWorkflowMarkdown includes profile hints when provided", () => {
+    const markdown = toWorkflowMarkdown([sampleJob], profileHintOptions);
+    expect(markdown).toContain("Profile hint: strong_match");
+    expect(markdown).toContain("profile fit: strong_match");
   });
 
-  test("toCareerOpsMarkdown joins multiple records with split-safe delimiter", () => {
-    const markdown = toCareerOpsMarkdown([
+  test("toWorkflowMarkdown joins multiple records with split-safe delimiter", () => {
+    const markdown = toWorkflowMarkdown([
       sampleJob,
       {
         ...sampleJob,
@@ -132,8 +132,8 @@ describe("CareerOps exporter", () => {
     expect(records[1].startsWith("# ")).toBe(true);
   });
 
-  test("toCareerOpsJsonl emits valid JSON per line with mapped fields", () => {
-    const jsonl = toCareerOpsJsonl([sampleJob], profileHintOptions);
+  test("toWorkflowJsonl emits valid JSON per line with mapped fields", () => {
+    const jsonl = toWorkflowJsonl([sampleJob], profileHintOptions);
     const lines = jsonl.split("\n");
     expect(lines).toHaveLength(1);
 
@@ -155,12 +155,12 @@ describe("CareerOps exporter", () => {
     expect(record.decision_handoff_state).toBe("pending_triage");
     expect(record.normalized_status).toBe("new");
     expect(record.main_fit_reason).toContain("profile fit=strong_match");
-    expect(record.notes).toContain("careerOpsProfile=CareerOps Default Profile");
+    expect(record.notes).toContain("workflowProfile=Example Workflow Profile");
     expect(record.notes).not.toContain("do-not-export");
   });
 
   test("missing fields use bounded fallbacks and link fallback risk", () => {
-    const markdown = toCareerOpsMarkdown([
+    const markdown = toWorkflowMarkdown([
       {
         title: "",
         company: "",
@@ -168,7 +168,7 @@ describe("CareerOps exporter", () => {
         link: "",
       },
     ], baseOptions);
-    const jsonl = toCareerOpsJsonl([
+    const jsonl = toWorkflowJsonl([
       {
         title: "",
         company: "",
@@ -190,8 +190,8 @@ describe("CareerOps exporter", () => {
   });
 
   test("secret-like fields are never serialized into markdown or jsonl", () => {
-    const markdown = toCareerOpsMarkdown([sampleJob], baseOptions);
-    const jsonl = toCareerOpsJsonl([sampleJob], baseOptions);
+    const markdown = toWorkflowMarkdown([sampleJob], baseOptions);
+    const jsonl = toWorkflowJsonl([sampleJob], baseOptions);
 
     ["cookie", "token", "session", "browserProfile", "premiumPayload", "do-not-export"].forEach((term) => {
       expect(markdown).not.toContain(term);

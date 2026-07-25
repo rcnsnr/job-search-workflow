@@ -1,7 +1,7 @@
 // options.js - Job Search Workflow Capture Options Page
 document.addEventListener("DOMContentLoaded", initOptionsPage);
 
-const profileUtils = window.CareerOpsProfileUtils;
+const profileUtils = window.WorkflowProfileUtils;
 const PROFILE_MODE_VALUES = profileUtils ? new Set(Object.values(profileUtils.PROFILE_MODES)) : new Set(["off"]);
 
 // Default settings configuration
@@ -64,10 +64,10 @@ const DEFAULT_SETTINGS = {
   unattendedPacingProfile: "conservative",
   unattendedPeriodMinutes: 60,
 
-  // CareerOps profile
-  careerOpsProfileMode: profileUtils ? profileUtils.PROFILE_MODES.OFF : "off",
-  careerOpsProfileJson: "",
-  careerOpsProfile: profileUtils ? profileUtils.normalizeCareerOpsProfile({}) : {},
+  // Workflow profile
+  workflowProfileMode: profileUtils ? profileUtils.PROFILE_MODES.OFF : "off",
+  workflowProfileJson: "",
+  workflowProfile: profileUtils ? profileUtils.normalizeWorkflowProfile({}) : {},
 };
 
 let currentSettings = { ...DEFAULT_SETTINGS };
@@ -75,7 +75,7 @@ let currentSettings = { ...DEFAULT_SETTINGS };
 function normalizeSettings(storedSettings) {
   const settings = storedSettings && typeof storedSettings === "object" ? storedSettings : {};
   const normalizedProfile = profileUtils
-    ? profileUtils.normalizeCareerOpsProfile(settings.careerOpsProfile)
+    ? profileUtils.normalizeWorkflowProfile(settings.workflowProfile)
     : {};
 
   return {
@@ -85,13 +85,13 @@ function normalizeSettings(storedSettings) {
       ...DEFAULT_SETTINGS.exportFields,
       ...(settings.exportFields || {}),
     },
-    careerOpsProfileMode: PROFILE_MODE_VALUES.has(settings.careerOpsProfileMode)
-      ? settings.careerOpsProfileMode
-      : DEFAULT_SETTINGS.careerOpsProfileMode,
-    careerOpsProfileJson: typeof settings.careerOpsProfileJson === "string"
-      ? settings.careerOpsProfileJson
+    workflowProfileMode: PROFILE_MODE_VALUES.has(settings.workflowProfileMode)
+      ? settings.workflowProfileMode
+      : DEFAULT_SETTINGS.workflowProfileMode,
+    workflowProfileJson: typeof settings.workflowProfileJson === "string"
+      ? settings.workflowProfileJson
       : (profileUtils ? JSON.stringify(normalizedProfile, null, 2) : ""),
-    careerOpsProfile: normalizedProfile,
+    workflowProfile: normalizedProfile,
   };
 }
 
@@ -207,10 +207,10 @@ function populateFormFields() {
   setMultiCheckboxGroup("unattended-jobtype-", currentSettings.unattendedJobTypes);
   setMultiCheckboxGroup("unattended-exp-", currentSettings.unattendedExperienceLevels);
 
-  // CareerOps profile
-  document.getElementById("careerops-profile-mode").value = currentSettings.careerOpsProfileMode;
-  document.getElementById("careerops-profile-json").value = currentSettings.careerOpsProfileJson;
-  renderCareerOpsProfileSummary(currentSettings.careerOpsProfile, currentSettings.careerOpsProfileMode);
+  // Workflow profile
+  document.getElementById("workflow-profile-mode").value = currentSettings.workflowProfileMode;
+  document.getElementById("workflow-profile-json").value = currentSettings.workflowProfileJson;
+  renderWorkflowProfileSummary(currentSettings.workflowProfile, currentSettings.workflowProfileMode);
 
   // Update range displays
   updateRangeDisplay("max-results", currentSettings.maxResults + " posting");
@@ -248,11 +248,11 @@ function updateRangeDisplay(inputId, text) {
 function setupEventListeners() {
   // Save all settings button
   document.getElementById("save-all-settings").addEventListener("click", saveAllSettings);
-  document.getElementById("careerops-profile-template").addEventListener("click", loadCareerOpsProfileTemplate);
-  document.getElementById("careerops-profile-import").addEventListener("click", importCareerOpsProfile);
-  document.getElementById("careerops-profile-clear").addEventListener("click", clearCareerOpsProfile);
-  document.getElementById("careerops-profile-json").addEventListener("input", refreshCareerOpsProfilePreviewFromTextarea);
-  document.getElementById("careerops-profile-mode").addEventListener("change", refreshCareerOpsProfilePreviewFromTextarea);
+  document.getElementById("workflow-profile-template").addEventListener("click", loadWorkflowProfileTemplate);
+  document.getElementById("workflow-profile-import").addEventListener("click", importWorkflowProfile);
+  document.getElementById("workflow-profile-clear").addEventListener("click", clearWorkflowProfile);
+  document.getElementById("workflow-profile-json").addEventListener("input", refreshWorkflowProfilePreviewFromTextarea);
+  document.getElementById("workflow-profile-mode").addEventListener("change", refreshWorkflowProfilePreviewFromTextarea);
 
   // Data management buttons
   document.getElementById("export-settings").addEventListener("click", exportSettings);
@@ -285,11 +285,11 @@ async function collectAndSaveSettings(showNotification = true) {
   try {
     showSaveStatus("saving", "Kaydediliyor...");
 
-    const profileParse = profileUtils.parseCareerOpsProfileInput(
-      document.getElementById("careerops-profile-json").value,
+    const profileParse = profileUtils.parseWorkflowProfileInput(
+      document.getElementById("workflow-profile-json").value,
     );
     if (!profileParse.ok) {
-      showSaveStatus("error", "CareerOps profile JSON invalid: " + profileParse.error);
+      showSaveStatus("error", "Profile JSON invalid: " + profileParse.error);
       return;
     }
 
@@ -354,15 +354,15 @@ async function collectAndSaveSettings(showNotification = true) {
       unattendedPacingProfile: document.getElementById("unattended-pacing-profile").value,
       unattendedPeriodMinutes: parseInt(document.getElementById("unattended-period-minutes").value) || 60,
 
-      careerOpsProfileMode: document.getElementById("careerops-profile-mode").value,
-      careerOpsProfileJson: profileParse.rawText,
-      careerOpsProfile: profileParse.profile,
+      workflowProfileMode: document.getElementById("workflow-profile-mode").value,
+      workflowProfileJson: profileParse.rawText,
+      workflowProfile: profileParse.profile,
     });
 
     // Save to storage
     await chrome.storage.local.set({ optionsSettings: newSettings });
     currentSettings = newSettings;
-    renderCareerOpsProfileSummary(currentSettings.careerOpsProfile, currentSettings.careerOpsProfileMode);
+    renderWorkflowProfileSummary(currentSettings.workflowProfile, currentSettings.workflowProfileMode);
 
     if (showNotification) {
       showSaveStatus("success", "Settings saved successfully!");
@@ -464,21 +464,21 @@ async function clearAllData() {
   }
 }
 
-function refreshCareerOpsProfilePreviewFromTextarea() {
-  const mode = document.getElementById("careerops-profile-mode").value;
-  const rawText = document.getElementById("careerops-profile-json").value;
-  const parsed = profileUtils.parseCareerOpsProfileInput(rawText);
+function refreshWorkflowProfilePreviewFromTextarea() {
+  const mode = document.getElementById("workflow-profile-mode").value;
+  const rawText = document.getElementById("workflow-profile-json").value;
+  const parsed = profileUtils.parseWorkflowProfileInput(rawText);
 
   if (!parsed.ok) {
-    renderCareerOpsProfileSummary(null, mode, parsed.error);
+    renderWorkflowProfileSummary(null, mode, parsed.error);
     return;
   }
 
-  renderCareerOpsProfileSummary(parsed.profile, mode);
+  renderWorkflowProfileSummary(parsed.profile, mode);
 }
 
-function renderCareerOpsProfileSummary(profile, mode, parseError = "") {
-  const container = document.getElementById("careerops-profile-summary");
+function renderWorkflowProfileSummary(profile, mode, parseError = "") {
+  const container = document.getElementById("workflow-profile-summary");
   if (!container) {
     return;
   }
@@ -488,7 +488,7 @@ function renderCareerOpsProfileSummary(profile, mode, parseError = "") {
     return;
   }
 
-  const normalizedProfile = profileUtils.normalizeCareerOpsProfile(profile);
+  const normalizedProfile = profileUtils.normalizeWorkflowProfile(profile);
   const modeLabels = {
     off: "Off",
     default_filters: "Default filterler",
@@ -513,21 +513,21 @@ function renderCareerOpsProfileSummary(profile, mode, parseError = "") {
   container.innerHTML = `<ul>${summaryItems.map((item) => `<li>${item}</li>`).join("")}</ul>`;
 }
 
-function loadCareerOpsProfileTemplate() {
-  document.getElementById("careerops-profile-json").value = profileUtils.createCareerOpsProfileTemplate();
-  if (document.getElementById("careerops-profile-mode").value === profileUtils.PROFILE_MODES.OFF) {
-    document.getElementById("careerops-profile-mode").value = profileUtils.PROFILE_MODES.DEFAULT_FILTERS;
+function loadWorkflowProfileTemplate() {
+  document.getElementById("workflow-profile-json").value = profileUtils.createWorkflowProfileTemplate();
+  if (document.getElementById("workflow-profile-mode").value === profileUtils.PROFILE_MODES.OFF) {
+    document.getElementById("workflow-profile-mode").value = profileUtils.PROFILE_MODES.DEFAULT_FILTERS;
   }
-  refreshCareerOpsProfilePreviewFromTextarea();
+  refreshWorkflowProfilePreviewFromTextarea();
 }
 
-function clearCareerOpsProfile() {
-  document.getElementById("careerops-profile-json").value = "";
-  document.getElementById("careerops-profile-mode").value = profileUtils.PROFILE_MODES.OFF;
-  refreshCareerOpsProfilePreviewFromTextarea();
+function clearWorkflowProfile() {
+  document.getElementById("workflow-profile-json").value = "";
+  document.getElementById("workflow-profile-mode").value = profileUtils.PROFILE_MODES.OFF;
+  refreshWorkflowProfilePreviewFromTextarea();
 }
 
-function importCareerOpsProfile() {
+function importWorkflowProfile() {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = ".json";
@@ -540,20 +540,20 @@ function importCareerOpsProfile() {
 
     try {
       const text = await file.text();
-      const parsed = profileUtils.parseCareerOpsProfileInput(text);
+      const parsed = profileUtils.parseWorkflowProfileInput(text);
       if (!parsed.ok) {
         throw new Error(parsed.error);
       }
 
-      document.getElementById("careerops-profile-json").value = parsed.rawText;
-      if (document.getElementById("careerops-profile-mode").value === profileUtils.PROFILE_MODES.OFF) {
-        document.getElementById("careerops-profile-mode").value = profileUtils.PROFILE_MODES.DEFAULT_FILTERS;
+      document.getElementById("workflow-profile-json").value = parsed.rawText;
+      if (document.getElementById("workflow-profile-mode").value === profileUtils.PROFILE_MODES.OFF) {
+        document.getElementById("workflow-profile-mode").value = profileUtils.PROFILE_MODES.DEFAULT_FILTERS;
       }
-      refreshCareerOpsProfilePreviewFromTextarea();
-      showSaveStatus("success", "CareerOps profile imported. Don't forget to save.");
+      refreshWorkflowProfilePreviewFromTextarea();
+      showSaveStatus("success", "Profile imported. Don't forget to save.");
     } catch (error) {
-      console.error("CareerOps profile import error:", error);
-      showSaveStatus("error", "CareerOps profile import failed: " + error.message);
+      console.error("Profile import error:", error);
+      showSaveStatus("error", "Profile import failed: " + error.message);
     }
   };
 

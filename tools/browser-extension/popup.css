@@ -191,32 +191,32 @@ button {
     font-size: 0.82rem;
 }
 
-#download-careerops-markdown {
+#download-workflow-markdown {
     background: #6f42c1;
     color: white;
 }
 
-#download-careerops-markdown:hover {
+#download-workflow-markdown:hover {
     background: #5d36a3;
     transform: translateY(-1px);
 }
 
-#download-careerops-jsonl {
+#download-workflow-jsonl {
     background: #fd7e14;
     color: white;
 }
 
-#download-careerops-jsonl:hover {
+#download-workflow-jsonl:hover {
     background: #dc6b11;
     transform: translateY(-1px);
 }
 
-#copy-careerops-markdown {
+#copy-workflow-markdown {
     background: #495057;
     color: white;
 }
 
-#copy-careerops-markdown:hover {
+#copy-workflow-markdown:hover {
     background: #343a40;
     transform: translateY(-1px);
 }
