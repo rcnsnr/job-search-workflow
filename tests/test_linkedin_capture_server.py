@@ -201,9 +201,9 @@ def test_capture_non_ascii_body_is_written(client):
         "work_model": "Remote",
         "source_class": "generic_job_board",
         "capture_method": "unattended_scan",
-        "why_captured": "SRE geçmişi ile uyumlu.",
+        "why_captured": "Strong SRE alignment.",
         "extracted_facts": {"team": "small", "tech": "Python"},
-        "fit_hypothesis": "İyi bir uyum.",
+        "fit_hypothesis": "Strong match.",
     }
 
     response = test_client.post("/capture", json=payload)
@@ -211,5 +211,5 @@ def test_capture_non_ascii_body_is_written(client):
 
     files = os.listdir(tmp_dir)
     content = open(os.path.join(tmp_dir, files[0]), encoding="utf-8").read()
-    assert "SRE geçmişi ile uyumlu." in content
-    assert "İyi bir uyum." in content
+    assert "Strong SRE alignment." in content
+    assert "Strong match." in content

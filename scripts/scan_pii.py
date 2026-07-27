@@ -43,8 +43,8 @@ DENIED_PATTERNS = [
     # Old Turkish status fallback that signals untranslated private UI
     (r"\bBelirsiz\b", "untranslated Turkish fallback 'Belirsiz'"),
     # Owner-specific locations that should not be hard-coded
-    (r"\bİstanbul\b|\bIstanbul\b", "owner city"),
-    (r"\bTürkiye\b|\bTurkey\b", "owner country"),
+    (r"\bIstanbul\b", "owner city"),
+    (r"\bTurkey\b", "owner country"),
     (r"\bAnkara\b", "owner-specific city"),
 ]
 

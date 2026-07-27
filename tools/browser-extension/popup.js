@@ -675,9 +675,9 @@ function setupDebugPanel() {
   if (clearButton) {
     clearButton.addEventListener("click", () => {
       if (confirm("Are you sure you want to clear all debug logs?")) {
-        logger.info("Loglar temizleniyor...");
+        logger.info("Clearing logs...");
         Logger.clearLogs();
-        debugLogsContainer.innerHTML = "<p style=\"color: #6c757d;\">Loglar temizlendi.</p>";
+        debugLogsContainer.innerHTML = "<p style=\"color: #6c757d;\">Logs cleared.</p>";
       }
     });
   }
@@ -762,13 +762,13 @@ function renderTelemetry(container, telemetry, metadata = {}) {
     <h4>Daily Profile Status</h4>
     <p class="telemetry__stat"><strong>Active profile:</strong> ${lastProfile}</p>
     <p class="telemetry__stat"><strong>Tasks processed today:</strong> ${processedToday}</p>
-    <p class="telemetry__stat"><strong>Last gecikme:</strong> ${delayInfo}</p>
+    <p class="telemetry__stat"><strong>Last delay:</strong> ${delayInfo}</p>
     <p class="telemetry__stat"><strong>Profile range:</strong> ${throttleRange}</p>
     <p class="telemetry__stat"><strong>Last processing time:</strong> ${lastProcessed}</p>
     <hr>
-    <p class="telemetry__stat"><strong>Premium toplam kota:</strong> ${premiumLimit}</p>
+    <p class="telemetry__stat"><strong>Premium limit:</strong> ${premiumLimit}</p>
     <p class="telemetry__stat"><strong>Premium used:</strong> ${premiumUsed}</p>
-    <p class="telemetry__stat"><strong>Kalan Premium kota:</strong> ${premiumRemaining}</p>
+    <p class="telemetry__stat"><strong>Premium remaining:</strong> ${premiumRemaining}</p>
     <p class="telemetry__stat"><strong>Last premium request:</strong> ${premiumLast}</p>
   `;
 }
