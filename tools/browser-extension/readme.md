@@ -60,6 +60,7 @@ A browser extension companion for the [Job Search Workflow](https://github.com/<
   - `Default filters only`
   - `Default filters + export hints`
 - This profile is used locally only; no automatic data pull from a sibling Job Search Workflow repo.
+- Location eligibility is configurable with generic regions, relocation preference, visa sponsorship preference, relocation-support policy, and an optional foreign onsite/hybrid penalty. No country or region is assumed by default.
 - This field is for strategy notes and non-sensitive metadata only. Do not synchronize cookies, tokens, sessions, or private payloads.
 
 ## Project Structure

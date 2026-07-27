@@ -8,6 +8,7 @@ const {
   buildFilterDefaultsFromOptions,
   buildFilterDefaultsFromProfile,
   resolvePopupFilters,
+  evaluateLocationEligibility,
   evaluateJobAgainstWorkflowProfile,
 } = require("../utils/workflow_profile");
 
@@ -151,6 +152,48 @@ describe("Workflow profile helpers", () => {
     expect(filters.minSalary).toBeNull();
     expect(filters.remoteOnly).toBe(false);
     expect(filters.maxAgeDays).toBeNull();
+  });
+
+  test("evaluateLocationEligibility is neutral until the user configures regions", () => {
+    const result = evaluateLocationEligibility({
+      location: "Foreign city",
+      workModel: "hybrid",
+    }, {});
+
+    expect(result.gate).toBe("not_evaluated");
+    expect(result.scoreAdjustment).toBe(0);
+  });
+
+  test("evaluateLocationEligibility keeps unsupported foreign onsite work conditional", () => {
+    const result = evaluateLocationEligibility({
+      location: "Foreign city",
+      workModel: "onsite",
+      relocationSupport: "not_offered",
+      visaSponsorship: "not_offered",
+    }, {
+      homeRegion: "home-region",
+      eligibleWorkRegions: ["target-region"],
+      relocationPreference: "conditional",
+      relocationSupportPolicy: "prefer",
+      foreignOnsiteWithoutSupportPenalty: -2,
+    });
+
+    expect(result.gate).toBe("risk");
+    expect(result.scoreAdjustment).toBe(-2);
+  });
+
+  test("evaluateLocationEligibility rejects local right-to-work without required sponsorship", () => {
+    const result = evaluateLocationEligibility({
+      location: "Foreign city",
+      workModel: "hybrid",
+      requiresLocalRightToWork: true,
+      visaSponsorship: "not_offered",
+    }, {
+      homeRegion: "home-region",
+      visaSponsorshipPreference: "required_for_foreign_local_roles",
+    });
+
+    expect(result.gate).toBe("reject_candidate");
   });
 
   test("evaluateJobAgainstWorkflowProfile returns strong match when signals align", () => {

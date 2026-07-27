@@ -29,6 +29,21 @@
     "onsite",
     "Unknown",
   ]);
+  const ALLOWED_RELOCATION_PREFERENCES = new Set([
+    "never",
+    "conditional",
+    "preferred",
+  ]);
+  const ALLOWED_VISA_SPONSORSHIP_PREFERENCES = new Set([
+    "ignore",
+    "prefer",
+    "required_for_foreign_local_roles",
+  ]);
+  const ALLOWED_RELOCATION_SUPPORT_POLICIES = new Set([
+    "ignore",
+    "prefer",
+    "required",
+  ]);
 
   function normalizeWhitespace(value) {
     if (typeof value !== "string") {
@@ -81,6 +96,13 @@
     return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
   }
 
+  function normalizeBoundedInteger(value, minimum, maximum, fallback) {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isFinite(parsed) && parsed >= minimum && parsed <= maximum
+      ? parsed
+      : fallback;
+  }
+
   function normalizeEnum(value, allowedValues, fallback) {
     return allowedValues.has(value) ? value : fallback;
   }
@@ -105,6 +127,12 @@
       locationPreferences: normalizeStringArray(profile.locationPreferences, 10),
       remoteOnly: normalizeBoolean(profile.remoteOnly, false),
       workModelPreferences: normalizeStringArray(profile.workModelPreferences, 4).filter((item) => ALLOWED_WORK_MODE_PREFERENCES.has(item)),
+      homeRegion: normalizeWhitespace(profile.homeRegion),
+      eligibleWorkRegions: normalizeStringArray(profile.eligibleWorkRegions, 10),
+      relocationPreference: normalizeEnum(profile.relocationPreference, ALLOWED_RELOCATION_PREFERENCES, "conditional"),
+      visaSponsorshipPreference: normalizeEnum(profile.visaSponsorshipPreference, ALLOWED_VISA_SPONSORSHIP_PREFERENCES, "ignore"),
+      relocationSupportPolicy: normalizeEnum(profile.relocationSupportPolicy, ALLOWED_RELOCATION_SUPPORT_POLICIES, "ignore"),
+      foreignOnsiteWithoutSupportPenalty: normalizeBoundedInteger(profile.foreignOnsiteWithoutSupportPenalty, -10, 0, -2),
       companyOrigin: normalizeEnum(profile.companyOrigin, ALLOWED_COMPANY_ORIGINS, "any"),
       minSalary: normalizeNullableNumber(profile.minSalary),
       maxAgeDays: normalizeNullableNumber(profile.maxAgeDays),
@@ -146,9 +174,15 @@
       keywords: ["platform", "reliability", "observability", "agent", "developer productivity"],
       requiredKeywords: ["platform"],
       avoidKeywords: ["onsite-only", "commission"],
-      locationPreferences: ["Remote", "Europe"],
+      locationPreferences: ["Remote", "Target region"],
       remoteOnly: true,
       workModelPreferences: ["remote", "hybrid"],
+      homeRegion: "home-region",
+      eligibleWorkRegions: ["home-region", "target-region"],
+      relocationPreference: "conditional",
+      visaSponsorshipPreference: "required_for_foreign_local_roles",
+      relocationSupportPolicy: "prefer",
+      foreignOnsiteWithoutSupportPenalty: -2,
       companyOrigin: null,
       minSalary: null,
       maxAgeDays: null,
@@ -325,6 +359,103 @@
     return parts.join(" ").toLowerCase();
   }
 
+  function evaluateLocationEligibility(job, profile) {
+    const normalizedProfile = normalizeWorkflowProfile(profile);
+    const homeRegion = normalizedProfile.homeRegion.toLowerCase();
+    const eligibleRegions = normalizedProfile.eligibleWorkRegions.map((item) => item.toLowerCase());
+    const text = buildJobSearchText(job);
+    const workModel = normalizeWhitespace(job?.workModel).toLowerCase();
+    const relocationSupport = normalizeWhitespace(job?.relocationSupport).toLowerCase();
+    const visaSponsorship = normalizeWhitespace(job?.visaSponsorship).toLowerCase();
+    const requiresLocalRightToWork = normalizeBoolean(job?.requiresLocalRightToWork, false);
+    const configuredRegions = [homeRegion, ...eligibleRegions].filter(Boolean);
+
+    if (configuredRegions.length === 0) {
+      return {
+        gate: "not_evaluated",
+        scoreAdjustment: 0,
+        reasons: [],
+        risks: [],
+      };
+    }
+
+    if (configuredRegions.some((region) => text.includes(region))) {
+      return {
+        gate: "pass",
+        scoreAdjustment: 0,
+        reasons: ["listing matches an eligible work region"],
+        risks: [],
+      };
+    }
+
+    if (workModel === "remote") {
+      return {
+        gate: "risk",
+        scoreAdjustment: 0,
+        reasons: [],
+        risks: ["remote listing does not confirm eligibility for configured regions"],
+      };
+    }
+
+    if (workModel !== "hybrid" && workModel !== "onsite") {
+      return {
+        gate: "risk",
+        scoreAdjustment: 0,
+        reasons: [],
+        risks: ["work model is unknown for a foreign-region listing"],
+      };
+    }
+
+    const supportConfirmed = relocationSupport === "confirmed" || visaSponsorship === "confirmed";
+    const supportMissing = relocationSupport === "not_offered" && visaSponsorship === "not_offered";
+    if (normalizedProfile.relocationPreference === "never") {
+      return {
+        gate: "reject_candidate",
+        scoreAdjustment: 0,
+        reasons: [],
+        risks: ["profile does not allow foreign onsite or hybrid work"],
+      };
+    }
+    if (requiresLocalRightToWork && normalizedProfile.visaSponsorshipPreference === "required_for_foreign_local_roles" && visaSponsorship !== "confirmed") {
+      return {
+        gate: "reject_candidate",
+        scoreAdjustment: 0,
+        reasons: [],
+        risks: ["local right-to-work is required without confirmed sponsorship"],
+      };
+    }
+    if (supportConfirmed) {
+      return {
+        gate: "risk",
+        scoreAdjustment: 1,
+        reasons: ["relocation or visa support is confirmed"],
+        risks: ["foreign onsite or hybrid work requires a relocation decision"],
+      };
+    }
+    if (supportMissing && normalizedProfile.relocationSupportPolicy === "required") {
+      return {
+        gate: "reject_candidate",
+        scoreAdjustment: 0,
+        reasons: [],
+        risks: ["required relocation or visa support is not offered"],
+      };
+    }
+    if (supportMissing) {
+      return {
+        gate: "risk",
+        scoreAdjustment: normalizedProfile.foreignOnsiteWithoutSupportPenalty,
+        reasons: [],
+        risks: ["relocation and visa support are not offered"],
+      };
+    }
+    return {
+      gate: "risk",
+      scoreAdjustment: 0,
+      reasons: [],
+      risks: ["relocation and visa support are not confirmed"],
+    };
+  }
+
   function evaluateJobAgainstWorkflowProfile(job, profile) {
     const normalizedProfile = normalizeWorkflowProfile(profile);
     const text = buildJobSearchText(job);
@@ -332,6 +463,7 @@
     const missingRequiredKeywords = normalizedProfile.requiredKeywords.filter((keyword) => !text.includes(keyword.toLowerCase()));
     const blockedKeywords = normalizedProfile.avoidKeywords.filter((keyword) => text.includes(keyword.toLowerCase()));
     const locationMatches = normalizedProfile.locationPreferences.filter((item) => text.includes(item.toLowerCase()));
+    const eligibility = evaluateLocationEligibility(job, normalizedProfile);
 
     let fitLabel = "neutral";
     const reasons = [];
@@ -359,8 +491,12 @@
     if (normalizedProfile.companyOrigin === "exclude-outsourcing" && normalizeWhitespace(job?.companyOrigin) === "outsourcing") {
       risks.push("company origin conflicts with outsourcing exclusion");
     }
+    reasons.push(...eligibility.reasons);
+    risks.push(...eligibility.risks);
 
-    if (risks.length === 0 && (matchedKeywords.length > 0 || locationMatches.length > 0)) {
+    if (eligibility.gate === "reject_candidate") {
+      fitLabel = "low_match";
+    } else if (risks.length === 0 && (matchedKeywords.length > 0 || locationMatches.length > 0)) {
       fitLabel = "strong_match";
     } else if (reasons.length > 0 && risks.length > 0) {
       fitLabel = "mixed_match";
@@ -376,6 +512,7 @@
       missingRequiredKeywords,
       blockedKeywords,
       locationMatches,
+      eligibility,
       profileLabel: normalizedProfile.profileLabel,
     };
   }
@@ -390,6 +527,7 @@
     buildFilterDefaultsFromOptions,
     buildFilterDefaultsFromProfile,
     resolvePopupFilters,
+    evaluateLocationEligibility,
     evaluateJobAgainstWorkflowProfile,
   };
 
