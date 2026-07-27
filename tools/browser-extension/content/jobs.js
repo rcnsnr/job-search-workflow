@@ -268,7 +268,7 @@
   function getJobCards() {
     const pageType = detectPageType();
     const selectors = [
-      // 2025-2026 current selectors (AI search ve yeni arama deneyimi)
+      // Current selectors for AI search and the newer search experience
       "[data-tracking-control-name='public_jobs_jserp-result_search-card']",
       "[data-view-name='search-entity-result-universal-template']",
       "li[data-occludable-job-id]",

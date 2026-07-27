@@ -229,7 +229,7 @@ describe("Popup Functionality", () => {
   });
 
   test("should accept filter values", async () => {
-    // Before temizle
+    // Clear fields before the test
     await popupPage.$eval("#keyword-input", (el) => (el.value = ""));
     await popupPage.$eval("#location-input", (el) => (el.value = ""));
 
