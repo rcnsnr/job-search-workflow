@@ -270,9 +270,13 @@ def tokenize(text: str) -> list[str]:
     return re.findall(r"[A-Za-z0-9_\-ÇĞİÖŞÜçğıöşü]+", text)
 
 
-def check_line(line: str, path: Path, line_no: int, findings: list[str]) -> None:
-    lower_line = line.lower()
-
+def check_line(
+    line: str,
+    path: Path,
+    line_no: int,
+    findings: list[str],
+    allowed: set[str],
+) -> None:
     # Layer 1: Turkish characters.
     for match in TURKISH_CHARS.finditer(line):
         findings.append(f"{path}:{line_no}:{match.start()+1}: Turkish character '{match.group()}'")
@@ -280,7 +284,7 @@ def check_line(line: str, path: Path, line_no: int, findings: list[str]) -> None
     # Layer 2 & 3: word list and normalized forms.
     for token in tokenize(line):
         lower_token = token.lower()
-        if lower_token in ALLOWED:
+        if lower_token in allowed:
             continue
 
         normalized = lower_token.translate(NORMALIZE_MAP)
@@ -308,7 +312,7 @@ def main() -> int:
             continue
 
         for line_no, line in enumerate(text.splitlines(), start=1):
-            check_line(line, path, line_no, findings)
+            check_line(line, path, line_no, findings, allowed)
 
     if findings:
         print("Turkish content detected:")

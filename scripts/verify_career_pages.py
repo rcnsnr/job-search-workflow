@@ -98,9 +98,6 @@ def main():
             continue
 
         status, error = check_url(url, timeout=args.timeout)
-        detected_ats = detect_ats_provider(url)
-        declared_ats = company.get("ats_provider", "unknown")
-
         if status == 200:
             print(f"  OK    {name}: {status}")
             ok_count += 1

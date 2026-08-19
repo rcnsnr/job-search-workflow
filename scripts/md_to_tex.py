@@ -216,20 +216,13 @@ def convert(md_path: Path) -> str:
     # For experience entries: track pending job title + meta line
     pending_title = None
 
-    def close_itemize():
-        nonlocal in_itemize
-        if in_itemize:
-            tex_add("\\end{itemize}\n")
-            in_itemize = False
-
     # We'll build tex via a list for efficiency
     out_parts = [tex]
 
     def add(s):
         out_parts.append(s)
 
-    # redefine close_itemize to use out_parts
-    def close_itemize2():
+    def close_itemize():
         nonlocal in_itemize
         if in_itemize:
             add("\\end{itemize}\n\n")
@@ -242,7 +235,7 @@ def convert(md_path: Path) -> str:
 
         # H2 section
         if stripped.startswith("## "):
-            close_itemize2()
+            close_itemize()
             pending_title = None
             sec = stripped[3:].strip()
             current_section = sec
@@ -252,7 +245,7 @@ def convert(md_path: Path) -> str:
 
         # H3 subsection
         if stripped.startswith("### "):
-            close_itemize2()
+            close_itemize()
             sub = stripped[4:].strip()
             if current_section == "Professional Experience":
                 # job entry: title now, next non-empty non-# line is meta
@@ -311,16 +304,16 @@ def convert(md_path: Path) -> str:
                 i += 1
                 continue
             # otherwise: paragraph text (summary, project description, training line)
-            close_itemize2()
+            close_itemize()
             add(convert_inline(stripped) + "\n\n")
             i += 1
             continue
 
         # empty line
-        close_itemize2()
+        close_itemize()
         i += 1
 
-    close_itemize2()
+    close_itemize()
     out_parts.append(POSTAMBLE)
     return "".join(out_parts)
 
@@ -330,7 +323,6 @@ def find_legacy_cvs_missing_tex(glob: str = "*-cv-*.md") -> list[Path]:
     apps = REPO_ROOT / "exports" / "applications"
     result = []
     for md in apps.rglob(glob):
-        stem = md.stem  # e.g. myname-cv-polar-senior-platform-engineer
         tex = md.with_suffix(".tex")
         pdf = md.with_suffix(".pdf")
         if pdf.exists() and not tex.exists():

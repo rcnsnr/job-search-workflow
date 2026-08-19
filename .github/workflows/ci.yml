@@ -26,6 +26,8 @@ jobs:
       - run: python3 -m pip install -e ".[dashboard,dev]"
       - run: python3 -m compileall -q dashboard scripts tests
         name: Compile Python sources
+      - run: python3 -m ruff check dashboard scripts tests
+        name: Lint Python sources
       - run: python3 -m pytest -q
         name: Run Python tests
       - run: PYTHONPATH=scripts python3 -m jsw smoke
