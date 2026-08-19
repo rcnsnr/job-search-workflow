@@ -113,7 +113,7 @@ Open `http://localhost:3000` to use:
 - a local workspace overview and attention list
 - a responsive application pipeline
 - searchable job records with compact dates
-- profile and scoring reference views
+- profile, career-direction, decision-criteria, and scoring reference views
 - a light-first interface with an optional dark theme
 
 The dashboard is read-only and does not require an account or external data

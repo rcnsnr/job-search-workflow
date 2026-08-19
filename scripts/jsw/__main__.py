@@ -16,7 +16,14 @@ import sys
 DEFAULT_USER_FILES = {
     "career_profile.md": "# Career Profile\n\nReplace this text with verified career information.\n",
     "skill_matrix_summary.md": "# Skill Matrix Summary\n\nList verified skills and evidence here.\n",
-    "target_roles.md": "# Target Roles\n\nDefine target roles, locations, and constraints here.\n",
+    "target_roles.md": (
+        "# Career Direction\n\n"
+        "## Target roles\n\n- Add the roles you want to pursue.\n\n"
+        "## Decision criteria\n\n"
+        "### Must have\n\n- Add non-negotiable requirements.\n\n"
+        "### Prefer\n\n- Add positive signals and trade-offs.\n\n"
+        "### Avoid\n\n- Add boundaries that should stop an application.\n"
+    ),
 }
 
 

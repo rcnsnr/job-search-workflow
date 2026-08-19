@@ -64,6 +64,16 @@ def test_jobs_page_has_local_filters_and_compact_dates() -> None:
     assert "2026-07-01T00:00:00" not in response.text
 
 
+def test_profile_surfaces_career_direction_and_decision_criteria() -> None:
+    response = client.get("/profile")
+
+    assert response.status_code == 200
+    assert "Career Direction" in response.text
+    assert "Decision criteria" in response.text
+    assert "AI-enabled platform engineering" in response.text
+    assert "No recurring overnight on-call" in response.text
+
+
 def test_format_date_normalizes_iso_timestamp() -> None:
     assert server.format_compact_date("2026-07-21T00:00:00+03:00") == "2026-07-21"
     assert server.format_compact_date("2026-07-21") == "2026-07-21"

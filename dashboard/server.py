@@ -296,6 +296,20 @@ def load_profile_html() -> str:
     return render_safe_markdown(text)
 
 
+def load_target_roles_html() -> str:
+    """Render the owner's career direction and decision criteria."""
+    local_targets = USER_DATA_DIR / "target_roles.md"
+    path = local_targets if local_targets.is_file() else FIXTURES_DIR / "sample-target_roles.md"
+    if not path.exists():
+        return render_safe_markdown(
+            "## Decision criteria\n\n"
+            "Add target roles, preferred environments, must-haves, and boundaries "
+            "to `user_data/target_roles.md`."
+        )
+    text = path.read_text(encoding="utf-8")
+    return render_safe_markdown(text)
+
+
 def load_scoring_config() -> dict:
     """Load scoring.yaml configuration."""
     path = SCORING_CONFIG
@@ -404,12 +418,14 @@ async def jobs_view(request: Request):
 async def profile_view(request: Request):
     """Profile summary view."""
     profile_html = load_profile_html()
+    target_roles_html = load_target_roles_html()
     return templates.TemplateResponse(
         request=request,
         name="profile.html",
         context={
             "request": request,
             "profile_html": profile_html,
+            "target_roles_html": target_roles_html,
         },
     )
 
@@ -485,9 +501,11 @@ def smoke_test() -> bool:
     try:
         cards = load_job_cards()
         profile = load_profile_html()
+        target_roles = load_target_roles_html()
         config = load_scoring_config()
         print(f"  cards loaded: {len(cards)}")
         print(f"  profile length: {len(profile)} chars")
+        print(f"  target roles length: {len(target_roles)} chars")
         print(f"  scoring config keys: {list(config.keys())}")
         return True
     except Exception as e:
