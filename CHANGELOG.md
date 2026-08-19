@@ -1,9 +1,9 @@
 # Changelog
 
 This file records user-visible changes to Job Search Workflow Community
-Edition. No stable release or tag is represented by the entries below.
+Edition.
 
-## [Unreleased] - 2026-08-19
+## [0.1.0] - 2026-08-19
 
 ### Added
 

@@ -7,7 +7,7 @@
 > 1.0.0. Commercial use is not granted by this repository. See
 > [Commercial Use and SaaS Boundary](COMMERCIAL_USE.md).
 
-See the [Changelog](CHANGELOG.md) for the current unreleased change set.
+See the [Changelog](CHANGELOG.md) for the current release notes.
 Report vulnerabilities through the private-first process in
 [Security Policy](SECURITY.md).
 
