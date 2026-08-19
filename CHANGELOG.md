@@ -15,6 +15,7 @@ Edition. No stable release or tag is represented by the entries below.
   signals.
 - Installable `jsw` command with local initialization, dashboard, and smoke
   checks.
+- Persistent dashboard ownership and noncommercial-use notice.
 
 ### Changed
 

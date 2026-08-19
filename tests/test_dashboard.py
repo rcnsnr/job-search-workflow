@@ -25,6 +25,8 @@ def test_primary_pages_use_community_edition_shell() -> None:
         assert 'id="main-content"' in response.text
         assert 'aria-label="Primary navigation"' in response.text
         assert "Theme" in response.text
+        assert "2026 Orcun Sener" in response.text
+        assert "Noncommercial use only" in response.text
 
 
 def test_public_dashboard_has_no_retired_private_product_name() -> None:

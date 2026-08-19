@@ -319,6 +319,14 @@ select {
   text-transform: uppercase;
 }
 
+.copyright-notice {
+  display: grid;
+  gap: 2px;
+  color: var(--sidebar-muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
 .workspace {
   min-width: 0;
 }
