@@ -4,7 +4,7 @@ set -euo pipefail
 
 repo_root="$(git rev-parse --show-toplevel)"
 receipt="$(git config --worktree --get-regexp 'deliveryTargetReceipt$' 2>/dev/null | awk 'NR == 1 { print $2 }')"
-validator="$(git config --worktree --get deliveryTargetValidator || true)"
+validator="$(git config --worktree --get-regexp 'deliveryTargetValidator$' 2>/dev/null | awk 'NR == 1 { print $2 }')"
 
 if [[ -z "$receipt" || -z "$validator" ]]; then
   echo "status=FAIL condition=missing_delivery_target_configuration" >&2
