@@ -327,6 +327,15 @@ select {
   line-height: 1.5;
 }
 
+.copyright-notice a {
+  color: inherit;
+  text-underline-offset: 2px;
+}
+
+.copyright-notice a:hover {
+  color: var(--sidebar-ink);
+}
+
 .workspace {
   min-width: 0;
 }

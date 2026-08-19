@@ -25,7 +25,10 @@ def test_primary_pages_use_community_edition_shell() -> None:
         assert 'id="main-content"' in response.text
         assert 'aria-label="Primary navigation"' in response.text
         assert "Theme" in response.text
-        assert "2026 Orcun Sener" in response.text
+        assert "Copyright &copy; 2026" in response.text
+        assert "Orcun Sener" in response.text
+        assert 'href="https://github.com/rcnsnr/job-search-workflow"' in response.text
+        assert 'target="_blank" rel="noopener noreferrer"' in response.text
         assert "Noncommercial use only" in response.text
 
 
