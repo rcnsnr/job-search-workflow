@@ -25,10 +25,10 @@
     "eslint": "^8.57.1",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
-    "puppeteer": "^24.32.1"
+    "puppeteer": "^25.8.0"
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=22.12.0",
     "npm": ">=9.0.0"
   }
 }

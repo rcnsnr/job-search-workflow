@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 import yaml
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from starlette.responses import JSONResponse
 
@@ -129,7 +129,7 @@ def find_existing_capture(inbox_dir: str, source_url: str) -> str | None:
 
 def create_app(inbox_dir: str | None = None) -> FastAPI:
     """Create the FastAPI app with an optional inbox directory override."""
-    inbox_dir = inbox_dir or os.environ.get("CAREEROPS_INBOX_DIR") or DEFAULT_INBOX_DIR
+    inbox_dir = inbox_dir or os.environ.get("JSW_INBOX_DIR") or DEFAULT_INBOX_DIR
     inbox_path = os.path.abspath(inbox_dir)
     os.makedirs(inbox_path, exist_ok=True)
 
@@ -211,7 +211,7 @@ def create_app(inbox_dir: str | None = None) -> FastAPI:
 def main() -> None:
     import uvicorn
 
-    port = int(os.environ.get("CAREEROPS_CAPTURE_PORT") or os.environ.get("CAREEROPS_LINKEDIN_CAPTURE_PORT", "8766"))
+    port = int(os.environ.get("JSW_CAPTURE_PORT", "8766"))
     app = create_app()
     uvicorn.run(app, host="127.0.0.1", port=port, log_level="info")
 

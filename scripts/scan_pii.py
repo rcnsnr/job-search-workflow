@@ -1,136 +1,165 @@
 #!/usr/bin/env python3
-"""Fail-closed PII and private-reference scanner for the public surface.
+"""Scan an explicit public tree for personal data and private references."""
 
-Scans public/tools/browser-extension/ and public/scripts/ for known hard-PII
-and owner-specific patterns. Designed to be run in CI before any public release.
+from __future__ import annotations
 
-Known non-PII patterns such as generic localhost references, the Job Search Workflow
-framework name, and public LinkedIn URLs are allow-listed.
-"""
-
+import argparse
 import os
 import re
 import sys
+from dataclasses import dataclass
+from pathlib import Path
 
-# File extensions to scan
-EXTENSIONS = {".js", ".json", ".md", ".html", ".py", ".css"}
 
-# Files and directories that are third-party or scanner artifacts and must be skipped.
-SKIP_NAMES = {
-    "node_modules",
+ROOT = Path(__file__).resolve().parents[1]
+SCANNER_PATH = Path(__file__).resolve()
+
+TEXT_EXTENSIONS = {
+    ".bat",
+    ".css",
+    ".html",
+    ".js",
+    ".json",
+    ".md",
+    ".py",
+    ".sh",
+    ".svg",
+    ".tex",
+    ".toml",
+    ".txt",
+    ".yaml",
+    ".yml",
+}
+TEXT_FILENAMES = {"CLA", "CODE_OF_CONDUCT", "CONTRIBUTING", "LICENSE"}
+SKIP_DIRECTORIES = {
     ".git",
-    "__pycache__",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
     ".venv",
-    "package-lock.json",
+    "__pycache__",
+    "coverage",
+    "dist",
+    "htmlcov",
+    "node_modules",
+    "reports",
+    "venv",
+}
+SKIP_FILES = {
     "cv-reference.docx",
+    "job-search-workflow-capture-v2.0.0.zip",
+    "package-lock.json",
 }
 
-# Patterns that are considered hard PII or private references.
-# Each tuple: (pattern, description)
-DENIED_PATTERNS = [
-    # Email addresses (but not example/placeholder domains)
-    (
-        r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?:com|net|org|io|co|me|tr|eu|gmail|yahoo|outlook|hotmail)",
-        "email address",
-    ),
-    # Home directory paths that include the owner's username
-    (r"/home/orcun/", "owner home directory path"),
-    # Owner username / placeholder usernames that should not be public
-    (r"\borcun\b", "owner username"),
-    (r"\bkullaniciadi\b", "placeholder username in Turkish"),
-    # Old private repo slug that should not appear in public
-    (r"linkedin-job-filter", "old private repo slug"),
-    # Old Turkish status fallback that signals untranslated private UI
-    (r"\bBelirsiz\b", "untranslated Turkish fallback 'Belirsiz'"),
-    # Owner-specific locations that should not be hard-coded
-    (r"\bIstanbul\b", "owner city"),
-    (r"\bTurkey\b", "owner country"),
-    (r"\bAnkara\b", "owner-specific city"),
-]
-
-# Patterns that are allowed even if they look like a denied match.
-ALLOWED_PATTERNS = [
-    # Generic localhost capture server reference
-    (r"localhost:\d+", "localhost capture server"),
-    # Public LinkedIn URL patterns
-    (r"https?://(www\.)?linkedin\.com", "public LinkedIn URL"),
-    # Job Search Workflow framework name is public
-    (r"Job Search Workflow", "Job Search Workflow framework name"),
-    # Job Search Workflow Capture public name
-    (r"Job Search Workflow Capture", "public product name"),
-    # job-search-workflow-capture slug
-    (r"job-search-workflow-capture", "public repo slug"),
-    # Generic placeholder username
-    (r"<your-username>", "placeholder username"),
-    # Example / placeholder domains
-    (r"@example\.", "example domain"),
-    (r"example\.com", "example domain"),
-]
+EMAIL_PATTERN = re.compile(
+    r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",
+    re.IGNORECASE,
+)
+ALLOWED_EMAIL_PATTERNS = (
+    re.compile(r"^[^@]+@example\.(?:com|net|org)$", re.IGNORECASE),
+    re.compile(r"^[^@]+@users\.noreply\.github\.com$", re.IGNORECASE),
+)
+DENIED_PATTERNS = (
+    (re.compile(r"career" r"ops", re.IGNORECASE), "retired private product name"),
+    (re.compile(r"/home/orcun/", re.IGNORECASE), "owner home directory path"),
+    (re.compile(r"\bkullaniciadi\b", re.IGNORECASE), "Turkish placeholder username"),
+    (re.compile(r"linkedin-job-filter", re.IGNORECASE), "old private repository slug"),
+    (re.compile(r"\bBelirsiz\b", re.IGNORECASE), "untranslated Turkish fallback"),
+    (re.compile(r"\bIstanbul\b", re.IGNORECASE), "owner-specific city"),
+    (re.compile(r"\bTurkey\b", re.IGNORECASE), "owner-specific country"),
+    (re.compile(r"\bAnkara\b", re.IGNORECASE), "owner-specific city"),
+)
 
 
-def should_skip(path: str) -> bool:
-    for part in path.split(os.sep):
-        if part in SKIP_NAMES:
-            return True
-    return False
+@dataclass(frozen=True)
+class Finding:
+    path: str
+    line_number: int
+    description: str
+    line: str
 
 
-def is_allowed(line: str) -> bool:
-    for pattern, _ in ALLOWED_PATTERNS:
-        if re.search(pattern, line, re.IGNORECASE):
-            return True
-    return False
+def is_allowed_email(value: str) -> bool:
+    return any(pattern.fullmatch(value) for pattern in ALLOWED_EMAIL_PATTERNS)
 
 
-def scan_file(path: str) -> list[tuple[int, str, str]]:
-    findings = []
-    with open(path, encoding="utf-8") as file:
-        for line_number, line in enumerate(file, start=1):
-            if is_allowed(line):
-                continue
-            for pattern, description in DENIED_PATTERNS:
-                if re.search(pattern, line, re.IGNORECASE):
-                    findings.append((line_number, description, line.strip()))
-                    break
+def should_scan(path: Path) -> bool:
+    if path.resolve() == SCANNER_PATH:
+        return False
+    if path.name in SKIP_FILES:
+        return False
+    return path.name in TEXT_FILENAMES or path.suffix.lower() in TEXT_EXTENSIONS
+
+
+def scan_line(line: str) -> list[str]:
+    descriptions: list[str] = []
+    if any(not is_allowed_email(match.group(0)) for match in EMAIL_PATTERN.finditer(line)):
+        descriptions.append("email address")
+    for pattern, description in DENIED_PATTERNS:
+        if pattern.search(line):
+            descriptions.append(description)
+    return descriptions
+
+
+def iter_files(scan_root: Path):
+    if scan_root.is_file():
+        if should_scan(scan_root):
+            yield scan_root
+        return
+
+    for current_root, directories, filenames in os.walk(scan_root):
+        directories[:] = sorted(name for name in directories if name not in SKIP_DIRECTORIES)
+        root_path = Path(current_root)
+        for filename in sorted(filenames):
+            path = root_path / filename
+            if should_scan(path):
+                yield path
+
+
+def scan_path(path: str | Path) -> list[Finding]:
+    scan_root = Path(path).expanduser().resolve()
+    if not scan_root.exists():
+        raise FileNotFoundError(f"Scan path does not exist: {scan_root}")
+
+    findings: list[Finding] = []
+    for file_path in iter_files(scan_root):
+        relative_path = file_path.name if scan_root.is_file() else file_path.relative_to(scan_root).as_posix()
+        lines = file_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+        for line_number, line in enumerate(lines, start=1):
+            for description in scan_line(line):
+                findings.append(Finding(relative_path, line_number, description, line.strip()))
     return findings
 
 
-def main() -> int:
-    base_dir = os.path.dirname(__file__)
-    repo_dir = os.path.abspath(os.path.join(base_dir, ".."))
-    scan_dirs = [
-        os.path.join(repo_dir, "tools", "browser-extension"),
-        os.path.join(repo_dir, "scripts"),
-    ]
-    scanner_path = os.path.abspath(__file__)
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--path",
+        type=Path,
+        default=ROOT,
+        help="File or directory to scan (default: repository root).",
+    )
+    return parser.parse_args(argv)
 
-    all_findings: list[tuple[str, int, str, str]] = []
 
-    for scan_dir in scan_dirs:
-        if not os.path.isdir(scan_dir):
-            continue
-        for root, _, files in os.walk(scan_dir):
-            for filename in files:
-                full_path = os.path.join(root, filename)
-                if os.path.abspath(full_path) == scanner_path:
-                    # Do not scan the scanner itself for its own regex strings.
-                    continue
-                if should_skip(full_path):
-                    continue
-                ext = os.path.splitext(filename)[1].lower()
-                if ext not in EXTENSIONS:
-                    continue
-                filepath = os.path.relpath(full_path, repo_dir)
-                for line_number, description, line in scan_file(full_path):
-                    all_findings.append((filepath, line_number, description, line))
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    try:
+        findings = scan_path(args.path)
+    except (FileNotFoundError, OSError) as error:
+        print(f"FAIL PII scan: {error}", file=sys.stderr)
+        return 2
 
-    if all_findings:
-        print("❌ PII / private-reference scan found potential issues:", file=sys.stderr)
-        for filepath, line_number, description, line in all_findings:
-            print(f"  {filepath}:{line_number}: {description}: {line}", file=sys.stderr)
+    if findings:
+        print("FAIL PII / private-reference scan found potential issues:", file=sys.stderr)
+        for finding in findings:
+            print(
+                f"  {finding.path}:{finding.line_number}: {finding.description}: {finding.line}",
+                file=sys.stderr,
+            )
         return 1
 
-    print("✅ PII / private-reference scan passed. No hard PII or owner-specific patterns found.")
+    print("PASS PII / private-reference scan")
     return 0
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Job Search Workflow Public Framework - scripts/setup.sh
+# Job Search Workflow Community Edition - scripts/setup.sh
 # Usage: ./scripts/setup.sh [--check-only]
 #
 # Checks prerequisites, creates missing local directories and sample fixtures,
@@ -43,7 +43,7 @@ MISSING_OPTIONAL=()
 
 cd "$REPO_ROOT"
 
-echo "Starting the Job Search Workflow Public Framework setup check..."
+echo "Starting the Job Search Workflow Community Edition setup check..."
 echo "Repository root: $REPO_ROOT"
 
 for file in "${REQUIRED_FILES[@]}"; do
@@ -93,9 +93,10 @@ echo "Python version OK: $PY_MAJOR.$PY_MINOR"
 
 NODE_VERSION=$(node --version | sed 's/^v//')
 NODE_MAJOR=$(echo "$NODE_VERSION" | cut -d. -f1)
+NODE_MINOR=$(echo "$NODE_VERSION" | cut -d. -f2)
 
-if [[ "$NODE_MAJOR" -lt 18 ]]; then
-    fail "Node.js >= 18 is required. Found: $NODE_VERSION"
+if [[ "$NODE_MAJOR" -lt 22 || ("$NODE_MAJOR" -eq 22 && "$NODE_MINOR" -lt 12) ]]; then
+    fail "Node.js >= 22.12 is required. Found: $NODE_VERSION"
     exit 1
 fi
 

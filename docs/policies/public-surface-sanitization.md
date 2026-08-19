@@ -1,119 +1,115 @@
 # Public Surface Sanitization Policy
 
-This policy defines how the Job Search Workflow repository produces a clean, reusable,
-public-facing surface under `public/`. It covers source code, documentation,
-fixtures, CI configuration, and release artifacts.
+This policy defines how Job Search Workflow Community Edition keeps its
+standalone repository reusable, local-first, and free from unintended personal
+or private material.
 
 ## Scope
 
-The public surface includes everything that may be copied into a separate public
-repository or released as a standalone artifact:
+The entire repository is public surface, including:
 
-- `public/tools/browser-extension/`
-- `public/scripts/`
-- `public/tests/`
-- `public/docs/`
-- `public/.github/workflows/`
-- `public/README.md` and `public/PUBLISH_CHECKLIST_EXTENSION.md`
+- source code under `dashboard/`, `scripts/`, and `tools/`
+- tests and fictitious fixtures
+- documentation and templates
+- CI configuration and release artifacts
+- root metadata such as `README.md` and `pyproject.toml`
+
+Generated dependency trees, Git internals, caches, and binary release artifacts
+are excluded from content scanning only when their source manifest or build
+input remains scanned.
 
 ## Hard Constraints
 
-### 1. No Personal Data or Private References
+### 1. No Unintended Personal Data
 
 Public artifacts MUST NOT contain:
 
-- Real names, email addresses, phone numbers, or national ID numbers.
-- Personal addresses, home directory paths, or usernames tied to the owner.
-- Private repository slugs, internal endpoints, or unpublished prompts.
-- Placeholder usernames such as `kullaniciadi` or `orcun`.
+- private email addresses, phone numbers, national identifiers, or addresses
+- owner home-directory paths or private repository slugs
+- credentials, tokens, internal endpoints, or unpublished prompts
+- real job-search records, application history, CVs, or decision records
 
-### 2. No Owner-Specific Defaults
+Fictitious fixture identities and GitHub noreply maintainer addresses are
+allowed. The maintainer's public name may appear in package metadata.
 
-Public templates, fixtures, and default settings MUST NOT encode owner
-preferences:
+### 2. Community Edition Naming
 
-- Minimum salary defaults MUST be `null` or a clearly fictitious value.
-- Location defaults MUST be generic (e.g. `Remote, Berlin`) not tied to the
-  owner.
-- Company-origin filters MUST default to neutral (`any`) in public templates.
-- `Job Search Workflow` is the public framework name; profile labels MUST use
-  `Example Job Search Workflow Profile` or a similarly generic label.
+- The user-facing framework name is `Job Search Workflow Community Edition`.
+- `JSW Community Edition` may be used where space is constrained.
+- The browser extension component remains `Job Search Workflow Capture`.
+- Environment variables use the `JSW_` prefix.
+- Retired private product names and owner-specific framework identifiers MUST
+  NOT appear anywhere in the standalone repository.
+- The CLI command remains `jsw`; this is a technical command, not a separate
+  product name.
 
-### 3. Brand and Trademark Boundaries
+### 3. No Owner-Specific Defaults
 
-- The public product name for the browser extension is
-  `Job Search Workflow Capture`.
-- `LinkedIn` MAY appear in descriptions, help text, target-site URLs, and
-  host permissions because the extension operates on LinkedIn Jobs.
-- `LinkedIn` MUST NOT be used as the main product name in `manifest.json`,
-  `package.json`, popup/options titles, or README level-one heading.
-- Private repo slugs such as `linkedin-job-filter` or any owner-specific
-  framework slug MUST NOT appear in public files.
-- Source identifiers and capture method names MUST use generic identifiers such
-  as `job-search-workflow-capture` / `job_search_workflow_capture`, not
-  `linkedin-manual-extension` or `linkedin_manual_extension_capture`.
+Public templates, fixtures, and default settings MUST NOT encode a maintainer's
+personal preferences:
 
-### 4. Language Rule for Public UI
+- compensation defaults are null or explicitly fictitious
+- location defaults are generic and belong only to sample fixtures
+- company filters default to neutral values
+- eligibility, work authorization, and relocation rules are user-configurable
 
-All user-facing strings in the public extension MUST be in English:
+### 4. Brand and Trademark Boundaries
 
-- HTML `lang` attribute MUST be `en`.
-- UI labels, button text, placeholders, console comments, and test log
-  messages MUST be English.
-- Regex-based keyword detection MUST use English terms only (e.g. `remote`,
-  `hybrid`, `office`, `onsite`).
+- LinkedIn may appear in descriptions, help text, supported-site URLs, and host
+  permissions where the extension actually integrates with LinkedIn Jobs.
+- LinkedIn MUST NOT be used as the extension's main product name.
+- Capture identifiers use generic JSW names rather than private or
+  owner-specific identifiers.
 
-Internal comments and variable names MAY remain English; Turkish comments MUST
-be translated before public release.
+### 5. Language Rule
 
-### 5. Inbox Capture Language Rule
-
-`inbox/jobs/` capture Markdown follows GAP-20260622-02:
-
-- Structural front-matter fields are English for machine readability.
-- Free-form prose sections are Turkish unless a downstream consumer requires
-  otherwise.
+User-facing Community Edition strings and public documentation are English.
+Machine-readable source fields remain English. User-created local content may
+use any language supported by the user's own workflow.
 
 ## Pre-Flight Checklist
 
 Before any public commit, pull request, or release:
 
-1. Run `npm test` in `public/tools/browser-extension/` and confirm full parity.
-2. Run `npm run lint` in `public/tools/browser-extension/`.
-3. Run `node scripts/validate-manifest.js` in `public/tools/browser-extension/`.
-4. Run `python3 -m pytest public/tests/test_linkedin_capture_server.py -q`.
-5. Run `python3 public/scripts/scan_pii.py`.
-6. Run `python3 public/scripts/check_linkedin_brand.py`.
-7. Run `npx markdownlint-cli2` on changed Markdown files.
-8. Review the diff manually for owner-specific strings, old private slugs, or
-   leftover Turkish UI text.
+1. Run `npm ci`, `npm run lint`, `npm test`, and
+   `node scripts/validate-manifest.js` under `tools/browser-extension/`.
+2. Run `npm audit --audit-level=high` under `tools/browser-extension/`.
+3. Run `python3 -m pytest -q`.
+4. Run `python3 scripts/scan_pii.py --path .`.
+5. Run `python3 scripts/check_secret_hygiene.py`.
+6. Run `python3 scripts/check_linkedin_brand.py`.
+7. Run `python3 scripts/verify_no_turkish.py --path .`.
+8. Run `npx markdownlint-cli2 "**/*.md" "#**/node_modules/**"`.
+9. Review the diff and reachable Git metadata for unintended private material.
 
 ## CI Enforcement
 
-`public/.github/workflows/clone-scan.yml` runs the above checks in separate
-jobs. Any failure blocks the workflow.
+`.github/workflows/ci.yml` runs deterministic pull-request checks. Scheduled
+setup, career-page, and clone scans are separate because they validate
+operational drift rather than duplicate the pull-request test suite.
+
+A passing file scan proves only that configured patterns found no match in the
+scanned tree. It does not prove that copies, forks, caches, or unrelated Git
+history are erased.
 
 ## Release Policy
 
-- Phase 1 `.zip` releases require explicit human approval after the checklist
-  is complete.
-- Chrome Web Store (Phase 2) is out of scope for this policy and requires a
-  separate approval.
-- No `git push` to a public remote may happen without a passing guardian audit
-  and, where required, the user's explicit sign-off.
+- GitHub releases require explicit human approval after the checklist passes.
+- Chrome Web Store publication remains separately scoped and approved.
+- Public pushes must use a GitHub noreply commit address and pass the repository
+  privacy checks.
 
 ## Tools
 
-- `public/scripts/scan_pii.py` — fail-closed scanner for hard PII and private
+- `scripts/scan_pii.py` scans an explicit root for personal and private
   references.
-- `public/scripts/check_linkedin_brand.py` — fail-closed check that LinkedIn
-  is not used as the main product name.
-- `npx markdownlint-cli2` — Markdown linting.
-- `npm test` and `npm run lint` — extension tests and static checks.
-- `pytest` and `py_compile` — Python server checks.
+- `scripts/check_secret_hygiene.py` scans for common credential formats.
+- `scripts/check_linkedin_brand.py` enforces extension brand boundaries.
+- `scripts/verify_no_turkish.py` checks public-facing language consistency.
+- `pytest`, `npm test`, and browser smoke checks cover runtime behavior.
 
 ## References
 
-- `public/PUBLISH_CHECKLIST_EXTENSION.md`
-- `public/tools/browser-extension/tests/fixtures/SANITIZATION_INVENTORY.md`
-- `AGENTS.md` GAP-20260622-02
+- `PUBLISH_CHECKLIST_EXTENSION.md`
+- `.github/workflows/ci.yml`
+- `docs/setup-and-verification.md`

@@ -1,8 +1,23 @@
 {% extends "base.html" %}
-{% block title %}Profile — Job Search Workflow{% endblock %}
+{% block title %}Profile · {{ product_name }}{% endblock %}
 {% block nav_profile %}active{% endblock %}
 {% block content %}
-<div class="content-page">
-  {{ profile_html | safe }}
-</div>
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Local context</p>
+    <h1>Profile</h1>
+    <p class="page-summary">The profile content used by your local workflow and scoring decisions.</p>
+  </div>
+  <span class="read-only-badge">Read only</span>
+</section>
+<section class="document-layout">
+  <aside class="document-note">
+    <span class="eyebrow">Source of truth</span>
+    <strong>Local Markdown</strong>
+    <p>Edit your profile file directly. This view never rewrites it.</p>
+  </aside>
+  <article class="prose panel document-panel">
+    {{ profile_html | safe }}
+  </article>
+</section>
 {% endblock %}

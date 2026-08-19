@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Jobs · {{ product_name }}{% endblock %}
+{% block nav_jobs %}active{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Local inventory</p>
+    <h1>Jobs</h1>
+    <p class="page-summary">Search and review normalized job records without changing the source files.</p>
+  </div>
+  <div class="heading-stat">
+    <strong>{{ cards | length }}</strong>
+    <span>Records</span>
+  </div>
+</section>
+
+<section class="filter-bar" aria-label="Job filters">
+  <label class="filter-field filter-field-search" for="job-search">
+    <span>Search</span>
+    <input id="job-search" type="search" placeholder="Company, role, or location" autocomplete="off">
+  </label>
+  <label class="filter-field" for="job-stage">
+    <span>Stage</span>
+    <select id="job-stage">
+      <option value="">All stages</option>
+      {% for stage in stages %}
+      <option value="{{ stage }}">{{ stage | replace('_', ' ') | title }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button id="job-filter-reset" class="secondary-button" type="button">Reset</button>
+</section>
+
+<section class="jobs-panel" aria-labelledby="jobs-list-title">
+  <header class="jobs-list-header" aria-hidden="true">
+    <span>Role</span>
+    <span>Location</span>
+    <span>Stage</span>
+    <span>Captured</span>
+    <span>Score</span>
+  </header>
+  <div id="jobs-list" class="jobs-list">
+    {% for card in cards %}
+    <a class="job-row" href="/posting/{{ card.filename }}" data-stage="{{ card.stage }}" data-search="{{ card.company }} {{ card.title }} {{ card.location }}">
+      <span class="job-primary">
+        <strong>{{ card.title }}</strong>
+        <small>{{ card.company }}</small>
+      </span>
+      <span data-label="Location">{{ card.location or 'Not provided' }}</span>
+      <span data-label="Stage"><span class="stage-marker stage-{{ card.stage }}">{{ card.stage | title }}</span></span>
+      <span data-label="Captured" class="date-value">{{ card.captured_at }}</span>
+      <span data-label="Score">
+        {% if card.fit_score is not none %}
+        <strong>{{ card.fit_score }}/5</strong>
+        {% else %}
+        <span class="muted-chip">Needs review</span>
+        {% endif %}
+      </span>
+    </a>
+    {% else %}
+    <div class="empty-state">
+      <strong>No job records found</strong>
+      <p>Add Markdown records under <code>inbox/jobs/</code> and refresh the page.</p>
+    </div>
+    {% endfor %}
+  </div>
+  <div id="jobs-empty-filter" class="empty-state" hidden>
+    <strong>No matching jobs</strong>
+    <p>Change the search text or reset the stage filter.</p>
+  </div>
+</section>
+{% endblock %}

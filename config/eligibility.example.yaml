@@ -1,0 +1,8 @@
+# Copy this file outside Git-tracked paths and replace the sample regions with
+# the regions where you are eligible to work.
+eligible_regions:
+  - global
+  - europe
+
+allow_outside_regions_with_sponsorship: true
+relocation_allowed: false

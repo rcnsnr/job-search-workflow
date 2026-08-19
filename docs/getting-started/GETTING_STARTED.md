@@ -1,9 +1,9 @@
-# Getting Started with Job Search Workflow
+# Getting Started with Job Search Workflow Community Edition
 
 This guide walks you through your first job triage, CV generation, and tracking
 — on macOS, Linux, or Windows.
 
-> **New here?** Read the [README](../README.md) first for the project overview.
+> **New here?** Read the [README](../../README.md) first for the project overview.
 
 ---
 
@@ -14,6 +14,7 @@ This guide walks you through your first job triage, CV generation, and tracking
 - [Your First Triage](#your-first-triage)
 - [Generate a Tailored CV](#generate-a-tailored-cv)
 - [Track in the Dashboard](#track-in-the-dashboard)
+- [Run Workflow Guards](#run-workflow-guards)
 - [Use the Career Pages Directory](#use-the-career-pages-directory)
 - [Next Steps](#next-steps)
 - [Troubleshooting](#troubleshooting)
@@ -29,7 +30,7 @@ You need:
 - **pdflatex** (for CV PDF generation)
 - **pandoc** (for DOCX generation)
 - **Git** (to clone the repo)
-- **Node.js** (optional, for markdown linting)
+- **Node.js 22.12+** (for extension tooling and repository checks)
 
 ### Install by Operating System
 
@@ -253,8 +254,9 @@ pandoc exports\your-cv.tex -o exports\your-cv.docx ^
 
 ## Track in the Dashboard
 
-The optional local dashboard turns your markdown files into a Kanban board
-and scoring view.
+The optional Community Operations Desk turns local Markdown files into a
+responsive overview, pipeline, searchable job inventory, profile view, and
+scoring reference.
 
 ### Start the Dashboard
 
@@ -270,14 +272,33 @@ Open `http://localhost:3000` in your browser.
 
 ### What You Can Do
 
-- View the **Kanban board**: new → triage → shortlist → applied → interview →
-  offer/reject
+- Review a compact **workspace overview** and attention list
+- View the responsive **pipeline**: new → triage → shortlist → applied →
+  interview → offer/reject
+- Search and filter the local **jobs inventory**
 - View your **profile**
 - Inspect **job postings**
-- See **scoring dashboard** with quality audit badges and compensation signals
+- Review **scoring configuration** and job signals
+- Choose a light or dark theme; light is the default
 
 The dashboard reads only from your local markdown files. No data leaves your
 machine.
+
+---
+
+## Run Workflow Guards
+
+Before saving or advancing a job record, use the read-only workflow guards to
+check duplicate identity, form-field limits, lifecycle metadata, and your own
+eligibility policy:
+
+```bash
+python3 scripts/workflow_guard.py --help
+```
+
+See the [Workflow Guards guide](WORKFLOW_GUARDS.md) for configuration examples
+and result meanings. The guards report problems but never submit an
+application, move a record, or make a decision for you.
 
 ---
 
@@ -348,7 +369,7 @@ the heading. The file contains explicit instructions for the AI.
 If you contribute changes, run:
 
 ```bash
-npx markdownlint-cli2 "**/*.md" "#node_modules"
+npx markdownlint-cli2 "**/*.md" "#**/node_modules/**"
 ```
 
 ---

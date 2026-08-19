@@ -1,6 +1,6 @@
 # Capture Server Setup Runbook
 
-The `public/scripts/linkedin_capture_server.py` FastAPI server receives job
+The `scripts/linkedin_capture_server.py` FastAPI server receives job
 postings from the `Job Search Workflow Capture` extension and writes them as
 Markdown files to `inbox/jobs/`.
 
@@ -30,7 +30,7 @@ python3 -m pip install fastapi pydantic pyyaml uvicorn
 Default port `8766` and default inbox directory `inbox/jobs`:
 
 ```bash
-python3 public/scripts/linkedin_capture_server.py
+python3 scripts/linkedin_capture_server.py
 ```
 
 You should see output similar to:
@@ -48,7 +48,7 @@ The server creates the inbox directory if it does not exist. Set a custom path
 with the environment variable:
 
 ```bash
-CAREEROPS_INBOX_DIR=/path/to/inbox/jobs python3 public/scripts/linkedin_capture_server.py
+JSW_INBOX_DIR=/path/to/inbox/jobs python3 scripts/linkedin_capture_server.py
 ```
 
 ## Configure port
@@ -56,11 +56,11 @@ CAREEROPS_INBOX_DIR=/path/to/inbox/jobs python3 public/scripts/linkedin_capture_
 The default port is `8766`. Override it with:
 
 ```bash
-CAREEROPS_CAPTURE_PORT=9000 python3 public/scripts/linkedin_capture_server.py
+JSW_CAPTURE_PORT=9000 python3 scripts/linkedin_capture_server.py
 ```
 
-The legacy variable `CAREEROPS_LINKEDIN_CAPTURE_PORT` is also accepted for
-backward compatibility.
+Environment variables use the `JSW_` prefix consistently across the Community
+Edition surface.
 
 ## Verify the server
 
@@ -130,14 +130,14 @@ curl -X POST http://localhost:8766/batch \
 For long-running unattended scans, use a process manager:
 
 ```bash
-nohup python3 public/scripts/linkedin_capture_server.py > logs/capture-server.log 2>&1 &
+nohup python3 scripts/linkedin_capture_server.py > logs/capture-server.log 2>&1 &
 ```
 
 Or use `tmux`:
 
 ```bash
 tmux new -s capture-server
-python3 public/scripts/linkedin_capture_server.py
+python3 scripts/linkedin_capture_server.py
 ```
 
 Detach with `Ctrl+b` then `d`.
@@ -162,12 +162,12 @@ Install the dependencies listed in the prerequisites section.
 ### `Permission denied: inbox/jobs`
 
 The server tries to create `inbox/jobs` relative to the current working
-directory. Ensure the process has write permission or set `CAREEROPS_INBOX_DIR`
+directory. Ensure the process has write permission or set `JSW_INBOX_DIR`
 to a writable path.
 
 ### `Address already in use`
 
-Another process is using port `8766`. Stop it or set `CAREEROPS_CAPTURE_PORT` to
+Another process is using port `8766`. Stop it or set `JSW_CAPTURE_PORT` to
 a different port. Update the extension options to match.
 
 ### Captures are not appearing in `inbox/jobs/`

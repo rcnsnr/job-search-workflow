@@ -35,7 +35,7 @@ The check validates these required components:
 - `README.md` and `.gitignore`
 - Git
 - Python 3.10 or newer
-- Node.js 18 or newer
+- Node.js 22.12 or newer
 - npm
 
 The Linux/macOS script also reports the optional `pandoc`, `pdflatex` and `markdownlint-cli2` tools. Missing optional tools do not block the basic setup, but the related document-export or lint capability will be unavailable.
@@ -99,7 +99,7 @@ Run these commands from the public repository root:
 bash -n scripts/setup.sh
 shellcheck scripts/setup.sh
 python3 -m unittest discover -s tests -v
-python3 -m pytest public/tests/test_linkedin_capture_server.py -q
+python3 -m pytest tests/test_linkedin_capture_server.py -q
 markdownlint-cli2 "**/*.md"
 ./scripts/setup.sh --check-only
 ./scripts/setup.sh

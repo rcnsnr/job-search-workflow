@@ -6,7 +6,7 @@ mode. This runbook covers the load-unpacked flow used for Phase 1 releases.
 ## Prerequisites
 
 - Chrome, Chromium, Brave, or another Chromium-based browser.
-- Extension source files in `public/tools/browser-extension/`.
+- Extension source files in `tools/browser-extension/`.
 
 ## Install steps
 
@@ -20,7 +20,7 @@ mode. This runbook covers the load-unpacked flow used for Phase 1 releases.
 
 3. Click **Load unpacked**.
 
-4. Select the `public/tools/browser-extension/` directory (or the extracted
+4. Select the `tools/browser-extension/` directory (or the extracted
    `.zip` release folder).
 
 5. The extension appears in the extensions list as `Job Search Workflow Capture`.

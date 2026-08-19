@@ -11,13 +11,14 @@ owner-specific defaults, English-only public UI, and release approvals.
 
 ## Pre-release verification
 
-- [ ] `tools/browser-extension/npm test` passes with **147/147** tests.
-- [ ] `tools/browser-extension/npm run lint` passes.
-- [ ] `tools/browser-extension/node scripts/validate-manifest.js` passes.
-- [ ] `python3 -m pytest public/tests/test_linkedin_capture_server.py -q` passes.
-- [ ] `python3 -m py_compile public/scripts/linkedin_capture_server.py` passes.
-- [ ] `python3 public/scripts/scan_pii.py` passes.
-- [ ] `python3 public/scripts/check_linkedin_brand.py` passes.
+- [ ] `npm test` passes from `tools/browser-extension/`.
+- [ ] `npm run lint` passes from `tools/browser-extension/`.
+- [ ] `node scripts/validate-manifest.js` passes from `tools/browser-extension/`.
+- [ ] `npm audit --audit-level=high` reports no high or critical findings.
+- [ ] `python3 -m pytest tests/test_linkedin_capture_server.py -q` passes.
+- [ ] `python3 -m py_compile scripts/linkedin_capture_server.py` passes.
+- [ ] `python3 scripts/scan_pii.py --path .` passes.
+- [ ] `python3 scripts/check_linkedin_brand.py` passes.
 - [ ] `npx markdownlint-cli2 "**/*.md"` passes.
 - [ ] `.github/workflows/clone-scan.yml` YAML is valid.
 

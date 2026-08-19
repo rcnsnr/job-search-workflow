@@ -1,18 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Job Search Workflow{% endblock %}</title>
+  <meta name="color-scheme" content="light dark">
+  <title>{% block title %}{{ product_name }}{% endblock %}</title>
+  <script>
+    document.documentElement.dataset.theme = localStorage.getItem("jsw-theme") || "light";
+  </script>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <nav>
-    <span class="brand">Job Search Workflow</span>
-    <a href="/" class="{% block nav_kanban %}{% endblock %}">Pipeline</a>
-    <a href="/profile" class="{% block nav_profile %}{% endblock %}">Profile</a>
-    <a href="/scoring" class="{% block nav_scoring %}{% endblock %}">Scoring</a>
-  </nav>
-  {% block content %}{% endblock %}
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Job Search Workflow Community Edition home">
+        <span class="brand-mark" aria-hidden="true">JSW</span>
+        <span class="brand-copy">
+          <strong>Job Search Workflow</strong>
+          <span>Community Edition</span>
+        </span>
+      </a>
+
+      <button class="mobile-menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation">
+        <span>Menu</span>
+        <span aria-hidden="true">+</span>
+      </button>
+
+      <nav id="primary-navigation" class="primary-nav" aria-label="Primary navigation">
+        <a href="/" class="{% block nav_overview %}{% endblock %}">
+          <span class="nav-index" aria-hidden="true">01</span>
+          <span>Overview</span>
+        </a>
+        <a href="/pipeline" class="{% block nav_pipeline %}{% endblock %}">
+          <span class="nav-index" aria-hidden="true">02</span>
+          <span>Pipeline</span>
+        </a>
+        <a href="/jobs" class="{% block nav_jobs %}{% endblock %}">
+          <span class="nav-index" aria-hidden="true">03</span>
+          <span>Jobs</span>
+        </a>
+        <a href="/profile" class="{% block nav_profile %}{% endblock %}">
+          <span class="nav-index" aria-hidden="true">04</span>
+          <span>Profile</span>
+        </a>
+        <a href="/scoring" class="{% block nav_scoring %}{% endblock %}">
+          <span class="nav-index" aria-hidden="true">05</span>
+          <span>Scoring</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="local-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>
+            <strong>Local-first</strong>
+            <small>Data stays on this device</small>
+          </span>
+        </div>
+        <button class="theme-toggle" type="button" aria-pressed="false">
+          <span>Theme</span>
+          <span class="theme-value">Light</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="workspace-bar">
+        <span>Community Operations Desk</span>
+        <span class="workspace-state">Read-only view</span>
+      </header>
+      <main id="main-content" class="main-content" tabindex="-1">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  <script src="/static/app.js" defer></script>
 </body>
 </html>

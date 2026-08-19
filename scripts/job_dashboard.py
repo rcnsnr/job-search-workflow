@@ -275,7 +275,7 @@ HTML_TEMPLATE = """<!doctype html>
 <head>
   <meta charset=\"utf-8\">
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-  <title>Job Search Workflow Dashboard</title>
+  <title>Job Search Workflow Community Edition</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -539,7 +539,7 @@ HTML_TEMPLATE = """<!doctype html>
 <body>
   <main>
     <header id=\"top\">
-      <h1>Job Search Workflow Dashboard</h1>
+      <h1>Job Search Workflow Community Edition</h1>
       <p>Read-only local dashboard. Canonical truth still lives in <code>inbox/jobs/*.md</code>.</p>
     </header>
 
@@ -1231,7 +1231,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
 def serve(host: str, port: int) -> int:
     server = ThreadingHTTPServer((host, port), DashboardHandler)
-    print(f"Job Search Workflow dashboard running at http://{host}:{port}")
+    print(f"Job Search Workflow Community Edition running at http://{host}:{port}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

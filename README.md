@@ -1,16 +1,20 @@
-# Job Search Workflow Public Framework
+# Job Search Workflow Community Edition
 
-> Status: Preparing for public release. This directory is not yet an independent, publication-ready public repository.
+> Status: Alpha. The Community Edition is cloneable and locally testable, but
+> interfaces may still change before a stable release.
 
-Job Search Workflow is intended to become a reusable framework that contains no personal data. It is designed to run career triage, document-generation standards and public job-source discovery workflows using data supplied by the user.
+Job Search Workflow Community Edition is a reusable, local-first framework for
+job triage, document-generation standards, application tracking, and public
+job-source discovery. It ships with fictitious fixtures and uses data supplied
+by each user; it does not require a hosted account.
 
 ## Quick Start
 
-1. After the independent public repository is released, clone it:
+1. Clone the Community Edition repository:
 
    ```bash
-   git clone https://github.com/<owner>/<repo>.git
-   cd <repo>
+   git clone https://github.com/rcnsnr/job-search-workflow.git
+   cd job-search-workflow
    ```
 
 2. Check the prerequisites first:
@@ -23,9 +27,14 @@ Job Search Workflow is intended to become a reusable framework that contains no 
    - Linux/macOS: `./scripts/setup.sh`
    - Windows CMD: `scripts\setup.bat`
 
-4. When sample fixtures are available, replace the copies under `user_data/` with your own verified information.
+4. Replace the generated sample files under `user_data/` with your own verified
+   information. Fictitious examples remain available under `fixtures/`.
 
 Read the [Setup and Verification Guide](docs/setup-and-verification.md) for the detailed behavior contract, support matrix and troubleshooting steps.
+
+Use the [Workflow Guards](docs/getting-started/WORKFLOW_GUARDS.md) to check
+duplicates, application field limits, lifecycle metadata, and configurable
+location or sponsorship eligibility without creating automatic actions.
 
 For source discovery, see the [Public Job Sources Quickstart](docs/sources/public-job-sources.md), the
 [Source Discovery Query Pack](docs/sources/source-discovery-query-pack.md), and
@@ -37,7 +46,7 @@ Required:
 
 - Git
 - Python 3.10+
-- Node.js 18+
+- Node.js 22.12+
 - npm
 
 Optional:
@@ -63,7 +72,8 @@ The setup scripts do not install missing system packages automatically and do no
 - `docs/sources/` - public-safe source discovery quickstart and example catalog
 - `docs/runbooks/` - repeatable operational procedures
 - `tools/browser-extension/` - `Job Search Workflow Capture` browser extension source
-- `fixtures/` - fictitious sample data to be added later
+- `fixtures/` - fictitious sample data for local demos and tests
+- `dashboard/` - local Community Operations Desk interface
 
 ## Browser Extension
 
@@ -81,11 +91,34 @@ Extension validation:
 
 ```bash
 cd tools/browser-extension
-npm install
+npm ci
 npm test
 npm run lint
 node scripts/validate-manifest.js
 ```
+
+## Community Operations Desk
+
+The local dashboard is the primary visual surface for Job Search Workflow
+Community Edition. It reads Markdown from `inbox/jobs/` and falls back to
+fictitious fixtures when no personal workspace exists.
+
+```bash
+pip install -e ".[dashboard]"
+python3 -m jsw dashboard
+```
+
+Open `http://localhost:3000` to use:
+
+- a local workspace overview and attention list
+- a responsive application pipeline
+- searchable job records with compact dates
+- profile and scoring reference views
+- a light-first interface with an optional dark theme
+
+The dashboard is read-only and does not require an account or external data
+transfer. `scripts/job_dashboard.py` is retained as a legacy compatibility
+entry point; `python3 -m jsw dashboard` is the canonical interface.
 
 ## Verification
 
@@ -105,7 +138,10 @@ The GitHub Actions workflow runs the Linux static and behavior checks and a real
 
 - Content under `user_data/`, `inbox/jobs/`, `runs/`, `outputs/` and `exports/` is excluded by `.gitignore`.
 - `.gitignore` alone does not guarantee prevention of personal-data leaks.
-- Before public release, run deterministic PII and secret scans, perform a manual content review, verify licensing and confirm that the Git history is clean.
+- Before every public contribution or release, run deterministic PII and secret
+  scans, perform a manual content review, verify licensing, and confirm that
+  Git history contains no unintended private data.
 - This framework does not guarantee employment, interviews or offers.
 
-See `.github/workflows/clone-scan.yml` for the CI definition.
+See `.github/workflows/ci.yml` for pull-request checks. Scheduled setup,
+career-page, and clone scans are intentionally separate operational workflows.

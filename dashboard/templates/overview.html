@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Overview · {{ product_name }}{% endblock %}
+{% block nav_overview %}active{% endblock %}
+{% block content %}
+<section class="page-heading page-heading-featured">
+  <div>
+    <p class="eyebrow">Local decision workspace</p>
+    <h1>Workspace overview</h1>
+    <p class="page-summary">See what is moving, what needs review, and where your attention is useful next.</p>
+  </div>
+  <div class="edition-stamp" aria-label="Community Edition">
+    <span>Community</span>
+    <strong>Edition</strong>
+  </div>
+</section>
+
+<section class="metrics-grid" aria-label="Workspace totals">
+  <article class="metric-card" style="--index: 1">
+    <span>Local files</span>
+    <strong>{{ total_cards }}</strong>
+    <small>Recognized job records</small>
+  </article>
+  <article class="metric-card" style="--index: 2">
+    <span>Shortlisted</span>
+    <strong>{{ stage_counts['shortlist'] }}</strong>
+    <small>Worth a closer look</small>
+  </article>
+  <article class="metric-card" style="--index: 3">
+    <span>Applied</span>
+    <strong>{{ stage_counts['applied'] }}</strong>
+    <small>Applications in motion</small>
+  </article>
+  <article class="metric-card metric-card-accent" style="--index: 4">
+    <span>Interviews</span>
+    <strong>{{ stage_counts['interview'] }}</strong>
+    <small>Active conversations</small>
+  </article>
+</section>
+
+<div class="overview-grid">
+  <section class="panel" aria-labelledby="attention-title">
+    <header class="panel-header">
+      <div>
+        <p class="eyebrow">Review queue</p>
+        <h2 id="attention-title">Needs attention</h2>
+      </div>
+      <a class="text-link" href="/jobs">View all jobs</a>
+    </header>
+    <div class="attention-list">
+      {% for card in attention_cards %}
+      <a class="attention-row" href="/posting/{{ card.filename }}">
+        <span class="stage-marker stage-{{ card.stage }}">{{ card.stage | title }}</span>
+        <span class="attention-copy">
+          <strong>{{ card.title }}</strong>
+          <small>{{ card.company }} · {{ card.location }}</small>
+        </span>
+        <span class="row-arrow" aria-hidden="true">↗</span>
+      </a>
+      {% else %}
+      <div class="empty-state">
+        <strong>No immediate review items</strong>
+        <p>Add job Markdown files under <code>inbox/jobs/</code> to populate this workspace.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="snapshot-title">
+    <header class="panel-header">
+      <div>
+        <p class="eyebrow">Current shape</p>
+        <h2 id="snapshot-title">Pipeline snapshot</h2>
+      </div>
+      <a class="text-link" href="/pipeline">Open pipeline</a>
+    </header>
+    <ol class="stage-list">
+      {% for stage, count in stage_counts.items() %}
+      <li>
+        <span class="stage-order">{{ "%02d" | format(loop.index) }}</span>
+        <span>{{ stage | replace('_', ' ') | title }}</span>
+        <strong>{{ count }}</strong>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+</div>
+
+<section class="principle-strip" aria-label="Community Edition principles">
+  <div>
+    <span class="eyebrow">Community Edition</span>
+    <strong>Your workflow, your files.</strong>
+  </div>
+  <p>The dashboard reads local Markdown and does not require an account, hosted service, or external data transfer.</p>
+</section>
+{% endblock %}

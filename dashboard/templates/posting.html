@@ -1,10 +1,21 @@
 {% extends "base.html" %}
-{% block title %}{{ filename }} — Job Search Workflow{% endblock %}
-{% block nav_kanban %}active{% endblock %}
+{% block title %}Job detail · {{ product_name }}{% endblock %}
+{% block nav_jobs %}active{% endblock %}
 {% block content %}
-<div class="content-page">
-  <p><a href="/" style="color:var(--text-muted);text-decoration:none;">← Back to pipeline</a></p>
-  <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0;">
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/jobs">Jobs</a>
+  <span aria-hidden="true">/</span>
+  <span>Job detail</span>
+</nav>
+<section class="page-heading page-heading-detail">
+  <div>
+    <p class="eyebrow">Source record</p>
+    <h1>Job detail</h1>
+    <p class="page-summary filename">{{ filename }}</p>
+  </div>
+  <a class="secondary-button button-link" href="/pipeline">View pipeline</a>
+</section>
+<article class="prose panel document-panel posting-document">
   {{ posting_html | safe }}
-</div>
+</article>
 {% endblock %}

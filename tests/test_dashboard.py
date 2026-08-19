@@ -1,0 +1,97 @@
+from __future__ import annotations
+
+import sys
+from importlib import util
+from pathlib import Path
+
+from fastapi.testclient import TestClient
+
+ROOT = Path(__file__).resolve().parents[1]
+SERVER_PATH = ROOT / "dashboard" / "server.py"
+SPEC = util.spec_from_file_location("dashboard_server", SERVER_PATH)
+assert SPEC and SPEC.loader
+server = util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = server
+SPEC.loader.exec_module(server)
+client = TestClient(server.app)
+
+
+def test_primary_pages_use_community_edition_shell() -> None:
+    for path in ("/", "/pipeline", "/jobs", "/profile", "/scoring"):
+        response = client.get(path)
+
+        assert response.status_code == 200
+        assert "Job Search Workflow Community Edition" in response.text
+        assert 'id="main-content"' in response.text
+        assert 'aria-label="Primary navigation"' in response.text
+        assert "Theme" in response.text
+
+
+def test_public_dashboard_has_no_retired_private_product_name() -> None:
+    retired_name = "career" + "ops"
+
+    for path in ("/", "/pipeline", "/jobs", "/profile", "/scoring"):
+        response = client.get(path)
+
+        assert retired_name not in response.text.lower()
+
+
+def test_overview_summarizes_local_pipeline() -> None:
+    response = client.get("/")
+
+    assert "Workspace overview" in response.text
+    assert "Pipeline snapshot" in response.text
+    assert "Needs attention" in response.text
+    assert "Local files" in response.text
+
+
+def test_pipeline_renders_every_stage_without_horizontal_board_contract() -> None:
+    response = client.get("/pipeline")
+
+    assert response.status_code == 200
+    assert 'class="pipeline-grid"' in response.text
+    for stage in server.PIPELINE_STAGES:
+        assert f'data-stage="{stage}"' in response.text
+
+
+def test_jobs_page_has_local_filters_and_compact_dates() -> None:
+    response = client.get("/jobs")
+
+    assert response.status_code == 200
+    assert 'id="job-search"' in response.text
+    assert 'id="job-stage"' in response.text
+    assert "2026-07-01" in response.text
+    assert "2026-07-01T00:00:00" not in response.text
+
+
+def test_format_date_normalizes_iso_timestamp() -> None:
+    assert server.format_compact_date("2026-07-21T00:00:00+03:00") == "2026-07-21"
+    assert server.format_compact_date("2026-07-21") == "2026-07-21"
+    assert server.format_compact_date("") == "Not provided"
+
+
+def test_pipeline_stage_prefers_generic_triage_state() -> None:
+    assert server.infer_stage({"triage_state": "captured"}, "") == "new"
+    assert server.infer_stage({"triage_state": "triaged_apply"}, "") == "shortlist"
+    assert server.infer_stage({"triage_state": "triaged_reject"}, "") == "reject"
+
+
+def test_markdown_rendering_removes_executable_content() -> None:
+    rendered = server.render_safe_markdown(
+        "# Safe heading\n\n<script>alert('unsafe')</script>\n\n"
+        "[unsafe link](javascript:alert('unsafe'))\n\n| A | B |\n| - | - |\n| 1 | 2 |"
+    )
+
+    assert "<h1>Safe heading</h1>" in rendered
+    assert "<table>" in rendered
+    assert "<script" not in rendered
+    assert "javascript:" not in rendered
+
+
+def test_cards_api_remains_available() -> None:
+    response = client.get("/api/cards")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload
+    assert {"filename", "title", "company", "stage"} <= payload[0].keys()
