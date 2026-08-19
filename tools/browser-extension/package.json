@@ -20,7 +20,7 @@
     "browser-extension"
   ],
   "author": "",
-  "license": "MIT",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "devDependencies": {
     "eslint": "^8.57.1",
     "jest": "^30.2.0",

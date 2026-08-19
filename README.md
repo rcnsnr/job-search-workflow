@@ -2,6 +2,10 @@
 
 > Status: Alpha. The Community Edition is cloneable and locally testable, but
 > interfaces may still change before a stable release.
+>
+> License: source-available for noncommercial use under PolyForm Noncommercial
+> 1.0.0. Commercial use is not granted by this repository. See
+> [Commercial Use and SaaS Boundary](COMMERCIAL_USE.md).
 
 Job Search Workflow Community Edition is a reusable, local-first framework for
 job triage, document-generation standards, application tracking, and public

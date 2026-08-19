@@ -60,6 +60,7 @@ Sponsor = "https://github.com/sponsors/rcnsnr"
 [tool.setuptools]
 packages = ["jsw", "dashboard"]
 package-dir = { jsw = "scripts/jsw", dashboard = "dashboard" }
+license-files = ["LICENSE", "NOTICE", "COMMERCIAL_USE.md"]
 
 [tool.setuptools.package-data]
 dashboard = ["templates/*.html", "static/*.css", "static/*.js", "static/*.svg"]

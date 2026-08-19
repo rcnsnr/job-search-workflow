@@ -17,7 +17,9 @@ structured, honest, and reusable framework for AI-assisted job searching.
 2. Follow existing code style and conventions.
 3. Ensure all CI checks pass (`markdownlint`, `pytest`, PII scan).
 4. Write or update tests for new functionality.
-5. Keep PRs focused — one logical change per PR.
+5. Complete every contributor and license confirmation in the pull request
+   template.
+6. Keep PRs focused - one logical change per PR.
 
 ### What We Welcome
 
@@ -63,4 +65,8 @@ Be respectful, constructive, and inclusive.
 ## License
 
 By contributing, you agree that your contributions will be licensed under the
-[PolyForm Noncommercial 1.0.0](LICENSE) license.
+[PolyForm Noncommercial 1.0.0](LICENSE) license and that the
+[Contributor License Agreement](CLA.md) applies. The CLA allows the maintainer
+to offer separate commercial licenses while Community Edition remains
+noncommercial and source-available. Review
+[Commercial Use and SaaS Boundary](COMMERCIAL_USE.md) before contributing.

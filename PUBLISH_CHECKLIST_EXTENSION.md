@@ -36,6 +36,8 @@ zip -r ../../job-search-workflow-capture-v2.0.0.zip \
   content/ utils/ scripts/ tests/ \
   package.json package-lock.json jest.config.js .eslintrc.json \
   -x "node_modules/*" -x "coverage/*" -x "*.log"
+zip -j ../../job-search-workflow-capture-v2.0.0.zip \
+  ../../LICENSE ../../NOTICE ../../COMMERCIAL_USE.md
 ```
 
 Verify the `.zip` contents:
@@ -56,6 +58,7 @@ The archive must contain at minimum:
 - `utils/*.js`
 - `scripts/validate-manifest.js`
 - `readme.md`
+- `LICENSE`, `NOTICE`, and `COMMERCIAL_USE.md`
 
 ## Create the GitHub release
 

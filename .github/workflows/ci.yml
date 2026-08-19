@@ -40,6 +40,8 @@ jobs:
         name: Verify extension brand boundaries
       - run: python3 scripts/verify_no_turkish.py --path .
         name: Verify public-facing language
+      - run: python3 scripts/check_license_policy.py
+        name: Verify noncommercial license boundary
 
   docs:
     name: Documentation

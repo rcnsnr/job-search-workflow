@@ -67,6 +67,21 @@ User-facing Community Edition strings and public documentation are English.
 Machine-readable source fields remain English. User-created local content may
 use any language supported by the user's own workflow.
 
+### 6. License and Commercial Boundary
+
+- Community Edition is source-available under PolyForm Noncommercial 1.0.0; it
+  MUST NOT be described as OSI-approved open source.
+- The canonical `LICENSE` MUST remain byte-identical to the official PolyForm
+  Noncommercial 1.0.0 plain text. Owner-specific notices belong in `NOTICE`.
+- All first-party packages and release archives MUST carry the same
+  noncommercial license identity and include `LICENSE` plus `NOTICE`.
+- Commercial use requires a separate written agreement from the copyright
+  holder. Community Edition does not grant rights to the separate private SaaS
+  product, hosted infrastructure, private code, customer data, or non-public
+  assets.
+- Dependency license metadata describes third-party dependencies only and MUST
+  NOT be presented as the license for first-party Community Edition code.
+
 ## Pre-Flight Checklist
 
 Before any public commit, pull request, or release:
@@ -80,7 +95,8 @@ Before any public commit, pull request, or release:
 6. Run `python3 scripts/check_linkedin_brand.py`.
 7. Run `python3 scripts/verify_no_turkish.py --path .`.
 8. Run `npx markdownlint-cli2 "**/*.md" "#**/node_modules/**"`.
-9. Review the diff and reachable Git metadata for unintended private material.
+9. Run `python3 scripts/check_license_policy.py`.
+10. Review the diff and reachable Git metadata for unintended private material.
 
 ## CI Enforcement
 
