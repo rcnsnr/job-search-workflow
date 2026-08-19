@@ -42,6 +42,7 @@ Edition.
 - Fixed Python quality defects in the Markdown-to-LaTeX and language-checking
   utilities.
 - Corrected setup fixture initialization and broken documentation links.
+- Removed the hosted Linux setup audit's redundant package-mirror dependency.
 - Removed raw frontmatter metadata from rendered job-detail content.
 
 ### Security

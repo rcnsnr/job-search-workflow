@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: "22"
       - run: python3 -m pip install -e ".[dashboard,dev]"
-      - run: sudo apt-get update && sudo apt-get install --yes shellcheck
+      - run: shellcheck --version
       - run: bash -n scripts/setup.sh
       - run: shellcheck scripts/setup.sh
       - run: python3 -m unittest discover -s tests -v
