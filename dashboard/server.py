@@ -17,12 +17,13 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
 from typing import Optional
+from urllib.parse import quote
 
 import bleach
 import markdown
 import yaml
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -41,6 +42,7 @@ RUNS_DIR = ROOT / "runs"
 USER_DATA_DIR = ROOT / "user_data"
 CONFIG_DIR = ROOT / "config"
 FIXTURES_DIR = ROOT / "fixtures"
+APPLICATIONS_DIR = ROOT / "exports" / "applications"
 PRODUCT_NAME = "Job Search Workflow Community Edition"
 MARKDOWN_CLEANER = bleach.Cleaner(
     tags={
@@ -111,6 +113,18 @@ class JobCard:
     raw_content: str
 
 
+@dataclass(frozen=True)
+class ApplicationDocument:
+    """A read-only application document linked to one posting."""
+
+    filename: str
+    label: str
+    file_format: str
+    href: Optional[str]
+    action: str
+    path: Optional[Path]
+
+
 @dataclass
 class DashboardData:
     """Aggregated dashboard state."""
@@ -155,6 +169,20 @@ def format_compact_date(value: object) -> str:
         return "Not provided"
     iso_match = re.match(r"^(\d{4}-\d{2}-\d{2})", text)
     return iso_match.group(1) if iso_match else text
+
+
+def format_score_adjustment(value: object) -> str:
+    """Explain a numeric score adjustment without configuration jargon."""
+    try:
+        adjustment = float(value)
+    except (TypeError, ValueError):
+        return "Not configured"
+    if adjustment == 0:
+        return "No score change"
+    amount = abs(adjustment)
+    unit = "point" if amount == 1 else "points"
+    verb = "Subtract" if adjustment < 0 else "Add"
+    return f"{verb} {amount:.1f} {unit}"
 
 
 def infer_stage(fm: dict, body: str) -> str:
@@ -321,16 +349,120 @@ def load_scoring_config() -> dict:
         return {}
 
 
+def resolve_posting_path(filename: str) -> Optional[Path]:
+    """Resolve a posting without allowing path traversal."""
+    if Path(filename).name != filename or not filename.endswith(".md"):
+        return None
+    candidates = (JOBS_DIR / filename, FIXTURES_DIR / filename)
+    return next((candidate for candidate in candidates if candidate.is_file()), None)
+
+
 def load_posting(filename: str) -> str:
     """Load a single job posting as rendered HTML."""
-    if Path(filename).name != filename or not filename.endswith(".md"):
-        return "<p>Posting not found.</p>"
-    candidates = (JOBS_DIR / filename, FIXTURES_DIR / filename)
-    path = next((candidate for candidate in candidates if candidate.is_file()), None)
+    path = resolve_posting_path(filename)
     if path is None:
         return "<p>Posting not found.</p>"
     text = path.read_text(encoding="utf-8")
-    return render_safe_markdown(text)
+    _, body = parse_frontmatter(text)
+    return render_safe_markdown(body)
+
+
+def classify_application_document(path: Path) -> Optional[str]:
+    """Classify only files that are directly used in an application."""
+    normalized = re.sub(r"[_\s]+", "-", path.stem.lower())
+    suffix = path.suffix.lower()
+    if suffix not in {".docx", ".md", ".pdf", ".txt"}:
+        return None
+    if "cover-letter" in normalized:
+        return "Cover letter"
+    if "application-answer" in normalized:
+        return "Application answers"
+    if "cv" in normalized.split("-") or "resume" in normalized.split("-"):
+        return "CV"
+    return None
+
+
+def application_document_paths(posting_filename: str) -> list[Path]:
+    """Find application documents for one posting using a bounded convention."""
+    if Path(posting_filename).name != posting_filename or not posting_filename.endswith(".md"):
+        return []
+
+    package_dir = APPLICATIONS_DIR / Path(posting_filename).stem
+    try:
+        package_dir.resolve().relative_to(APPLICATIONS_DIR.resolve())
+    except ValueError:
+        return []
+    if package_dir.is_dir() and not package_dir.is_symlink():
+        return [
+            path
+            for path in package_dir.iterdir()
+            if path.is_file() and not path.is_symlink()
+        ]
+
+    if posting_filename == "sample-job-posting.md" and not (JOBS_DIR / posting_filename).is_file():
+        return [
+            FIXTURES_DIR / "sample-cover-letter.md",
+            FIXTURES_DIR / "sample-application-answers.md",
+        ]
+    return []
+
+
+def load_application_documents(posting_filename: str) -> list[ApplicationDocument]:
+    """Return existing, allowlisted application documents for one posting."""
+    order = {"CV": 0, "Cover letter": 1, "Application answers": 2}
+    documents: list[ApplicationDocument] = []
+    if (
+        posting_filename == "sample-job-posting.md"
+        and not (JOBS_DIR / posting_filename).is_file()
+    ):
+        documents.append(
+            ApplicationDocument(
+                filename="sample-cv.pdf",
+                label="CV",
+                file_format="PDF",
+                href=None,
+                action="Delivery format",
+                path=None,
+            )
+        )
+    for path in application_document_paths(posting_filename):
+        if not path.is_file():
+            continue
+        label = classify_application_document(path)
+        if label is None:
+            continue
+        encoded_posting = quote(posting_filename, safe="")
+        encoded_document = quote(path.name, safe="")
+        documents.append(
+            ApplicationDocument(
+                filename=path.name,
+                label=label,
+                file_format=path.suffix.removeprefix(".").upper(),
+                href=f"/application-file/{encoded_posting}/{encoded_document}",
+                action="Download" if path.suffix.lower() == ".docx" else "Open",
+                path=path,
+            )
+        )
+    return sorted(documents, key=lambda document: (order[document.label], document.filename))
+
+
+def resolve_application_document(
+    posting_filename: str, document_filename: str,
+) -> Optional[ApplicationDocument]:
+    """Resolve a requested document only from the posting's admitted set."""
+    if (
+        Path(document_filename).name != document_filename
+        or resolve_posting_path(posting_filename) is None
+    ):
+        return None
+    return next(
+        (
+            document
+            for document in load_application_documents(posting_filename)
+            if document.filename == document_filename and document.path is not None
+        ),
+        None,
+    )
 
 
 def compute_stage_counts(cards: list[JobCard]) -> dict[str, int]:
@@ -354,6 +486,7 @@ app = FastAPI(
 
 templates = Jinja2Templates(directory=str(PACKAGE_ROOT / "templates"))
 templates.env.globals["product_name"] = PRODUCT_NAME
+templates.env.filters["score_adjustment"] = format_score_adjustment
 app.mount("/static", StaticFiles(directory=str(Path(__file__).parent / "static")), name="static")
 
 
@@ -434,6 +567,7 @@ async def profile_view(request: Request):
 async def posting_view(request: Request, filename: str):
     """Single job posting viewer."""
     posting_html = load_posting(filename)
+    application_documents = load_application_documents(filename)
     return templates.TemplateResponse(
         request=request,
         name="posting.html",
@@ -441,6 +575,40 @@ async def posting_view(request: Request, filename: str):
             "request": request,
             "filename": filename,
             "posting_html": posting_html,
+            "application_documents": application_documents,
+        },
+    )
+
+
+@app.get("/application-file/{posting_filename}/{document_filename}")
+async def application_document_view(
+    request: Request, posting_filename: str, document_filename: str,
+):
+    """Open one allowlisted application document without mutating it."""
+    document = resolve_application_document(posting_filename, document_filename)
+    if document is None or document.path is None:
+        raise HTTPException(status_code=404, detail="Application document not found")
+
+    suffix = document.path.suffix.lower()
+    if suffix == ".pdf":
+        return FileResponse(document.path, media_type="application/pdf")
+    if suffix == ".docx":
+        return FileResponse(
+            document.path,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            filename=document.filename,
+        )
+
+    text = document.path.read_text(encoding="utf-8")
+    return templates.TemplateResponse(
+        request=request,
+        name="application_file.html",
+        context={
+            "request": request,
+            "posting_filename": posting_filename,
+            "document": document,
+            "document_html": render_safe_markdown(text) if suffix == ".md" else None,
+            "document_text": text if suffix != ".md" else None,
         },
     )
 

@@ -135,12 +135,19 @@ Open `http://localhost:3000` to use:
 - a local workspace overview and attention list
 - a responsive application pipeline
 - searchable job records with compact dates
+- posting-specific CV, cover-letter, and application-answer access
 - profile, career-direction, decision-criteria, and scoring reference views
 - a light-first interface with an optional dark theme
 
 The dashboard is read-only and does not require an account or external data
 transfer. `scripts/job_dashboard.py` is retained as a legacy compatibility
 entry point; `python3 -m jsw dashboard` is the canonical interface.
+
+To surface application documents for a job, place them under
+`exports/applications/<posting-filename-without-.md>/`. The dashboard admits
+only CV/resume, cover-letter, and application-answer files with `.md`, `.txt`,
+`.pdf`, or `.docx` extensions. LaTeX sources, triage notes, research, and other
+preparation files are intentionally excluded.
 
 ## Verification
 

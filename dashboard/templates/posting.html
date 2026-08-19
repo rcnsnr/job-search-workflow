@@ -15,7 +15,43 @@
   </div>
   <a class="secondary-button button-link" href="/pipeline">View pipeline</a>
 </section>
-<article class="prose panel document-panel posting-document">
-  {{ posting_html | safe }}
-</article>
+<div class="posting-layout">
+  <article class="prose panel document-panel posting-document">
+    {{ posting_html | safe }}
+  </article>
+  {% if application_documents %}
+  <section class="application-files panel" aria-labelledby="application-files-title">
+    <header class="application-files-header">
+      <div>
+        <p class="eyebrow">Ready to use</p>
+        <h2 id="application-files-title">Application files</h2>
+      </div>
+      <span>{{ application_documents | length }} available</span>
+    </header>
+    <div class="application-file-list">
+      {% for document in application_documents %}
+      {% if document.href %}
+      <a class="application-file-row" href="{{ document.href }}">
+        <span class="file-format">{{ document.file_format }}</span>
+        <span class="application-file-copy">
+          <strong>{{ document.label }}</strong>
+          <small>{{ document.filename }}</small>
+        </span>
+        <span class="file-action">{{ document.action }} <span aria-hidden="true">↗</span></span>
+      </a>
+      {% else %}
+      <div class="application-file-row application-file-row-static">
+        <span class="file-format">{{ document.file_format }}</span>
+        <span class="application-file-copy">
+          <strong>{{ document.label }}</strong>
+          <small>{{ document.filename }}</small>
+        </span>
+        <span class="file-action">{{ document.action }}</span>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
 {% endblock %}

@@ -15,45 +15,79 @@
   <header class="panel-header">
     <div>
       <p class="eyebrow">Risk adjustments</p>
-      <h2>Quality audit penalties</h2>
+      <h2>How quality risks change a score</h2>
     </div>
   </header>
   {% if quality_audit %}
-  <div class="table-scroll" tabindex="0" aria-label="Quality audit penalties table">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th scope="col">Category</th>
-          <th scope="col">Low</th>
-          <th scope="col">Medium</th>
-          <th scope="col">High</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Ghost Job</th>
-          <td>{{ quality_audit.get('ghost_job_penalty', {}).get('low', '—') }}</td>
-          <td>{{ quality_audit.get('ghost_job_penalty', {}).get('medium', '—') }}</td>
-          <td>{{ quality_audit.get('ghost_job_penalty', {}).get('high', '—') }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Exploitation</th>
-          <td>{{ quality_audit.get('exploitation_penalty', {}).get('low', '—') }}</td>
-          <td>{{ quality_audit.get('exploitation_penalty', {}).get('medium', '—') }}</td>
-          <td>{{ quality_audit.get('exploitation_penalty', {}).get('high', '—') }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Chaos</th>
-          <td>{{ quality_audit.get('chaos_penalty', {}).get('low', '—') }}</td>
-          <td>{{ quality_audit.get('chaos_penalty', {}).get('medium', '—') }}</td>
-          <td>{{ quality_audit.get('chaos_penalty', {}).get('high', '—') }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Multi-high escalation</th>
-          <td colspan="3">{{ quality_audit.get('multi_high_escalation', '—') }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="risk-score-guide">
+    <div class="risk-score-explainer">
+      <div>
+        <strong>How to read this</strong>
+        <p>Risk deductions are applied after the role receives its 0-5 fit score.</p>
+      </div>
+      <div class="score-example" aria-label="Example adjusted score">
+        <span>4.2 fit score</span>
+        <span aria-hidden="true">−</span>
+        <span>0.5 risk</span>
+        <span aria-hidden="true">=</span>
+        <strong>3.7 adjusted</strong>
+      </div>
+    </div>
+
+    <div class="risk-card-grid">
+      <article class="risk-card">
+        <header>
+          <span class="risk-card-index">01</span>
+          <div>
+            <h3>Inactive posting risk</h3>
+            <p>Signals that the company may not be actively filling the role.</p>
+          </div>
+        </header>
+        <dl>
+          <div><dt>Low risk</dt><dd>{{ quality_audit.get('ghost_job_penalty', {}).get('low') | score_adjustment }}</dd></div>
+          <div><dt>Medium risk</dt><dd>{{ quality_audit.get('ghost_job_penalty', {}).get('medium') | score_adjustment }}</dd></div>
+          <div><dt>High risk</dt><dd>{{ quality_audit.get('ghost_job_penalty', {}).get('high') | score_adjustment }}</dd></div>
+        </dl>
+      </article>
+
+      <article class="risk-card">
+        <header>
+          <span class="risk-card-index">02</span>
+          <div>
+            <h3>Unfair process risk</h3>
+            <p>Excessive unpaid work, pressure, or one-sided candidate demands.</p>
+          </div>
+        </header>
+        <dl>
+          <div><dt>Low risk</dt><dd>{{ quality_audit.get('exploitation_penalty', {}).get('low') | score_adjustment }}</dd></div>
+          <div><dt>Medium risk</dt><dd>{{ quality_audit.get('exploitation_penalty', {}).get('medium') | score_adjustment }}</dd></div>
+          <div><dt>High risk</dt><dd>{{ quality_audit.get('exploitation_penalty', {}).get('high') | score_adjustment }}</dd></div>
+        </dl>
+      </article>
+
+      <article class="risk-card">
+        <header>
+          <span class="risk-card-index">03</span>
+          <div>
+            <h3>Delivery chaos risk</h3>
+            <p>Unclear ownership, constant urgency, or structurally unstable work.</p>
+          </div>
+        </header>
+        <dl>
+          <div><dt>Low risk</dt><dd>{{ quality_audit.get('chaos_penalty', {}).get('low') | score_adjustment }}</dd></div>
+          <div><dt>Medium risk</dt><dd>{{ quality_audit.get('chaos_penalty', {}).get('medium') | score_adjustment }}</dd></div>
+          <div><dt>High risk</dt><dd>{{ quality_audit.get('chaos_penalty', {}).get('high') | score_adjustment }}</dd></div>
+        </dl>
+      </article>
+    </div>
+
+    <div class="multi-risk-note">
+      <span>Extra caution</span>
+      <div>
+        <strong>Two or more high risks</strong>
+        <p>{{ quality_audit.get('multi_high_escalation') | score_adjustment }} in addition to the category deductions.</p>
+      </div>
+    </div>
   </div>
   {% else %}
   <div class="empty-state">

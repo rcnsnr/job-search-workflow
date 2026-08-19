@@ -16,6 +16,9 @@ Edition. No stable release or tag is represented by the entries below.
 - Installable `jsw` command with local initialization, dashboard, and smoke
   checks.
 - Persistent dashboard ownership and noncommercial-use notice.
+- Posting-specific access to existing CV, cover-letter, and application-answer
+  files, plus a richer fictitious pipeline for local demonstrations.
+- Direct GitHub Sponsors access from the Community Edition overview.
 
 ### Changed
 
@@ -23,6 +26,10 @@ Edition. No stable release or tag is represented by the entries below.
   the dashboard to Community Operations Desk.
 - Adopted a light-first, responsive interface with optional dark mode and
   compact component radii.
+- Replaced numeric-only quality-risk penalties with plain-language score
+  explanations and an example calculation.
+- Moved posting-specific application files into a responsive right rail on
+  wide screens while preserving the single-column narrow layout.
 - Consolidated pull-request checks for Python, documentation, privacy, and the
   browser extension.
 - Clarified that Community Edition is source-available for noncommercial use
@@ -35,6 +42,7 @@ Edition. No stable release or tag is represented by the entries below.
 - Fixed Python quality defects in the Markdown-to-LaTeX and language-checking
   utilities.
 - Corrected setup fixture initialization and broken documentation links.
+- Removed raw frontmatter metadata from rendered job-detail content.
 
 ### Security
 
