@@ -47,5 +47,7 @@ Edition.
 ### Security
 
 - Added secret, brand, language, and deterministic license-policy checks.
+- Added an opt-in, receipt-bound pre-push entry point for guarded release
+  delivery.
 - Replaced inconsistent first-party license metadata with the official
   PolyForm Noncommercial 1.0.0 boundary.
