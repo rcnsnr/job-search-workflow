@@ -65,7 +65,6 @@ def main():
     parser.add_argument("--output", type=str, default="", help="Output report file path")
     args = parser.parse_args()
 
-    import urllib.parse  # needed for quote
 
     print("Scanning GitHub for potential clones of job-search-workflow...\n")
 
@@ -109,7 +108,7 @@ def main():
     report_lines = [
         f"# Clone Scan Report — {today}",
         "",
-        f"## Summary",
+        "## Summary",
         "",
         f"- Queries run: {len(SEARCH_QUERIES)}",
         f"- Potential clones found: {len(potential_clones)}",
@@ -132,10 +131,10 @@ def main():
         for clone in potential_clones:
             report_lines.append(f"- **{clone['repo']}** — {clone['url']}")
             report_lines.append(f"  Matched: `{clone['query'][:60]}`")
-            report_lines.append(f"  Action: Review manually. If clone, consider:")
-            report_lines.append(f"    - DMCA takedown notice to GitHub")
-            report_lines.append(f"    - Contact author for license compliance")
-            report_lines.append(f"    - Public community call-out if ignored")
+            report_lines.append("  Action: Review manually. If clone, consider:")
+            report_lines.append("    - DMCA takedown notice to GitHub")
+            report_lines.append("    - Contact author for license compliance")
+            report_lines.append("    - Public community call-out if ignored")
             report_lines.append("")
 
     report_content = "\n".join(report_lines) + "\n"

@@ -35,7 +35,7 @@ The check validates these required components:
 - `README.md` and `.gitignore`
 - Git
 - Python 3.10 or newer
-- Node.js 18 or newer
+- Node.js 22.12 or newer
 - npm
 
 The Linux/macOS script also reports the optional `pandoc`, `pdflatex` and `markdownlint-cli2` tools. Missing optional tools do not block the basic setup, but the related document-export or lint capability will be unavailable.
@@ -80,6 +80,7 @@ mode:
 
    ```bash
    cd tools/browser-extension
+   npm ci
    npm test
    npm run lint
    node scripts/validate-manifest.js
@@ -99,7 +100,11 @@ Run these commands from the public repository root:
 bash -n scripts/setup.sh
 shellcheck scripts/setup.sh
 python3 -m unittest discover -s tests -v
-python3 -m pytest public/tests/test_linkedin_capture_server.py -q
+python3 -m pytest -q
+PYTHONPATH=scripts python3 -m jsw smoke
+python3 scripts/scan_pii.py --path .
+python3 scripts/check_secret_hygiene.py
+python3 scripts/check_license_policy.py
 markdownlint-cli2 "**/*.md"
 ./scripts/setup.sh --check-only
 ./scripts/setup.sh
@@ -108,12 +113,19 @@ git diff --check
 
 ## CI Evidence
 
-`.github/workflows/clone-scan.yml` runs independent jobs for:
+`.github/workflows/ci.yml` runs pull-request and `main` checks for Python,
+dashboard behavior, privacy, documentation, and the browser extension.
+
+`.github/workflows/setup-audit.yml` runs independent scheduled/manual jobs for:
 
 - Linux: Bash syntax, ShellCheck, Markdown lint, Python behavior tests and a full setup smoke test.
 - Windows: a full `setup.bat` smoke test under real `cmd.exe`.
 
-Required workflow steps do not suppress failures. A lint, test or setup failure fails the job.
+`.github/workflows/clone-scan.yml` is a separate scheduled/manual repository
+discovery check; it is not setup or pull-request CI evidence.
+
+Required workflow steps do not suppress failures. A lint, test or setup failure
+fails the owning job.
 
 ## Behavior Tests
 
@@ -133,7 +145,7 @@ Required workflow steps do not suppress failures. A lint, test or setup failure 
 
 - `Missing required tools`: Install the listed tools through a trusted package manager, then run `--check-only` again.
 - `Python >= 3.10 is required`: Correct the active `python3` or `python` installation.
-- `Node.js >= 18 is required`: Switch to a supported Node.js LTS release.
+- `Node.js >= 22.12 is required`: Switch to Node.js 22.12 or newer.
 - Markdown lint failure: Correct the reported files instead of converting the failure into a warning.
 - Windows CI failure: Fix the first failing command in the relevant GitHub Actions log. A Linux pass is not evidence of Windows compatibility.
 

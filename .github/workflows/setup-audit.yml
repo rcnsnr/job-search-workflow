@@ -1,135 +1,45 @@
 name: Setup Audit
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * 1'
+    - cron: "0 6 * * 1"
 
 permissions:
   contents: read
 
 jobs:
   linux:
-    name: Linux setup and tests
+    name: Linux setup contract
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
-      - name: Install audit tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes shellcheck
-          python3 -m pip install fastapi pydantic pyyaml uvicorn httpx pytest
-          npm install --global markdownlint-cli2@0.20.0
-
-      - name: Static checks
-        run: |
-          bash -n scripts/setup.sh
-          shellcheck scripts/setup.sh
-          markdownlint-cli2 "**/*.md"
-
-      - name: Behavior tests
-        run: python3 -m unittest discover -s tests -v
-
-      - name: Full setup smoke test
-        run: ./scripts/setup.sh
-
-  extension:
-    name: Browser extension lint, test and manifest validation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install extension dependencies
-        run: |
-          cd tools/browser-extension
-          npm ci
-
-      - name: Extension static checks
-        run: |
-          cd tools/browser-extension
-          npm run lint
-          node scripts/validate-manifest.js
-
-      - name: Extension unit and DOM tests
-        run: |
-          cd tools/browser-extension
-          npm test
-
-      - name: PII / private-reference scan
-        run: python3 scripts/scan_pii.py
-
-      - name: LinkedIn brand check
-        run: python3 scripts/check_linkedin_brand.py
-
-  capture-server:
-    name: Capture server Python tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install Python dependencies
-        run: |
-          python3 -m pip install fastapi pydantic pyyaml uvicorn httpx pytest
-
-      - name: Run capture server tests
-        run: python3 -m pytest tests/test_linkedin_capture_server.py -q
-
-      - name: Python compile check
-        run: |
-          python3 -m py_compile scripts/linkedin_capture_server.py
-          python3 -m py_compile scripts/scan_pii.py
-          python3 -m py_compile scripts/check_linkedin_brand.py
+          node-version: "22"
+      - run: python3 -m pip install -e ".[dashboard,dev]"
+      - run: shellcheck --version
+      - run: bash -n scripts/setup.sh
+      - run: shellcheck scripts/setup.sh
+      - run: python3 -m unittest discover -s tests -v
+      - run: ./scripts/setup.sh --check-only
+      - run: ./scripts/setup.sh
 
   windows:
-    name: Windows setup smoke test
+    name: Windows setup contract
     runs-on: windows-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
-      - name: Full setup smoke test
-        shell: cmd
+          node-version: "22"
+      - shell: cmd
+        run: scripts\setup.bat --check-only
+      - shell: cmd
         run: scripts\setup.bat

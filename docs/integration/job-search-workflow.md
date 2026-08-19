@@ -1,8 +1,9 @@
 # Job Search Workflow Integration Contract
 
 This document defines how the `Job Search Workflow Capture` browser extension,
-the `public/scripts/linkedin_capture_server.py` FastAPI capture server, and the
-Job Search Workflow `inbox/jobs/` triage/decision/export pipeline fit together.
+the `scripts/linkedin_capture_server.py` FastAPI capture server, and the Job
+Search Workflow Community Edition `inbox/jobs/` triage/decision/export pipeline
+fit together.
 
 ## Scope
 
@@ -168,9 +169,9 @@ GET /captures?since=2026-07-25T00:00:00+00:00
 
 ## Normalized Posting Schema
 
-The Markdown file written to `inbox/jobs/` has English front-matter and
-Turkish prose sections to match Job Search Workflow capture conventions
-(GAP-20260622-02).
+The Markdown file written to `inbox/jobs/` has English front-matter and English
+sample prose. User-created local prose may use the language preferred by the
+workspace owner.
 
 ```markdown
 ---
@@ -215,9 +216,9 @@ Strong SRE background alignment.
 
 ### Free-form sections
 
-- `## Why Captured` — Turkish prose explaining why the posting was captured.
+- `## Why Captured` — prose explaining why the posting was captured.
 - `## Extracted Facts` — bullet list of structured facts extracted during capture.
-- `## Fit Hypothesis` — Turkish prose describing the initial fit hypothesis.
+- `## Fit Hypothesis` — prose describing the initial fit hypothesis.
 
 ## Deduplication
 
@@ -234,19 +235,19 @@ Environment variables:
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `CAREEROPS_INBOX_DIR` | `inbox/jobs` | Directory where capture Markdown files are written. |
-| `CAREEROPS_CAPTURE_PORT` | `8766` | Port the FastAPI server listens on. `CAREEROPS_LINKEDIN_CAPTURE_PORT` is accepted as a legacy fallback. |
+| `JSW_INBOX_DIR` | `inbox/jobs` | Directory where capture Markdown files are written. |
+| `JSW_CAPTURE_PORT` | `8766` | Port the FastAPI server listens on. |
 
 Start the server:
 
 ```bash
-python3 public/scripts/linkedin_capture_server.py
+python3 scripts/linkedin_capture_server.py
 ```
 
 Or with a custom inbox directory:
 
 ```bash
-CAREEROPS_INBOX_DIR=/path/to/inbox/jobs python3 public/scripts/linkedin_capture_server.py
+JSW_INBOX_DIR=/path/to/inbox/jobs python3 scripts/linkedin_capture_server.py
 ```
 
 ## Extension ↔ Server Wiring

@@ -1,7 +1,7 @@
 // content/autoscan.js
 // Unattended scan loop for LinkedIn Jobs -> Workflow capture server
 (function () {
-  if (window.__careerOpsAutoScanInitialized) {
+  if (window.__jswAutoScanInitialized) {
     return;
   }
 
@@ -332,7 +332,7 @@
     });
   }
 
-  window.__careerOpsAutoScanInitialized = true;
+  window.__jswAutoScanInitialized = true;
 
   window.WorkflowAutoScan = {
     start,

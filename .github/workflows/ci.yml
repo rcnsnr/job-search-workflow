@@ -6,106 +6,69 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint:
-    name: Markdown Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - run: npx --yes markdownlint-cli2 "**/*.md" "#node_modules"
-
-  pii-scan:
-    name: PII Scan
+  python:
+    name: Python, dashboard, and privacy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - run: python3 scripts/scan_pii.py --path .
-        name: Scan for personal data leaks
-
-  python-check:
-    name: Python Syntax Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: |
-          python3 -m py_compile scripts/scan_pii.py
-          python3 -m py_compile scripts/validate_pdf_standard.py
-          python3 -m py_compile scripts/check_secret_hygiene.py
-          python3 -m py_compile scripts/job_dashboard.py
-          python3 -m py_compile scripts/md_to_tex.py
-          python3 -m py_compile scripts/md_to_docx.py
-          python3 -m py_compile scripts/verify_no_turkish.py
-          python3 -m py_compile scripts/relocation_livability_research.py
-        name: Verify Python scripts compile
-
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: pip install fastapi pydantic pyyaml uvicorn httpx pytest
-      - run: pytest --tb=short -q
-
-  setup-script-test:
-    name: Setup Script Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: pip install pytest
-      - run: bash -n scripts/setup.sh
-        name: Bash syntax check
-      - run: pytest tests/test_setup.py -v --tb=short
-        name: Setup behavior tests
-
-  dashboard-smoke:
-    name: Dashboard Smoke Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: pip install fastapi uvicorn jinja2 markdown pyyaml httpx
+          python-version: "3.12"
+      - run: python3 -m pip install --upgrade pip
+      - run: python3 -m pip install -e ".[dashboard,dev]"
+      - run: python3 -m compileall -q dashboard scripts tests
+        name: Compile Python sources
+      - run: python3 -m ruff check dashboard scripts tests
+        name: Lint Python sources
+      - run: python3 -m pytest -q
+        name: Run Python tests
       - run: PYTHONPATH=scripts python3 -m jsw smoke
-        name: Dashboard smoke test
-
-  turkish-check:
-    name: Turkish Content Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+        name: Run dashboard smoke test
+      - run: python3 scripts/scan_pii.py --path .
+        name: Scan the complete public tree
+      - run: python3 scripts/check_secret_hygiene.py
+        name: Scan for common secret formats
+      - run: python3 scripts/check_linkedin_brand.py
+        name: Verify extension brand boundaries
       - run: python3 scripts/verify_no_turkish.py --path .
-        name: Verify no Turkish content in public-facing files
+        name: Verify public-facing language
+      - run: python3 scripts/check_license_policy.py
+        name: Verify noncommercial license boundary
 
-  extension-lint:
-    name: Browser Extension Lint & Test
+  docs:
+    name: Documentation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - working-directory: tools/browser-extension
-        run: npm install
-      - working-directory: tools/browser-extension
-        run: npm run lint
-      - working-directory: tools/browser-extension
-        run: npm test
+      - run: npx --yes markdownlint-cli2@0.20.0 "**/*.md" "#**/node_modules/**"
+        name: Lint Markdown
+
+  extension:
+    name: Browser extension
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/browser-extension
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: tools/browser-extension/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: node scripts/validate-manifest.js
+      - run: npm test -- --runInBand
+      - run: npm audit --audit-level=high

@@ -1,5 +1,8 @@
 # markdownlint-cli2 config for job-search-workflow public repository
 # Prompt files, fixtures, and templates intentionally relax strict prose rules.
+ignores:
+  - "**/node_modules/**"
+
 config:
   default: true
   MD013: false  # line length

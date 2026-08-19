@@ -28,6 +28,7 @@ classifiers = [
 dependencies = [
     "pyyaml>=6.0,<7.0",
     "markdown>=3.5,<4.0",
+    "bleach>=6.4,<7.0",
 ]
 
 [project.optional-dependencies]
@@ -42,6 +43,9 @@ export = [
 ]
 dev = [
     "pytest>=7.0.0",
+    "httpx>=0.27,<1.0",
+    "httpx2>=2.0,<3.0",
+    "ruff==0.14.10",
 ]
 
 [project.scripts]
@@ -54,8 +58,9 @@ Issues = "https://github.com/rcnsnr/job-search-workflow/issues"
 Sponsor = "https://github.com/sponsors/rcnsnr"
 
 [tool.setuptools]
-packages = ["jsw"]
-package-dir = { "" = "scripts" }
+packages = ["jsw", "dashboard"]
+package-dir = { jsw = "scripts/jsw", dashboard = "dashboard" }
+license-files = ["LICENSE", "NOTICE", "COMMERCIAL_USE.md"]
 
 [tool.setuptools.package-data]
-jsw = ["*.py"]
+dashboard = ["templates/*.html", "static/*.css", "static/*.js", "static/*.svg"]

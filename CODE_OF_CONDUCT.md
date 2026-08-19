@@ -30,8 +30,10 @@ Examples of unacceptable behavior:
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the project maintainers. All complaints will be reviewed and
-investigated promptly and fairly.
+reported to the project owner through the maintainer's GitHub profile. Request
+a private contact channel and do not publish sensitive details in an issue. All
+complaints will be reviewed and investigated fairly; no response-time
+commitment is currently offered.
 
 ## Attribution
 

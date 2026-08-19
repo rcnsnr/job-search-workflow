@@ -8,6 +8,11 @@ location: Remote (Europe)
 work_model: remote
 source_class: company_careers_page
 capture_method: playwright_snapshot
+triage_state: captured
+hiring_region: europe
+sponsorship_required: false
+sponsorship_provided: false
+relocation_required: false
 ---
 
 ## Why Captured

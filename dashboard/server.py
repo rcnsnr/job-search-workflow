@@ -11,15 +11,19 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field
+from datetime import date, datetime
 from pathlib import Path
 from typing import Optional
+from urllib.parse import quote
 
+import bleach
 import markdown
 import yaml
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -27,16 +31,51 @@ from fastapi.templating import Jinja2Templates
 # Paths
 # ---------------------------------------------------------------------------
 
-ROOT = Path(__file__).resolve().parents[1]
+PACKAGE_ROOT = Path(__file__).resolve().parent
+SOURCE_ROOT = PACKAGE_ROOT.parent
+ROOT = Path(os.environ.get("JSW_WORKSPACE", Path.cwd())).expanduser().resolve()
+if not any((ROOT / marker).exists() for marker in ("config", "fixtures", "inbox", "user_data")):
+    if (SOURCE_ROOT / "fixtures").exists():
+        ROOT = SOURCE_ROOT
 JOBS_DIR = ROOT / "inbox" / "jobs"
 RUNS_DIR = ROOT / "runs"
 USER_DATA_DIR = ROOT / "user_data"
 CONFIG_DIR = ROOT / "config"
 FIXTURES_DIR = ROOT / "fixtures"
+APPLICATIONS_DIR = ROOT / "exports" / "applications"
+PRODUCT_NAME = "Job Search Workflow Community Edition"
+MARKDOWN_CLEANER = bleach.Cleaner(
+    tags={
+        "a",
+        "blockquote",
+        "code",
+        "em",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "hr",
+        "li",
+        "ol",
+        "p",
+        "pre",
+        "strong",
+        "table",
+        "tbody",
+        "td",
+        "th",
+        "thead",
+        "tr",
+        "ul",
+    },
+    attributes={"a": ["href", "title"], "code": ["class"], "th": ["align"], "td": ["align"]},
+    protocols={"http", "https", "mailto"},
+    strip=True,
+    strip_comments=True,
+)
 
-# Fallback to fixtures if personal dirs don't exist (public/demo mode)
-DATA_DIR = JOBS_DIR if JOBS_DIR.exists() else FIXTURES_DIR
-PROFILE_PATH = USER_DATA_DIR / "career_profile.md" if USER_DATA_DIR.exists() else FIXTURES_DIR / "sample-profile.md"
 SCORING_CONFIG = CONFIG_DIR / "scoring.yaml" if CONFIG_DIR.exists() else ROOT / "config" / "scoring.yaml"
 
 # ---------------------------------------------------------------------------
@@ -70,7 +109,20 @@ class JobCard:
     quality_badge: str
     quality_recommendation: str
     compensation_signal: str
+    captured_at: str
     raw_content: str
+
+
+@dataclass(frozen=True)
+class ApplicationDocument:
+    """A read-only application document linked to one posting."""
+
+    filename: str
+    label: str
+    file_format: str
+    href: Optional[str]
+    action: str
+    path: Optional[Path]
 
 
 @dataclass
@@ -102,11 +154,55 @@ def parse_frontmatter(text: str) -> tuple[dict, str]:
     return fm, text[match.end():]
 
 
+def render_safe_markdown(text: str) -> str:
+    """Render Markdown and remove executable or untrusted HTML content."""
+    rendered = markdown.markdown(text, extensions=["tables", "fenced_code"])
+    return MARKDOWN_CLEANER.clean(rendered)
+
+
+def format_compact_date(value: object) -> str:
+    """Render date-like values consistently without exposing raw timestamps."""
+    if isinstance(value, (datetime, date)):
+        return value.date().isoformat() if isinstance(value, datetime) else value.isoformat()
+    text = str(value or "").strip()
+    if not text:
+        return "Not provided"
+    iso_match = re.match(r"^(\d{4}-\d{2}-\d{2})", text)
+    return iso_match.group(1) if iso_match else text
+
+
+def format_score_adjustment(value: object) -> str:
+    """Explain a numeric score adjustment without configuration jargon."""
+    try:
+        adjustment = float(value)
+    except (TypeError, ValueError):
+        return "Not configured"
+    if adjustment == 0:
+        return "No score change"
+    amount = abs(adjustment)
+    unit = "point" if amount == 1 else "points"
+    verb = "Subtract" if adjustment < 0 else "Add"
+    return f"{verb} {amount:.1f} {unit}"
+
+
 def infer_stage(fm: dict, body: str) -> str:
     """Infer pipeline stage from frontmatter and body content."""
+    triage_state = str(fm.get("triage_state", "")).lower()
     status = str(fm.get("application_status", "")).lower()
     decision = str(fm.get("initial_decision", "")).lower()
 
+    triage_stage_map = {
+        "captured": "new",
+        "triaged_reject": "reject",
+        "triaged_conditional": "shortlist",
+        "triaged_apply": "shortlist",
+        "applied": "applied",
+        "interview": "interview",
+        "offer": "offer",
+        "closed": "reject",
+    }
+    if triage_state in triage_stage_map:
+        return triage_stage_map[triage_state]
     if "reject" in status or "reject" in decision:
         return "reject"
     if "offer" in status:
@@ -163,17 +259,19 @@ def parse_compensation_signal(body: str) -> str:
     return "unknown"
 
 
-def load_job_cards() -> list[JobCard]:
-    """Load all job postings from data directory."""
+def load_job_cards_from(directory: Path) -> list[JobCard]:
+    """Load recognized job postings from one directory."""
     cards: list[JobCard] = []
-    if not DATA_DIR.exists():
+    if not directory.exists():
         return cards
 
-    for path in sorted(DATA_DIR.glob("*.md")):
+    for path in sorted(directory.glob("*.md")):
         if path.name in {"README.md", "source_consistency_report.md"}:
             continue
         text = path.read_text(encoding="utf-8")
         fm, body = parse_frontmatter(text)
+        if not fm or not (fm.get("role_title") and fm.get("company")):
+            continue
 
         title = str(fm.get("role_title", path.stem.replace("-", " ").title()))
         company = str(fm.get("company", "Unknown"))
@@ -186,6 +284,7 @@ def load_job_cards() -> list[JobCard]:
         decision = str(fm.get("initial_decision", ""))
         quality_badge, quality_rec = parse_quality_signals(body)
         comp_signal = parse_compensation_signal(body)
+        captured_at = format_compact_date(fm.get("captured_at"))
 
         cards.append(
             JobCard(
@@ -201,6 +300,7 @@ def load_job_cards() -> list[JobCard]:
                 quality_badge=quality_badge,
                 quality_recommendation=quality_rec,
                 compensation_signal=comp_signal,
+                captured_at=captured_at,
                 raw_content=text,
             )
         )
@@ -208,13 +308,34 @@ def load_job_cards() -> list[JobCard]:
     return cards
 
 
+def load_job_cards() -> list[JobCard]:
+    """Prefer real local records and fall back to public demo fixtures."""
+    local_cards = load_job_cards_from(JOBS_DIR)
+    return local_cards if local_cards else load_job_cards_from(FIXTURES_DIR)
+
+
 def load_profile_html() -> str:
     """Render career profile markdown to HTML."""
-    path = PROFILE_PATH
+    local_profile = USER_DATA_DIR / "career_profile.md"
+    path = local_profile if local_profile.is_file() else FIXTURES_DIR / "sample-profile.md"
     if not path.exists():
         return "<p>Profile not found.</p>"
     text = path.read_text(encoding="utf-8")
-    return markdown.markdown(text, extensions=["tables", "fenced_code"])
+    return render_safe_markdown(text)
+
+
+def load_target_roles_html() -> str:
+    """Render the owner's career direction and decision criteria."""
+    local_targets = USER_DATA_DIR / "target_roles.md"
+    path = local_targets if local_targets.is_file() else FIXTURES_DIR / "sample-target_roles.md"
+    if not path.exists():
+        return render_safe_markdown(
+            "## Decision criteria\n\n"
+            "Add target roles, preferred environments, must-haves, and boundaries "
+            "to `user_data/target_roles.md`."
+        )
+    text = path.read_text(encoding="utf-8")
+    return render_safe_markdown(text)
 
 
 def load_scoring_config() -> dict:
@@ -228,13 +349,120 @@ def load_scoring_config() -> dict:
         return {}
 
 
+def resolve_posting_path(filename: str) -> Optional[Path]:
+    """Resolve a posting without allowing path traversal."""
+    if Path(filename).name != filename or not filename.endswith(".md"):
+        return None
+    candidates = (JOBS_DIR / filename, FIXTURES_DIR / filename)
+    return next((candidate for candidate in candidates if candidate.is_file()), None)
+
+
 def load_posting(filename: str) -> str:
     """Load a single job posting as rendered HTML."""
-    path = DATA_DIR / filename
-    if not path.exists() or not path.is_file():
+    path = resolve_posting_path(filename)
+    if path is None:
         return "<p>Posting not found.</p>"
     text = path.read_text(encoding="utf-8")
-    return markdown.markdown(text, extensions=["tables", "fenced_code"])
+    _, body = parse_frontmatter(text)
+    return render_safe_markdown(body)
+
+
+def classify_application_document(path: Path) -> Optional[str]:
+    """Classify only files that are directly used in an application."""
+    normalized = re.sub(r"[_\s]+", "-", path.stem.lower())
+    suffix = path.suffix.lower()
+    if suffix not in {".docx", ".md", ".pdf", ".txt"}:
+        return None
+    if "cover-letter" in normalized:
+        return "Cover letter"
+    if "application-answer" in normalized:
+        return "Application answers"
+    if "cv" in normalized.split("-") or "resume" in normalized.split("-"):
+        return "CV"
+    return None
+
+
+def application_document_paths(posting_filename: str) -> list[Path]:
+    """Find application documents for one posting using a bounded convention."""
+    if Path(posting_filename).name != posting_filename or not posting_filename.endswith(".md"):
+        return []
+
+    package_dir = APPLICATIONS_DIR / Path(posting_filename).stem
+    try:
+        package_dir.resolve().relative_to(APPLICATIONS_DIR.resolve())
+    except ValueError:
+        return []
+    if package_dir.is_dir() and not package_dir.is_symlink():
+        return [
+            path
+            for path in package_dir.iterdir()
+            if path.is_file() and not path.is_symlink()
+        ]
+
+    if posting_filename == "sample-job-posting.md" and not (JOBS_DIR / posting_filename).is_file():
+        return [
+            FIXTURES_DIR / "sample-cover-letter.md",
+            FIXTURES_DIR / "sample-application-answers.md",
+        ]
+    return []
+
+
+def load_application_documents(posting_filename: str) -> list[ApplicationDocument]:
+    """Return existing, allowlisted application documents for one posting."""
+    order = {"CV": 0, "Cover letter": 1, "Application answers": 2}
+    documents: list[ApplicationDocument] = []
+    if (
+        posting_filename == "sample-job-posting.md"
+        and not (JOBS_DIR / posting_filename).is_file()
+    ):
+        documents.append(
+            ApplicationDocument(
+                filename="sample-cv.pdf",
+                label="CV",
+                file_format="PDF",
+                href=None,
+                action="Delivery format",
+                path=None,
+            )
+        )
+    for path in application_document_paths(posting_filename):
+        if not path.is_file():
+            continue
+        label = classify_application_document(path)
+        if label is None:
+            continue
+        encoded_posting = quote(posting_filename, safe="")
+        encoded_document = quote(path.name, safe="")
+        documents.append(
+            ApplicationDocument(
+                filename=path.name,
+                label=label,
+                file_format=path.suffix.removeprefix(".").upper(),
+                href=f"/application-file/{encoded_posting}/{encoded_document}",
+                action="Download" if path.suffix.lower() == ".docx" else "Open",
+                path=path,
+            )
+        )
+    return sorted(documents, key=lambda document: (order[document.label], document.filename))
+
+
+def resolve_application_document(
+    posting_filename: str, document_filename: str,
+) -> Optional[ApplicationDocument]:
+    """Resolve a requested document only from the posting's admitted set."""
+    if (
+        Path(document_filename).name != document_filename
+        or resolve_posting_path(posting_filename) is None
+    ):
+        return None
+    return next(
+        (
+            document
+            for document in load_application_documents(posting_filename)
+            if document.filename == document_filename and document.path is not None
+        ),
+        None,
+    )
 
 
 def compute_stage_counts(cards: list[JobCard]) -> dict[str, int]:
@@ -251,18 +479,39 @@ def compute_stage_counts(cards: list[JobCard]) -> dict[str, int]:
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="Job Search Workflow Dashboard",
+    title=PRODUCT_NAME,
     description="Local-first dashboard for job search pipeline tracking.",
     version="0.1.0",
 )
 
-templates = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
+templates = Jinja2Templates(directory=str(PACKAGE_ROOT / "templates"))
+templates.env.globals["product_name"] = PRODUCT_NAME
+templates.env.filters["score_adjustment"] = format_score_adjustment
 app.mount("/static", StaticFiles(directory=str(Path(__file__).parent / "static")), name="static")
 
 
 @app.get("/", response_class=HTMLResponse)
-async def kanban_board(request: Request):
-    """Kanban board view — main dashboard page."""
+async def overview(request: Request):
+    """Local workspace overview."""
+    cards = load_job_cards()
+    stage_counts = compute_stage_counts(cards)
+    attention_cards = [card for card in cards if card.stage in {"new", "triage", "shortlist"}][:5]
+    return templates.TemplateResponse(
+        request=request,
+        name="overview.html",
+        context={
+            "request": request,
+            "cards": cards,
+            "attention_cards": attention_cards,
+            "stage_counts": stage_counts,
+            "total_cards": len(cards),
+        },
+    )
+
+
+@app.get("/pipeline", response_class=HTMLResponse)
+async def pipeline_view(request: Request):
+    """Adaptive pipeline board."""
     cards = load_job_cards()
     stage_counts = compute_stage_counts(cards)
     cards_by_stage = {stage: [] for stage in PIPELINE_STAGES}
@@ -271,8 +520,9 @@ async def kanban_board(request: Request):
             cards_by_stage[card.stage].append(card)
 
     return templates.TemplateResponse(
-        "kanban.html",
-        {
+        request=request,
+        name="kanban.html",
+        context={
             "request": request,
             "stages": PIPELINE_STAGES,
             "cards_by_stage": cards_by_stage,
@@ -282,15 +532,33 @@ async def kanban_board(request: Request):
     )
 
 
+@app.get("/jobs", response_class=HTMLResponse)
+async def jobs_view(request: Request):
+    """Searchable local job inventory."""
+    cards = load_job_cards()
+    return templates.TemplateResponse(
+        request=request,
+        name="jobs.html",
+        context={
+            "request": request,
+            "cards": cards,
+            "stages": PIPELINE_STAGES,
+        },
+    )
+
+
 @app.get("/profile", response_class=HTMLResponse)
 async def profile_view(request: Request):
     """Profile summary view."""
     profile_html = load_profile_html()
+    target_roles_html = load_target_roles_html()
     return templates.TemplateResponse(
-        "profile.html",
-        {
+        request=request,
+        name="profile.html",
+        context={
             "request": request,
             "profile_html": profile_html,
+            "target_roles_html": target_roles_html,
         },
     )
 
@@ -299,12 +567,48 @@ async def profile_view(request: Request):
 async def posting_view(request: Request, filename: str):
     """Single job posting viewer."""
     posting_html = load_posting(filename)
+    application_documents = load_application_documents(filename)
     return templates.TemplateResponse(
-        "posting.html",
-        {
+        request=request,
+        name="posting.html",
+        context={
             "request": request,
             "filename": filename,
             "posting_html": posting_html,
+            "application_documents": application_documents,
+        },
+    )
+
+
+@app.get("/application-file/{posting_filename}/{document_filename}")
+async def application_document_view(
+    request: Request, posting_filename: str, document_filename: str,
+):
+    """Open one allowlisted application document without mutating it."""
+    document = resolve_application_document(posting_filename, document_filename)
+    if document is None or document.path is None:
+        raise HTTPException(status_code=404, detail="Application document not found")
+
+    suffix = document.path.suffix.lower()
+    if suffix == ".pdf":
+        return FileResponse(document.path, media_type="application/pdf")
+    if suffix == ".docx":
+        return FileResponse(
+            document.path,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            filename=document.filename,
+        )
+
+    text = document.path.read_text(encoding="utf-8")
+    return templates.TemplateResponse(
+        request=request,
+        name="application_file.html",
+        context={
+            "request": request,
+            "posting_filename": posting_filename,
+            "document": document,
+            "document_html": render_safe_markdown(text) if suffix == ".md" else None,
+            "document_text": text if suffix != ".md" else None,
         },
     )
 
@@ -315,8 +619,9 @@ async def scoring_view(request: Request):
     cards = load_job_cards()
     scoring_config = load_scoring_config()
     return templates.TemplateResponse(
-        "scoring.html",
-        {
+        request=request,
+        name="scoring.html",
+        context={
             "request": request,
             "cards": cards,
             "scoring_config": scoring_config,
@@ -342,6 +647,7 @@ async def api_cards():
             "quality_badge": c.quality_badge,
             "quality_recommendation": c.quality_recommendation,
             "compensation_signal": c.compensation_signal,
+            "captured_at": c.captured_at,
         }
         for c in cards
     ]
@@ -363,9 +669,11 @@ def smoke_test() -> bool:
     try:
         cards = load_job_cards()
         profile = load_profile_html()
+        target_roles = load_target_roles_html()
         config = load_scoring_config()
         print(f"  cards loaded: {len(cards)}")
         print(f"  profile length: {len(profile)} chars")
+        print(f"  target roles length: {len(target_roles)} chars")
         print(f"  scoring config keys: {list(config.keys())}")
         return True
     except Exception as e:

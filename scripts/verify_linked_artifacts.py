@@ -174,7 +174,7 @@ def main():
     for r in results:
         counts[r["status"]] = counts.get(r["status"], 0) + 1
 
-    print(f"=== GAP-20260719-01 Linked Artifact Verification Check ===")
+    print("=== GAP-20260719-01 Linked Artifact Verification Check ===")
     print(f"Files scanned: {len(results)}")
     print(f"  PASS (verified): {counts['pass']}")
     print(f"  FAIL (missing):  {counts['fail']}")

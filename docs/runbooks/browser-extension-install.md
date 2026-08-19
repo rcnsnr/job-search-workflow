@@ -6,7 +6,7 @@ mode. This runbook covers the load-unpacked flow used for Phase 1 releases.
 ## Prerequisites
 
 - Chrome, Chromium, Brave, or another Chromium-based browser.
-- Extension source files in `public/tools/browser-extension/`.
+- Extension source files in `tools/browser-extension/`.
 
 ## Install steps
 
@@ -20,8 +20,8 @@ mode. This runbook covers the load-unpacked flow used for Phase 1 releases.
 
 3. Click **Load unpacked**.
 
-4. Select the `public/tools/browser-extension/` directory (or the extracted
-   `.zip` release folder).
+4. Select the `tools/browser-extension/` directory. An extracted `.zip` folder
+   is also valid after an approved release archive exists.
 
 5. The extension appears in the extensions list as `Job Search Workflow Capture`.
 
@@ -117,17 +117,18 @@ The server writes one Markdown file per posting to `inbox/jobs/`, deduplicating 
 
 ### LinkedIn shows a challenge page
 
-- Reduce scan speed to `Conservative`.
-- Increase the delay values in the speed profile.
-- Avoid unattended scans on the same account too frequently.
+- Stop the scan and do not attempt to bypass the challenge.
+- Continue manually only when the site's normal access flow and terms permit
+  it.
 
 ## Update the extension
 
-1. Download the latest `.zip` release.
-2. Extract it to a folder.
-3. In `chrome://extensions`, find the existing extension and click **Remove**.
-4. Click **Load unpacked** and select the extracted folder.
+1. Export settings from the options page.
+2. Update the cloned repository with Git, or download an approved release
+   archive when one is published.
+3. Return to `chrome://extensions` and click **Reload** on the extension card.
+4. If the source directory changed, remove the extension and load the new
+   directory unpacked.
 
-Your options are stored in `chrome.storage.local`; they are lost when the
-extension is removed. Use **Export Settings** in the options page before
-removing.
+Removing the extension may clear `chrome.storage.local`; import the settings
+backup after reinstalling.

@@ -1,36 +1,52 @@
 {% extends "base.html" %}
-{% block title %}Pipeline — Job Search Workflow{% endblock %}
-{% block nav_kanban %}active{% endblock %}
+{% block title %}Pipeline · {{ product_name }}{% endblock %}
+{% block nav_pipeline %}active{% endblock %}
 {% block content %}
-<div class="kanban">
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Application flow</p>
+    <h1>Pipeline</h1>
+    <p class="page-summary">A compact stage-by-stage view of the local job search workflow.</p>
+  </div>
+  <div class="heading-stat">
+    <strong>{{ total_cards }}</strong>
+    <span>Total jobs</span>
+  </div>
+</section>
+
+<section class="pipeline-grid" aria-label="Job pipeline">
   {% for stage in stages %}
-  <div class="column">
-    <div class="column-header">
-      <h3>{{ stage | capitalize }}</h3>
-      <span class="column-count">{{ stage_counts[stage] }}</span>
-    </div>
-    <div class="column-cards">
+  <article class="pipeline-column" data-stage="{{ stage }}" style="--index: {{ loop.index }}">
+    <header class="pipeline-column-header">
+      <div>
+        <span class="stage-kicker">Stage {{ "%02d" | format(loop.index) }}</span>
+        <h2>{{ stage | replace('_', ' ') | title }}</h2>
+      </div>
+      <span class="count-badge">{{ stage_counts[stage] }}</span>
+    </header>
+    <div class="pipeline-cards">
       {% for card in cards_by_stage[stage] %}
-      <a href="/posting/{{ card.filename }}" style="text-decoration:none;color:inherit;">
-        <div class="card">
-          <div class="card-title">{{ card.title }}</div>
-          <div class="card-company">{{ card.company }} · {{ card.location }}</div>
-          <div class="card-meta">
-            {% if card.fit_score is not none %}
-            <span class="badge badge-fit">{{ card.fit_score }}/5</span>
-            {% endif %}
-            {% if card.quality_badge and card.quality_badge != 'skipped' %}
-            <span class="badge badge-{{ card.quality_badge | replace('_', '-') }}">{{ card.quality_badge | replace('quality_', '') }}</span>
-            {% endif %}
-            {% if card.compensation_signal and card.compensation_signal != 'unknown' %}
-            <span class="badge badge-compensation-{{ card.compensation_signal | replace('_', '-') }}">{{ card.compensation_signal | replace('_', ' ') }}</span>
-            {% endif %}
-          </div>
-        </div>
+      <a class="job-card" href="/posting/{{ card.filename }}">
+        <span class="job-card-company">{{ card.company }}</span>
+        <strong>{{ card.title }}</strong>
+        <span class="job-card-location">{{ card.location }}</span>
+        <span class="job-card-footer">
+          <span>{{ card.captured_at }}</span>
+          {% if card.fit_score is not none %}
+          <span class="score-chip">{{ card.fit_score }}/5</span>
+          {% else %}
+          <span class="muted-chip">Needs review</span>
+          {% endif %}
+        </span>
       </a>
+      {% else %}
+      <div class="empty-stage">
+        <span aria-hidden="true">—</span>
+        <p>No jobs in this stage.</p>
+      </div>
       {% endfor %}
     </div>
-  </div>
+  </article>
   {% endfor %}
-</div>
+</section>
 {% endblock %}

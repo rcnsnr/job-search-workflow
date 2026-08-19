@@ -13,7 +13,7 @@ if "%~1"=="-h" goto help
 if not "%~2"=="" goto invalid_args
 if not "%~1"=="" if not "%~1"=="--check-only" goto invalid_args
 
-echo Starting the Job Search Workflow Public Framework setup check...
+echo Starting the Job Search Workflow Community Edition setup check...
 echo Repository root: %CD%
 
 if not exist README.md (
@@ -53,8 +53,13 @@ echo Python version OK: !PY_MAJOR!.!PY_MINOR!
 for /f "tokens=*" %%a in ('node --version') do set "NODE_VERSION=%%a"
 set "NODE_VERSION=!NODE_VERSION:v=!"
 for /f "tokens=1 delims=." %%a in ("!NODE_VERSION!") do set "NODE_MAJOR=%%a"
-if !NODE_MAJOR! LSS 18 (
-    echo Node.js 18 or newer is required. Found: !NODE_VERSION! >&2
+for /f "tokens=2 delims=." %%a in ("!NODE_VERSION!") do set "NODE_MINOR=%%a"
+if !NODE_MAJOR! LSS 22 (
+    echo Node.js 22.12 or newer is required. Found: !NODE_VERSION! >&2
+    goto fail
+)
+if !NODE_MAJOR! EQU 22 if !NODE_MINOR! LSS 12 (
+    echo Node.js 22.12 or newer is required. Found: !NODE_VERSION! >&2
     goto fail
 )
 echo Node.js version OK: !NODE_VERSION!
@@ -76,8 +81,8 @@ if errorlevel 1 goto fail
 if not exist exports mkdir exports
 if errorlevel 1 goto fail
 
-if exist fixtures\sample-career_profile.md if not exist user_data\career_profile.md (
-    copy fixtures\sample-career_profile.md user_data\career_profile.md >nul
+if exist fixtures\sample-profile.md if not exist user_data\career_profile.md (
+    copy fixtures\sample-profile.md user_data\career_profile.md >nul
     if errorlevel 1 goto fail
     echo Copied sample profile: user_data\career_profile.md
 )

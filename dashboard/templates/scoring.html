@@ -1,82 +1,142 @@
 {% extends "base.html" %}
-{% block title %}Scoring — Job Search Workflow{% endblock %}
+{% block title %}Scoring · {{ product_name }}{% endblock %}
 {% block nav_scoring %}active{% endblock %}
 {% block content %}
-<div class="content-page">
-  <h1>Scoring Dashboard</h1>
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Decision support</p>
+    <h1>Scoring</h1>
+    <p class="page-summary">Review configuration and job signals. Scores support judgment; they do not replace it.</p>
+  </div>
+  <span class="read-only-badge">Config view</span>
+</section>
 
-  <h2>Quality Audit Penalties</h2>
+<section class="panel scoring-section">
+  <header class="panel-header">
+    <div>
+      <p class="eyebrow">Risk adjustments</p>
+      <h2>How quality risks change a score</h2>
+    </div>
+  </header>
   {% if quality_audit %}
-  <table class="scoring-table">
-    <tr>
-      <th>Category</th>
-      <th>Low</th>
-      <th>Medium</th>
-      <th>High</th>
-    </tr>
-    <tr>
-      <td>Ghost Job</td>
-      <td>{{ quality_audit.get('ghost_job_penalty', {}).get('low', '—') }}</td>
-      <td>{{ quality_audit.get('ghost_job_penalty', {}).get('medium', '—') }}</td>
-      <td>{{ quality_audit.get('ghost_job_penalty', {}).get('high', '—') }}</td>
-    </tr>
-    <tr>
-      <td>Exploitation</td>
-      <td>{{ quality_audit.get('exploitation_penalty', {}).get('low', '—') }}</td>
-      <td>{{ quality_audit.get('exploitation_penalty', {}).get('medium', '—') }}</td>
-      <td>{{ quality_audit.get('exploitation_penalty', {}).get('high', '—') }}</td>
-    </tr>
-    <tr>
-      <td>Chaos</td>
-      <td>{{ quality_audit.get('chaos_penalty', {}).get('low', '—') }}</td>
-      <td>{{ quality_audit.get('chaos_penalty', {}).get('medium', '—') }}</td>
-      <td>{{ quality_audit.get('chaos_penalty', {}).get('high', '—') }}</td>
-    </tr>
-    <tr>
-      <td>Multi-high escalation</td>
-      <td colspan="3">{{ quality_audit.get('multi_high_escalation', '—') }}</td>
-    </tr>
-  </table>
-  {% else %}
-  <p>No quality audit configuration found.</p>
-  {% endif %}
+  <div class="risk-score-guide">
+    <div class="risk-score-explainer">
+      <div>
+        <strong>How to read this</strong>
+        <p>Risk deductions are applied after the role receives its 0-5 fit score.</p>
+      </div>
+      <div class="score-example" aria-label="Example adjusted score">
+        <span>4.2 fit score</span>
+        <span aria-hidden="true">−</span>
+        <span>0.5 risk</span>
+        <span aria-hidden="true">=</span>
+        <strong>3.7 adjusted</strong>
+      </div>
+    </div>
 
-  <h2>Job Cards with Scores</h2>
-  {% if cards %}
-  <table class="scoring-table">
-    <tr>
-      <th>Title</th>
-      <th>Company</th>
-      <th>Stage</th>
-      <th>Fit Score</th>
-      <th>Quality Badge</th>
-      <th>Compensation</th>
-    </tr>
-    {% for card in cards %}
-    <tr>
-      <td><a href="/posting/{{ card.filename }}" style="color:var(--accent);text-decoration:none;">{{ card.title }}</a></td>
-      <td>{{ card.company }}</td>
-      <td>{{ card.stage }}</td>
-      <td>{{ card.fit_score if card.fit_score is not none else '—' }}</td>
-      <td>
-        {% if card.quality_badge and card.quality_badge != 'skipped' %}
-        <span class="badge badge-{{ card.quality_badge | replace('_', '-') }}">{{ card.quality_badge | replace('quality_', '') }}</span>
-        {% else %}
-        <span class="badge badge-quality-skipped">skipped</span>
-        {% endif %}
-      </td>
-      <td>
-        {% if card.compensation_signal and card.compensation_signal != 'unknown' %}
-        <span class="badge badge-compensation-{{ card.compensation_signal | replace('_', '-') }}">{{ card.compensation_signal | replace('_', ' ') }}</span>
-        {% else %}
-        <span class="badge badge-compensation-unknown">unknown</span>
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
+    <div class="risk-card-grid">
+      <article class="risk-card">
+        <header>
+          <span class="risk-card-index">01</span>
+          <div>
+            <h3>Inactive posting risk</h3>
+            <p>Signals that the company may not be actively filling the role.</p>
+          </div>
+        </header>
+        <dl>
+          <div><dt>Low risk</dt><dd>{{ quality_audit.get('ghost_job_penalty', {}).get('low') | score_adjustment }}</dd></div>
+          <div><dt>Medium risk</dt><dd>{{ quality_audit.get('ghost_job_penalty', {}).get('medium') | score_adjustment }}</dd></div>
+          <div><dt>High risk</dt><dd>{{ quality_audit.get('ghost_job_penalty', {}).get('high') | score_adjustment }}</dd></div>
+        </dl>
+      </article>
+
+      <article class="risk-card">
+        <header>
+          <span class="risk-card-index">02</span>
+          <div>
+            <h3>Unfair process risk</h3>
+            <p>Excessive unpaid work, pressure, or one-sided candidate demands.</p>
+          </div>
+        </header>
+        <dl>
+          <div><dt>Low risk</dt><dd>{{ quality_audit.get('exploitation_penalty', {}).get('low') | score_adjustment }}</dd></div>
+          <div><dt>Medium risk</dt><dd>{{ quality_audit.get('exploitation_penalty', {}).get('medium') | score_adjustment }}</dd></div>
+          <div><dt>High risk</dt><dd>{{ quality_audit.get('exploitation_penalty', {}).get('high') | score_adjustment }}</dd></div>
+        </dl>
+      </article>
+
+      <article class="risk-card">
+        <header>
+          <span class="risk-card-index">03</span>
+          <div>
+            <h3>Delivery chaos risk</h3>
+            <p>Unclear ownership, constant urgency, or structurally unstable work.</p>
+          </div>
+        </header>
+        <dl>
+          <div><dt>Low risk</dt><dd>{{ quality_audit.get('chaos_penalty', {}).get('low') | score_adjustment }}</dd></div>
+          <div><dt>Medium risk</dt><dd>{{ quality_audit.get('chaos_penalty', {}).get('medium') | score_adjustment }}</dd></div>
+          <div><dt>High risk</dt><dd>{{ quality_audit.get('chaos_penalty', {}).get('high') | score_adjustment }}</dd></div>
+        </dl>
+      </article>
+    </div>
+
+    <div class="multi-risk-note">
+      <span>Extra caution</span>
+      <div>
+        <strong>Two or more high risks</strong>
+        <p>{{ quality_audit.get('multi_high_escalation') | score_adjustment }} in addition to the category deductions.</p>
+      </div>
+    </div>
+  </div>
   {% else %}
-  <p>No job cards found.</p>
+  <div class="empty-state">
+    <strong>No quality audit configuration</strong>
+    <p>Add the quality audit section to <code>config/scoring.yaml</code>.</p>
+  </div>
   {% endif %}
-</div>
+</section>
+
+<section class="panel scoring-section">
+  <header class="panel-header">
+    <div>
+      <p class="eyebrow">Record signals</p>
+      <h2>Job scores</h2>
+    </div>
+    <span class="panel-meta">{{ cards | length }} records</span>
+  </header>
+  {% if cards %}
+  <div class="table-scroll" tabindex="0" aria-label="Job scores table">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th scope="col">Role</th>
+          <th scope="col">Company</th>
+          <th scope="col">Stage</th>
+          <th scope="col">Fit</th>
+          <th scope="col">Quality</th>
+          <th scope="col">Compensation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for card in cards %}
+        <tr>
+          <th scope="row"><a class="table-link" href="/posting/{{ card.filename }}">{{ card.title }}</a></th>
+          <td>{{ card.company }}</td>
+          <td><span class="stage-marker stage-{{ card.stage }}">{{ card.stage | title }}</span></td>
+          <td>{{ card.fit_score if card.fit_score is not none else 'Not scored' }}</td>
+          <td>{{ card.quality_badge | replace('quality_', '') | replace('_', ' ') | title if card.quality_badge != 'skipped' else 'Not audited' }}</td>
+          <td>{{ card.compensation_signal | replace('_', ' ') | title if card.compensation_signal != 'unknown' else 'Not provided' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <strong>No scored jobs</strong>
+    <p>Job records with scoring metadata will appear here.</p>
+  </div>
+  {% endif %}
+</section>
 {% endblock %}

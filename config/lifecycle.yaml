@@ -1,0 +1,19 @@
+states:
+  - captured
+  - triaged_reject
+  - triaged_conditional
+  - triaged_apply
+  - applied
+  - interview
+  - offer
+  - closed
+
+required_fields:
+  applied:
+    - applied_date
+  interview:
+    - applied_date
+  offer:
+    - applied_date
+  closed:
+    - closure_date

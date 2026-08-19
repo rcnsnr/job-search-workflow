@@ -1,8 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Profile — Job Search Workflow{% endblock %}
+{% block title %}Profile · {{ product_name }}{% endblock %}
 {% block nav_profile %}active{% endblock %}
 {% block content %}
-<div class="content-page">
-  {{ profile_html | safe }}
-</div>
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Local context</p>
+    <h1>Profile</h1>
+    <p class="page-summary">See the evidence, direction, and boundaries that guide your local decisions.</p>
+  </div>
+  <span class="read-only-badge">Read only</span>
+</section>
+<section class="profile-context panel" aria-labelledby="career-direction-title">
+  <header class="profile-context-intro">
+    <span class="eyebrow">At a glance</span>
+    <h2 id="career-direction-title">Decision compass</h2>
+    <p>Keep the roles you want and the trade-offs you will accept visible while reviewing opportunities.</p>
+  </header>
+  <div class="prose profile-context-content">
+    {{ target_roles_html | safe }}
+  </div>
+</section>
+<section class="document-layout">
+  <aside class="document-note">
+    <span class="eyebrow">Source of truth</span>
+    <strong>Local Markdown</strong>
+    <p>Edit your profile file directly. This view never rewrites it.</p>
+  </aside>
+  <article class="prose panel document-panel">
+    {{ profile_html | safe }}
+  </article>
+</section>
 {% endblock %}

@@ -13,7 +13,7 @@ describe("autoscan content script", () => {
 
   beforeEach(() => {
     document.body.innerHTML = "";
-    window.__careerOpsAutoScanInitialized = false;
+  window.__jswAutoScanInitialized = false;
     delete window.WorkflowAutoScan;
     scrollCalls = [];
     window.scrollTo = jest.fn((x, y) => {
@@ -94,7 +94,7 @@ describe("autoscan content script", () => {
 
   afterEach(() => {
     delete window.WorkflowAutoScan;
-    delete window.__careerOpsAutoScanInitialized;
+    delete window.__jswAutoScanInitialized;
   });
 
   function requireAutoscan() {

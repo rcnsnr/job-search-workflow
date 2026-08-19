@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="JSW">
+  <rect width="64" height="64" rx="4" fill="#173330"/>
+  <path d="M13 15h38v34H13z" fill="none" stroke="#8de0d5" stroke-width="2"/>
+  <text x="32" y="37" fill="#f4f0e7" font-family="monospace" font-size="14" font-weight="700" text-anchor="middle">JSW</text>
+</svg>

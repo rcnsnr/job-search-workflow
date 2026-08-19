@@ -1,0 +1,13 @@
+fields:
+  - id: motivation
+    heading: Why are you interested in this role?
+    required: true
+    max_length: 1000
+  - id: infrastructure_example
+    heading: Describe a complex infrastructure challenge you solved.
+    required: true
+    max_length: 1500
+  - id: gpu_experience
+    heading: What experience do you have with GPU infrastructure? (optional)
+    required: false
+    max_length: 800

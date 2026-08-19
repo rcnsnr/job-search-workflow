@@ -15,10 +15,6 @@ Usage:
 
 import argparse
 import json
-import re
-import sys
-import urllib.request
-import urllib.parse
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -123,9 +119,6 @@ def generate_report(
     If scores and notes are provided, use them. Otherwise, output a template
     with Unknown for manual filling.
     """
-    city_slug = city.lower().replace(" ", "-")
-    country_slug = country.lower().replace(" ", "-")
-
     if scores is None:
         scores = {k: None for k in DIMENSIONS}
     if notes is None:
@@ -170,8 +163,8 @@ def generate_report(
         "",
         f"**Family profile:** {FAMILY_PROFILE}",
         f"**Salary context:** £{salary_gbp:,.0f}/year" if salary_gbp else "**Salary context:** Unknown",
-        f"**Last updated:** 2026-07-15",
-        f"**Data freshness:** refresh every 6 months or when new city added",
+        "**Last updated:** 2026-07-15",
+        "**Data freshness:** refresh every 6 months or when new city added",
         "",
         "## Scoring",
         "",

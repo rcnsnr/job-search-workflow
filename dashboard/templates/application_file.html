@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ document.label }} · {{ product_name }}{% endblock %}
+{% block nav_jobs %}active{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/jobs">Jobs</a>
+  <span aria-hidden="true">/</span>
+  <a href="/posting/{{ posting_filename }}">Job detail</a>
+  <span aria-hidden="true">/</span>
+  <span>{{ document.label }}</span>
+</nav>
+<section class="page-heading page-heading-detail">
+  <div>
+    <p class="eyebrow">Application file · {{ document.file_format }}</p>
+    <h1>{{ document.label }}</h1>
+    <p class="page-summary filename">{{ document.filename }}</p>
+  </div>
+  <a class="secondary-button button-link" href="/posting/{{ posting_filename }}">Back to job</a>
+</section>
+{% if document_html %}
+<article class="prose panel document-panel application-document">
+  {{ document_html | safe }}
+</article>
+{% else %}
+<article class="panel document-panel application-document">
+  <pre class="plain-document">{{ document_text }}</pre>
+</article>
+{% endif %}
+{% endblock %}

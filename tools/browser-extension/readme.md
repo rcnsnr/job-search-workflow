@@ -103,7 +103,10 @@ job-search-workflow-capture/
 
 ## License
 
-This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+This extension is part of Job Search Workflow Community Edition and uses the
+repository's [PolyForm Noncommercial 1.0.0 license](../../LICENSE). Commercial
+use is not granted by this repository; see the
+[Commercial Use and SaaS Boundary](../../COMMERCIAL_USE.md).
 
 ## Contributing
 

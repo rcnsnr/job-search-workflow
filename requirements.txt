@@ -7,10 +7,13 @@ pypandoc>=1.11
 
 # Testing
 pytest>=7.0.0
+httpx>=0.27,<1.0
+httpx2>=2.0,<3.0
 
 # Optional: Dashboard
 fastapi>=0.110,<1.0
 uvicorn[standard]>=0.27,<1.0
 jinja2>=3.1,<4.0
 markdown>=3.5,<4.0
+bleach>=6.4,<7.0
 pyyaml>=6.0,<7.0

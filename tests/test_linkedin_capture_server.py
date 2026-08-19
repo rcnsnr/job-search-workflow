@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import pytest
 from fastapi.testclient import TestClient
 
-# Make public/scripts/ importable during tests
+# Make repository scripts importable during tests.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from linkedin_capture_server import create_app

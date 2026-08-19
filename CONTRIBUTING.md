@@ -1,4 +1,4 @@
-# Contributing to job-search-workflow
+# Contributing to Job Search Workflow Community Edition
 
 Thank you for your interest in contributing! This project aims to provide a
 structured, honest, and reusable framework for AI-assisted job searching.
@@ -9,7 +9,8 @@ structured, honest, and reusable framework for AI-assisted job searching.
 
 - Use GitHub Issues for bug reports, feature requests, or documentation gaps.
 - Include steps to reproduce for bugs.
-- For security vulnerabilities, please email instead of opening a public issue.
+- Follow [SECURITY.md](SECURITY.md) for private-first vulnerability reporting;
+  do not put exploit details or secrets in a public issue.
 
 ### Pull Requests
 
@@ -17,7 +18,9 @@ structured, honest, and reusable framework for AI-assisted job searching.
 2. Follow existing code style and conventions.
 3. Ensure all CI checks pass (`markdownlint`, `pytest`, PII scan).
 4. Write or update tests for new functionality.
-5. Keep PRs focused — one logical change per PR.
+5. Complete every contributor and license confirmation in the pull request
+   template.
+6. Keep PRs focused - one logical change per PR.
 
 ### What We Welcome
 
@@ -25,14 +28,15 @@ structured, honest, and reusable framework for AI-assisted job searching.
 - Script enhancements (validation, export, automation)
 - Sample fixtures (fictitious profiles, postings, CVs)
 - Documentation clarity improvements
-- Translations of modes/runbooks
+- English documentation and accessibility improvements
 - CI/CD pipeline improvements
 
 ### What We Don't Accept
 
 - Real personal data in any form (names, emails, companies, dates)
-- Auto-apply or scraping functionality
-- Bypassing login walls, rate limits, or access controls
+- Automated application submission or credential extraction
+- Bulk scraping or bypassing login walls, rate limits, bot challenges, or
+  access controls
 - Dependencies on proprietary SaaS backends
 
 ## Development Standards
@@ -63,4 +67,8 @@ Be respectful, constructive, and inclusive.
 ## License
 
 By contributing, you agree that your contributions will be licensed under the
-[PolyForm Noncommercial 1.0.0](LICENSE) license.
+[PolyForm Noncommercial 1.0.0](LICENSE) license and that the
+[Contributor License Agreement](CLA.md) applies. The CLA allows the maintainer
+to offer separate commercial licenses while Community Edition remains
+noncommercial and source-available. Review
+[Commercial Use and SaaS Boundary](COMMERCIAL_USE.md) before contributing.

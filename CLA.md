@@ -1,11 +1,14 @@
 # Contributor License Agreement (CLA)
 
+Version 1.1, effective 2026-08-19.
+
 By contributing to the **job-search-workflow** project, you agree to the
 following terms.
 
 ## 1. Definitions
 
-- **"Project"** means the job-search-workflow open-source project.
+- **"Project"** means the Job Search Workflow Community Edition source-available
+  project.
 - **"Contributor"** means the individual submitting a contribution.
 - **"Contribution"** means any original work of authorship, including
   modifications, additions, or new files, submitted to the Project.
@@ -18,6 +21,12 @@ no-charge, royalty-free, irrevocable copyright license to reproduce,
 prepare derivative works of, publicly display, publicly perform,
 sublicense, and distribute Contributor's Contributions and such
 derivative works.
+
+This grant includes the right for Maintainer to license or relicense a
+Contribution, alone or as part of the Project, under the Project's public
+noncommercial license and under separate commercial license terms. Contributor
+retains copyright in the Contribution. No separate permission or royalty is
+required for Maintainer to exercise the rights granted in this section.
 
 ## 3. Grant of Patent License
 
@@ -49,6 +58,10 @@ permission.
 
 The Project is licensed under the PolyForm Noncommercial 1.0.0 license.
 Contributor's Contributions are licensed under the same terms.
+
+Public availability under PolyForm Noncommercial does not prevent Maintainer
+from offering the Project, Contributions, or derivative works under separate
+commercial license terms.
 
 ## 7. No Warranty
 
