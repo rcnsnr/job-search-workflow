@@ -14,7 +14,7 @@ Markdown files to `inbox/jobs/`.
 From the public repository root:
 
 ```bash
-python3 -m pip install fastapi pydantic pyyaml uvicorn
+python3 -m pip install -e ".[dashboard]"
 ```
 
 Or use a virtual environment:
@@ -22,7 +22,7 @@ Or use a virtual environment:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python3 -m pip install fastapi pydantic pyyaml uvicorn
+python3 -m pip install -e ".[dashboard]"
 ```
 
 ## Start the server
@@ -130,6 +130,7 @@ curl -X POST http://localhost:8766/batch \
 For long-running unattended scans, use a process manager:
 
 ```bash
+mkdir -p logs
 nohup python3 scripts/linkedin_capture_server.py > logs/capture-server.log 2>&1 &
 ```
 

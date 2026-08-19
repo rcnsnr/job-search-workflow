@@ -7,6 +7,10 @@
 > 1.0.0. Commercial use is not granted by this repository. See
 > [Commercial Use and SaaS Boundary](COMMERCIAL_USE.md).
 
+See the [Changelog](CHANGELOG.md) for the current unreleased change set.
+Report vulnerabilities through the private-first process in
+[Security Policy](SECURITY.md).
+
 Job Search Workflow Community Edition is a reusable, local-first framework for
 job triage, document-generation standards, application tracking, and public
 job-source discovery. It ships with fictitious fixtures and uses data supplied
@@ -35,6 +39,20 @@ by each user; it does not require a hosted account.
    information. Fictitious examples remain available under `fixtures/`.
 
 Read the [Setup and Verification Guide](docs/setup-and-verification.md) for the detailed behavior contract, support matrix and troubleshooting steps.
+
+## Documentation Map
+
+| Need | Guide |
+| --- | --- |
+| First end-to-end workflow | [Getting Started](docs/getting-started/GETTING_STARTED.md) |
+| Setup and supported environments | [Setup and Verification](docs/setup-and-verification.md) |
+| Read-only record checks | [Workflow Guards](docs/getting-started/WORKFLOW_GUARDS.md) |
+| Public job-source discovery | [Source Discovery Operations](docs/runbooks/source-discovery-operations.md) |
+| Browser extension install | [Extension Install](docs/runbooks/browser-extension-install.md) |
+| Local capture server | [Capture Server Setup](docs/runbooks/capture-server-setup.md) |
+| Vulnerability reporting | [Security Policy](SECURITY.md) |
+| License and SaaS boundary | [Commercial Use](COMMERCIAL_USE.md) |
+| Project changes | [Changelog](CHANGELOG.md) |
 
 Use the [Workflow Guards](docs/getting-started/WORKFLOW_GUARDS.md) to check
 duplicates, application field limits, lifecycle metadata, and configurable
@@ -131,12 +149,19 @@ From the public repository root on Linux or macOS:
 ```bash
 bash -n scripts/setup.sh
 shellcheck scripts/setup.sh
-python3 -m unittest discover -s tests -v
+python3 -m pip install -e ".[dashboard,dev]"
+python3 -m pytest -q
+PYTHONPATH=scripts python3 -m jsw smoke
+python3 scripts/scan_pii.py --path .
+python3 scripts/check_secret_hygiene.py
+python3 scripts/check_license_policy.py
 markdownlint-cli2 "**/*.md"
 ./scripts/setup.sh
 ```
 
-The GitHub Actions workflow runs the Linux static and behavior checks and a real Windows CMD smoke test as separate jobs. Windows support is not considered verified unless the Windows job passes.
+Pull-request CI runs Python, dashboard, privacy, documentation, and extension
+checks. The scheduled Setup Audit runs Linux and real Windows CMD setup jobs;
+Windows support is not considered verified unless that job passes.
 
 ## Security and Privacy
 

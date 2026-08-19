@@ -46,7 +46,7 @@ brew install --cask mactex
 # Pandoc for DOCX
 brew install pandoc
 
-# Node.js (optional)
+# Node.js (required by repository setup and extension checks)
 brew install node
 
 # Verify
@@ -89,7 +89,7 @@ sudo dnf install python3 python3-pip git nodejs texlive-latex pandoc
    [TeX Live](https://tug.org/texlive/).
 4. **Pandoc**: Install from [pandoc.org](https://pandoc.org/installing.html)
    or with `winget install pandoc`.
-5. **Node.js** (optional): Download from [nodejs.org](https://nodejs.org) or
+5. **Node.js**: Download from [nodejs.org](https://nodejs.org) or
    run `winget install OpenJS.NodeJS` in PowerShell.
 
 Verify in PowerShell:
@@ -171,7 +171,7 @@ deal-breaker preferences.
 
 Copy a job posting that interests you. You can use:
 
-- The [Career Pages Directory](../data/career-pages/companies.yaml) for direct
+- The [Career Pages Directory](../../data/career-pages/companies.yaml) for direct
   company career pages
 - LinkedIn, Indeed, or any public job board
 - A job posting someone shared with you
@@ -234,20 +234,22 @@ pdflatex -output-directory=exports exports\your-cv.tex
 
 ### Export to DOCX
 
-For a DOCX version, use `pandoc` with the reference template:
+The repository does not bundle a personal DOCX style template. Place a template
+you have the right to use at `exports/cv-reference.docx`, save the generated CV
+content as `exports/your-cv.md`, and run:
 
 ```bash
 # macOS / Linux
-pandoc exports/your-cv.tex -o exports/your-cv.docx \
-  --reference-doc=templates/cv-reference.docx
+pandoc exports/your-cv.md -o exports/your-cv.docx \
+  --reference-doc=exports/cv-reference.docx
 
 # Windows (PowerShell)
-pandoc exports\your-cv.tex -o exports\your-cv.docx `
-  --reference-doc=templates\cv-reference.docx
+pandoc exports\your-cv.md -o exports\your-cv.docx `
+  --reference-doc=exports\cv-reference.docx
 
 # Windows (CMD)
-pandoc exports\your-cv.tex -o exports\your-cv.docx ^
-  --reference-doc=templates\cv-reference.docx
+pandoc exports\your-cv.md -o exports\your-cv.docx ^
+  --reference-doc=exports\cv-reference.docx
 ```
 
 ---
@@ -281,8 +283,9 @@ Open `http://localhost:3000` in your browser.
 - Review **scoring configuration** and job signals
 - Choose a light or dark theme; light is the default
 
-The dashboard reads only from your local markdown files. No data leaves your
-machine.
+The dashboard reads only from your local Markdown files and does not transmit
+them. A separate cloud AI assistant may process anything you choose to paste
+into that service, so review its privacy terms independently.
 
 ---
 
@@ -337,7 +340,7 @@ pull request. See `data/career-pages/README.md` for the schema.
 | Optimize LinkedIn | `modes/03_LINKEDIN_PROFILE.md` |
 | Draft recruiter messages | `modes/04_RECRUITER_OUTREACH.md` |
 | Find job sources | `modes/06_PUBLIC_SOURCE_DISCOVERY.md` |
-| Contribute | [CONTRIBUTING.md](../CONTRIBUTING.md) |
+| Contribute | [CONTRIBUTING.md](../../CONTRIBUTING.md) |
 
 ---
 
@@ -382,3 +385,7 @@ personal information to the repository.
 
 If you want to back up your data, copy the directories above to a private
 location outside the repository.
+
+Community Edition is source-available for noncommercial use. Read
+[Commercial Use and SaaS Boundary](../../COMMERCIAL_USE.md) before sharing,
+redistributing, or integrating the code into another product.

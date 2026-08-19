@@ -116,8 +116,8 @@ for dir in user_data inbox/jobs runs outputs exports; do
 done
 
 if [[ -d "$REPO_ROOT/fixtures" ]]; then
-    if [[ ! -f "$REPO_ROOT/user_data/career_profile.md" && -f "$REPO_ROOT/fixtures/sample-career_profile.md" ]]; then
-        cp "$REPO_ROOT/fixtures/sample-career_profile.md" "$REPO_ROOT/user_data/career_profile.md"
+    if [[ ! -f "$REPO_ROOT/user_data/career_profile.md" && -f "$REPO_ROOT/fixtures/sample-profile.md" ]]; then
+        cp "$REPO_ROOT/fixtures/sample-profile.md" "$REPO_ROOT/user_data/career_profile.md"
         echo "Copied sample profile: user_data/career_profile.md"
     fi
 

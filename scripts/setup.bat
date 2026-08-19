@@ -81,8 +81,8 @@ if errorlevel 1 goto fail
 if not exist exports mkdir exports
 if errorlevel 1 goto fail
 
-if exist fixtures\sample-career_profile.md if not exist user_data\career_profile.md (
-    copy fixtures\sample-career_profile.md user_data\career_profile.md >nul
+if exist fixtures\sample-profile.md if not exist user_data\career_profile.md (
+    copy fixtures\sample-profile.md user_data\career_profile.md >nul
     if errorlevel 1 goto fail
     echo Copied sample profile: user_data\career_profile.md
 )

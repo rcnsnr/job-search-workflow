@@ -18,9 +18,13 @@ owner-specific defaults, English-only public UI, and release approvals.
 - [ ] `python3 -m pytest tests/test_linkedin_capture_server.py -q` passes.
 - [ ] `python3 -m py_compile scripts/linkedin_capture_server.py` passes.
 - [ ] `python3 scripts/scan_pii.py --path .` passes.
+- [ ] `python3 scripts/check_secret_hygiene.py` passes.
 - [ ] `python3 scripts/check_linkedin_brand.py` passes.
+- [ ] `python3 scripts/verify_no_turkish.py --path .` passes.
+- [ ] `python3 scripts/check_license_policy.py` passes.
 - [ ] `npx markdownlint-cli2 "**/*.md"` passes.
-- [ ] `.github/workflows/clone-scan.yml` YAML is valid.
+- [ ] `.github/workflows/ci.yml` and `.github/workflows/setup-audit.yml` pass
+  `actionlint`.
 
 ## Build the Phase 1 load-unpacked `.zip`
 
@@ -33,8 +37,7 @@ zip -r ../../job-search-workflow-capture-v2.0.0.zip \
   manifest.json popup.html popup.js popup.css \
   options.html options.js options.css \
   service_worker.js icon.png readme.md \
-  content/ utils/ scripts/ tests/ \
-  package.json package-lock.json jest.config.js .eslintrc.json \
+  content/ utils/ \
   -x "node_modules/*" -x "coverage/*" -x "*.log"
 zip -j ../../job-search-workflow-capture-v2.0.0.zip \
   ../../LICENSE ../../NOTICE ../../COMMERCIAL_USE.md
@@ -63,10 +66,11 @@ The archive must contain at minimum:
 ## Create the GitHub release
 
 1. Ensure the working tree is clean and the checklist above is complete.
-2. Create a tag, for example `extension-v2.0.0`.
-3. Create a GitHub release using that tag.
-4. Attach `job-search-workflow-capture-v2.0.0.zip` to the release.
-5. Include installation instructions and a link to
+2. Obtain explicit owner approval for the tag and public release.
+3. Create a tag, for example `extension-v2.0.0`.
+4. Create a GitHub release using that tag.
+5. Attach `job-search-workflow-capture-v2.0.0.zip` to the release.
+6. Include installation instructions and a link to
    `docs/runbooks/browser-extension-install.md`.
 
 ## Post-release

@@ -76,7 +76,7 @@ class SetupScriptTests(unittest.TestCase):
     def test_fixture_copy_preserves_existing_user_file(self) -> None:
         root = self.make_repo()
         (root / "fixtures").mkdir()
-        (root / "fixtures" / "sample-career_profile.md").write_text("# Sample\n", encoding="utf-8")
+        (root / "fixtures" / "sample-profile.md").write_text("# Sample\n", encoding="utf-8")
         (root / "fixtures" / "sample-target_roles.md").write_text("# Roles\n", encoding="utf-8")
         (root / "user_data").mkdir()
         profile = root / "user_data" / "career_profile.md"
@@ -85,6 +85,17 @@ class SetupScriptTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(profile.read_text(encoding="utf-8"), "# Existing\n")
         self.assertEqual((root / "user_data" / "target_roles.md").read_text(encoding="utf-8"), "# Roles\n")
+
+    def test_fixture_copy_uses_repository_sample_profile(self) -> None:
+        root = self.make_repo()
+        (root / "fixtures").mkdir()
+        (root / "fixtures" / "sample-profile.md").write_text("# Sample\n", encoding="utf-8")
+
+        result = self.run_setup(root)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        profile = root / "user_data" / "career_profile.md"
+        self.assertEqual(profile.read_text(encoding="utf-8"), "# Sample\n")
 
     def test_invalid_python_file_fails_setup(self) -> None:
         root = self.make_repo()

@@ -110,7 +110,9 @@ validated through multiple export cycles.
 - Avoid complex tables unless the user asks for a human-designed, non-ATS document.
 - Verify LibreOffice rendering before final delivery when a DOCX is generated.
 - **DOCX MUST be generated via `pandoc` with the reference template:**
-  `pandoc <input>.md --reference-doc=exports/cv-variants-2026-06-21/cv-reference.docx -o <output>.docx`
+  `pandoc <input>.md --reference-doc=exports/cv-reference.docx -o <output>.docx`
+  The template is user-supplied and must be licensed for the user's intended
+  use; Community Edition does not bundle a personal style template.
   Direct `python-docx` generation is acceptable only for non-CV documents.
 
 ## Output Rule
