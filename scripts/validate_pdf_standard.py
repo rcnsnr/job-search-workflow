@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate that all CV PDF files in exports/ were generated via the repo
+"""Validate that CV PDF files were generated via the repo
 standard export chain (LaTeX .tex source -> pdflatex -> PDF).
 
 Enforces GAP-20260714-02: PDF/DOCX export chain hard-lock.
@@ -9,6 +9,7 @@ FORBIDDEN for CV/resume PDF generation.
 Usage:
     python3 scripts/validate_pdf_standard.py
     python3 scripts/validate_pdf_standard.py --strict   # exit 1 on warnings
+    python3 scripts/validate_pdf_standard.py --public-fixture --strict
 
 Exit codes:
     0 = all PDFs pass validation
@@ -24,6 +25,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 EXPORTS_DIR = REPO_ROOT / "exports"
 REFERENCE_DOCX = EXPORTS_DIR / "cv-reference.docx"
+PUBLIC_FIXTURE_CV_PDF = Path("fixtures/sample-cv.pdf")
 
 # PDF producer strings that indicate FORBIDDEN HTML-to-PDF tools
 FORBIDDEN_PRODUCERS = [
@@ -45,17 +47,24 @@ ALLOWED_PRODUCERS = [
 ]
 
 
-def find_cv_pdfs(root: Path) -> list[Path]:
+def public_fixture_pdf(root: Path) -> Path:
+    """Return the one public, reusable CV fixture path."""
+    return root / PUBLIC_FIXTURE_CV_PDF
+
+
+def find_cv_pdfs(root: Path, *, include_public_fixture: bool = False) -> list[Path]:
     """Find all PDF files under exports/applications/ that look like CVs."""
     pdfs = []
     apps_dir = root / "exports" / "applications"
-    if not apps_dir.exists():
-        return pdfs
-    for pdf in apps_dir.rglob("*.pdf"):
-        # Skip non-CV PDFs (e.g., cover letters, READMEs)
-        name_lower = pdf.name.lower()
-        if "cv" in name_lower or "resume" in name_lower:
-            pdfs.append(pdf)
+    if apps_dir.exists():
+        for pdf in apps_dir.rglob("*.pdf"):
+            # Skip non-CV PDFs (e.g., cover letters, READMEs)
+            name_lower = pdf.name.lower()
+            if "cv" in name_lower or "resume" in name_lower:
+                pdfs.append(pdf)
+    fixture = public_fixture_pdf(root)
+    if include_public_fixture and fixture.is_file():
+        pdfs.append(fixture)
     return pdfs
 
 
@@ -151,6 +160,40 @@ def validate_pdf(pdf_path: Path, strict: bool = False) -> list[str]:
     return errors
 
 
+def pdf_page_count(pdf_path: Path) -> int | None:
+    """Return the PDF page count when pdfinfo is available."""
+    try:
+        result = subprocess.run(
+            ["pdfinfo", str(pdf_path)],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+    if result.returncode != 0:
+        return None
+    for line in result.stdout.splitlines():
+        if line.startswith("Pages:"):
+            try:
+                return int(line.split(":", 1)[1].strip())
+            except ValueError:
+                return None
+    return None
+
+
+def validate_public_fixture(pdf_path: Path, strict: bool = False) -> list[str]:
+    """Validate the public sample CV's standard plus its two-page contract."""
+    errors = validate_pdf(pdf_path, strict=strict)
+    pages = pdf_page_count(pdf_path)
+    if pages != 2:
+        errors.append(
+            f"{pdf_path.relative_to(REPO_ROOT)}: expected 2 pages, found "
+            f"{pages if pages is not None else 'unknown'}"
+        )
+    return errors
+
+
 def validate_docx_reference(strict: bool = False) -> list[str]:
     """Validate that the cv-reference.docx template exists."""
     errors = []
@@ -170,18 +213,27 @@ def main() -> int:
         "--strict", action="store_true",
         help="Exit 1 on warnings as well as errors"
     )
+    parser.add_argument(
+        "--public-fixture",
+        action="store_true",
+        help="Also validate fixtures/sample-cv.pdf and skip local DOCX validation.",
+    )
     args = parser.parse_args()
 
     all_errors = []
 
     # Validate PDFs
-    pdfs = find_cv_pdfs(REPO_ROOT)
+    pdfs = find_cv_pdfs(REPO_ROOT, include_public_fixture=args.public_fixture)
     if not pdfs:
         print("INFO: No CV PDFs found under exports/applications/")
     else:
         print(f"INFO: Found {len(pdfs)} CV PDF(s) to validate")
         for pdf in pdfs:
-            errors = validate_pdf(pdf, strict=args.strict)
+            errors = (
+                validate_public_fixture(pdf, strict=args.strict)
+                if args.public_fixture and pdf == public_fixture_pdf(REPO_ROOT)
+                else validate_pdf(pdf, strict=args.strict)
+            )
             if errors:
                 all_errors.extend(errors)
                 print(f"FAIL: {pdf.relative_to(REPO_ROOT)}")
@@ -191,11 +243,12 @@ def main() -> int:
                 print(f"PASS: {pdf.relative_to(REPO_ROOT)}")
 
     # Validate reference template
-    docx_errors = validate_docx_reference(strict=args.strict)
-    if docx_errors:
-        all_errors.extend(docx_errors)
-        for e in docx_errors:
-            print(f"FAIL: {e}")
+    if not args.public_fixture:
+        docx_errors = validate_docx_reference(strict=args.strict)
+        if docx_errors:
+            all_errors.extend(docx_errors)
+            for e in docx_errors:
+                print(f"FAIL: {e}")
 
     # Summary
     print()

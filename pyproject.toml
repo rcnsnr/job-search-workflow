@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "job-search-workflow"
-version = "0.1.0"
+version = "0.2.0"
 description = "AI-assisted, local-first job search workflow framework — triage, scoring, application tracking"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -15,6 +15,7 @@ Refresh all five assets together when a public dashboard visual source changes:
 - `assets/screenshots/dashboard-jobs.png`
 - `assets/screenshots/dashboard-profile.png`
 - `assets/screenshots/dashboard-scoring.png`
+- `assets/screenshots/manifest.json`
 
 These paths are intentionally stable. They can be embedded in documentation,
 linked from release notes, or reused for a social post without creating dated
@@ -30,6 +31,9 @@ or duplicate image files.
   full-page PNG.
 - Overwrite the stable asset for `/`, `/pipeline`, `/jobs`, `/profile`, and
   `/scoring` respectively. Do not create date-stamped public variants.
+- Increment `baseline_revision` in `assets/screenshots/manifest.json` after
+  reviewing all five captures. This records a full recheck when one image has
+  identical pixels and therefore no Git binary diff.
 - Review the images before committing. They must not contain a real person,
   employer claim, confidential material, account identifier, or local path.
 
@@ -38,7 +42,8 @@ or duplicate image files.
 `scripts/check_dashboard_screenshot_coverage.py` compares the pull request
 with its base commit. A change under `dashboard/static/`, `dashboard/templates/`,
 or `dashboard/server.py` requires every stable screenshot to be updated in the
-same change.
+same change. When a recaptured image has identical pixels, the refreshed
+manifest is the review receipt for that image.
 
 Run the guard locally before opening a pull request:
 

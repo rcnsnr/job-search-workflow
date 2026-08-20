@@ -29,6 +29,15 @@ def test_nonvisual_change_does_not_require_screenshot_refresh() -> None:
     assert coverage.missing_screenshot_updates({"README.md"}) == set()
 
 
+def test_capture_receipt_covers_a_recheck_with_identical_pixels() -> None:
+    changed_paths = {
+        "dashboard/server.py",
+        coverage.CAPTURE_RECEIPT,
+    }
+
+    assert coverage.missing_screenshot_updates(changed_paths) == set()
+
+
 def test_public_screenshot_assets_and_readme_preview_are_present() -> None:
     for screenshot in coverage.STABLE_SCREENSHOTS:
         path = ROOT / screenshot
@@ -37,3 +46,4 @@ def test_public_screenshot_assets_and_readme_preview_are_present() -> None:
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert coverage.STABLE_SCREENSHOTS[0] in readme
+    assert (ROOT / coverage.CAPTURE_RECEIPT).is_file()
