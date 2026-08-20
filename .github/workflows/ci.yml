@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -32,6 +34,10 @@ jobs:
         name: Run Python tests
       - run: PYTHONPATH=scripts python3 -m jsw smoke
         name: Run dashboard smoke test
+      - run: python3 scripts/check_dashboard_screenshot_coverage.py --base "$COMPARE_BASE"
+        name: Require screenshots for dashboard visual changes
+        env:
+          COMPARE_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
       - run: python3 scripts/scan_pii.py --path .
         name: Scan the complete public tree
       - run: python3 scripts/check_secret_hygiene.py

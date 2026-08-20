@@ -6,6 +6,11 @@ Describe the change and why it is needed.
 
 List the checks you ran.
 
+## Visual Change Evidence
+
+- [ ] N/A - This PR does not change public dashboard visuals.
+- [ ] Refreshed all five stable fixture screenshots under `assets/screenshots/`.
+
 ## Contributor and License Confirmation
 
 - [ ] I have read and agree to the [Contributor License Agreement](../CLA.md).
