@@ -134,4 +134,7 @@ def test_upgrade_script_accepts_a_source_override_for_bootstrapping() -> None:
 def test_upgrade_scripts_exist_for_linux_macos_and_windows() -> None:
     assert UPGRADE_SH.is_file()
     assert UPGRADE_BAT.is_file()
-    assert "xcopy" in UPGRADE_BAT.read_text(encoding="utf-8").lower()
+    batch_script = UPGRADE_BAT.read_text(encoding="utf-8").lower()
+
+    assert "xcopy" in batch_script
+    assert "findstr /r /x" in batch_script
