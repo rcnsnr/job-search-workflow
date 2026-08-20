@@ -138,3 +138,4 @@ def test_upgrade_scripts_exist_for_linux_macos_and_windows() -> None:
 
     assert "xcopy" in batch_script
     assert "findstr /r /x" in batch_script
+    assert "shift" not in batch_script
