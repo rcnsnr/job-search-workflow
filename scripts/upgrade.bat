@@ -38,7 +38,8 @@ if "%TAG%"=="" (
     set "TAG=%~1"
 )
 
-python -c "import re, sys; sys.exit(0 if re.fullmatch(r'v\d+\.\d+\.\d+', sys.argv[1]) else 1)" "%TAG%"
+echo Requested release: %TAG%
+echo(%TAG%| findstr /r /x "v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*" >nul
 if errorlevel 1 (
     echo Release tag must use vX.Y.Z format. >&2
     goto fail
