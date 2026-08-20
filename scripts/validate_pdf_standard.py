@@ -20,6 +20,7 @@ import argparse
 import re
 import subprocess
 import sys
+import zlib
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -161,7 +162,7 @@ def validate_pdf(pdf_path: Path, strict: bool = False) -> list[str]:
 
 
 def pdf_page_count(pdf_path: Path) -> int | None:
-    """Return the PDF page count when pdfinfo is available."""
+    """Return the PDF page count with a pdfinfo-free fallback."""
     try:
         result = subprocess.run(
             ["pdfinfo", str(pdf_path)],
@@ -170,16 +171,26 @@ def pdf_page_count(pdf_path: Path) -> int | None:
             timeout=10,
         )
     except (FileNotFoundError, subprocess.TimeoutExpired):
-        return None
-    if result.returncode != 0:
-        return None
-    for line in result.stdout.splitlines():
-        if line.startswith("Pages:"):
-            try:
-                return int(line.split(":", 1)[1].strip())
-            except ValueError:
-                return None
-    return None
+        result = None
+    if result and result.returncode == 0:
+        for line in result.stdout.splitlines():
+            if line.startswith("Pages:"):
+                try:
+                    return int(line.split(":", 1)[1].strip())
+                except ValueError:
+                    break
+
+    # pdfTeX stores page objects in compressed object streams. Count those
+    # objects when pdfinfo is unavailable, as on the hosted Python runner.
+    blob = pdf_path.read_bytes()
+    page_pattern = re.compile(rb"/Type\s*/Page(?!s)")
+    page_count = len(page_pattern.findall(blob))
+    for stream in re.findall(rb"stream\r?\n(.*?)\r?\nendstream", blob, re.DOTALL):
+        try:
+            page_count += len(page_pattern.findall(zlib.decompress(stream)))
+        except zlib.error:
+            continue
+    return page_count or None
 
 
 def validate_public_fixture(pdf_path: Path, strict: bool = False) -> list[str]:

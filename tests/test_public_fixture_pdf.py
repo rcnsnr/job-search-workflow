@@ -4,6 +4,8 @@ import sys
 from importlib import util
 from pathlib import Path
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = ROOT / "scripts" / "validate_pdf_standard.py"
@@ -21,3 +23,14 @@ def test_public_sample_cv_fixture_is_real_and_strictly_valid() -> None:
     assert pdf_path.read_bytes().startswith(b"%PDF-")
     assert validator.pdf_page_count(pdf_path) == 2
     assert validator.validate_public_fixture(pdf_path, strict=True) == []
+
+
+def test_page_count_falls_back_without_pdfinfo(monkeypatch: pytest.MonkeyPatch) -> None:
+    pdf_path = validator.public_fixture_pdf(ROOT)
+
+    def missing_pdfinfo(*_args: object, **_kwargs: object) -> None:
+        raise FileNotFoundError
+
+    monkeypatch.setattr(validator.subprocess, "run", missing_pdfinfo)
+
+    assert validator.pdf_page_count(pdf_path) == 2
