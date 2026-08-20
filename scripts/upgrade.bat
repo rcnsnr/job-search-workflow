@@ -6,26 +6,18 @@ set "UPSTREAM_API=https://api.github.com/repos/rcnsnr/job-search-workflow/releas
 set "SCRIPT_DIR=%~dp0"
 for %%I in ("%SCRIPT_DIR%..") do set "DEFAULT_SOURCE_ROOT=%%~fI"
 set "SOURCE_ROOT=%DEFAULT_SOURCE_ROOT%"
-set "TAG="
-
-:parse_args
-if "%~1"=="" goto args_done
-if "%~1"=="--help" goto help
-if "%~1"=="-h" goto help
-if "%~1"=="--source" (
-    if "%~2"=="" (
-        echo --source requires a workspace path. >&2
-        goto fail
-    )
-    set "SOURCE_ROOT=%~2"
-    shift
-    shift
-    goto parse_args
-)
-if not "%TAG%"=="" goto invalid_args
 set "TAG=%~1"
-shift
-goto parse_args
+if "%TAG%"=="--help" goto help
+if "%TAG%"=="-h" goto help
+
+if "%~2"=="" goto args_done
+if not "%~2"=="--source" goto invalid_args
+if "%~3"=="" (
+    echo --source requires a workspace path. >&2
+    goto fail
+)
+if not "%~4"=="" goto invalid_args
+set "SOURCE_ROOT=%~3"
 
 :args_done
 for %%I in ("%SOURCE_ROOT%") do set "SOURCE_ROOT=%%~fI"
