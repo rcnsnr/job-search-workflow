@@ -10,7 +10,9 @@ and keep the upgrade link unchanged so users always reach the current procedure.
 
 ## Upgrade safely
 
-Follow the [current upgrade procedure](https://github.com/rcnsnr/job-search-workflow/blob/main/docs/UPGRADING.md) before updating an existing clone or fork.
+Run `./scripts/upgrade.sh vX.Y.Z` on Linux/macOS or `scripts\upgrade.bat vX.Y.Z`
+on Windows. The scripts create a backup and a separate release workspace before
+copying personal data. Read the [current upgrade procedure](https://github.com/rcnsnr/job-search-workflow/blob/main/docs/UPGRADING.md) for the full behavior.
 
 ## Validation
 

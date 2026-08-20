@@ -23,78 +23,69 @@ Current Community Edition releases do not run a database migration or write to
 these directories. The dashboard is read-only. Still, keep a dated backup so
 you can return to the previous workspace without risk.
 
-## Recommended: Test a New Clone First
+## Recommended: Run the Upgrade Script
 
-This is the safest path for most users. Keep the old folder unchanged until the
-new dashboard shows the expected records.
-
-1. Close any running dashboard process.
-2. Back up the five personal directories listed above from your current clone.
-3. Clone the tagged release into a separate folder. Replace `vX.Y.Z` with the
-   release tag shown in the release notes.
-
-   ```bash
-   git clone --branch vX.Y.Z https://github.com/rcnsnr/job-search-workflow.git job-search-workflow-vX.Y.Z
-   cd job-search-workflow-vX.Y.Z
-   ./scripts/setup.sh --check-only
-   ./scripts/setup.sh
-   ```
-
-   On Windows Command Prompt, use `scripts\setup.bat --check-only` and then
-   `scripts\setup.bat`.
-
-4. Start the new dashboard against the old workspace. Replace the path with the
-   absolute path of your existing clone.
-
-   ```bash
-   JSW_WORKSPACE="/absolute/path/to/your-existing-workspace" python3 -m jsw dashboard
-   ```
-
-5. Check your jobs, profile and application documents in the browser. If they
-   look correct, you can use the new clone. Keep the old clone and backup until
-   you are comfortable with the update.
-
-For long-term separation, copy the five personal directories into a dedicated
-local folder outside every clone, then point the dashboard at that folder with
-`JSW_WORKSPACE`. Future code upgrades can then use fresh clones without moving
-your data.
-
-## Update an Unmodified Direct Clone
-
-Use this only when `git status --short` shows no tracked-code changes that you
-need to keep. Back up personal directories first.
+This is the supported path for direct clones and forks. Close any running
+dashboard process, open a terminal in your current clone, and run the exact tag
+named in the release notes:
 
 ```bash
-git fetch origin --tags
-git switch main
-git pull --ff-only origin main
-git switch --detach vX.Y.Z
-./scripts/setup.sh --check-only
-./scripts/setup.sh
-PYTHONPATH=scripts python3 -m jsw smoke
+./scripts/upgrade.sh vX.Y.Z
 ```
 
-`--ff-only` is deliberate: it stops instead of combining an unexpected local
-history with the public release. If it stops, use the recommended new-clone
-path rather than forcing a pull, rebase, or reset.
+On Windows Command Prompt:
 
-## Update a Fork
+```bat
+scripts\upgrade.bat vX.Y.Z
+```
 
-Fork owners should keep their fork remote as `origin` and add the public
-project as `upstream` once:
+The script does four things in this order:
+
+1. Creates a dated backup outside the current clone.
+2. Clones the requested release into a separate sibling folder.
+3. Copies `user_data/`, `inbox/`, `exports/`, `outputs/` and `runs/` into that
+   new folder.
+4. Checks the new release prerequisites without changing the original
+   workspace.
+
+It never runs `git pull`, `git reset`, `git rebase`, or a delete command against
+your existing workspace. If the tag, backup path, copy, clone, or prerequisite
+check fails, it stops and leaves the original workspace in place.
+
+You may omit the version to use the latest published stable GitHub release, but
+using the exact tag from release notes is more reproducible:
 
 ```bash
-git remote add upstream https://github.com/rcnsnr/job-search-workflow.git
-git fetch upstream --tags
-git switch main
-git merge --ff-only upstream/main
-git push origin main
-git switch --detach vX.Y.Z
+./scripts/upgrade.sh
 ```
 
-If the fast-forward merge stops because your fork has framework changes, do not
-force it. Create a separate upgrade branch from `upstream/main`, test it against
-your existing workspace, and merge your customizations deliberately.
+After a successful run, open the printed new workspace path, install the local
+dashboard dependency if needed, and start the dashboard there. Keep the old
+clone and dated backup until you have checked your records.
+
+### One-Time Bootstrap for v0.2.0 and Earlier
+
+Older releases do not include the upgrade scripts. Download or clone the
+`v0.2.1` source into a temporary folder, then point its script at your current
+workspace. This first bootstrap does not alter the old workspace:
+
+```bash
+git clone --branch v0.2.1 https://github.com/rcnsnr/job-search-workflow.git /tmp/jsw-upgrade-v0.2.1
+/tmp/jsw-upgrade-v0.2.1/scripts/upgrade.sh v0.2.1 --source /absolute/path/to/your-current-workspace
+```
+
+On Windows, clone `v0.2.1` into a temporary folder and run
+`scripts\upgrade.bat v0.2.1 --source C:\path\to\your-current-workspace` from
+that temporary clone. From `v0.2.1` onward, the normal one-command path is
+available inside every workspace.
+
+## Forks and Local Customizations
+
+The upgrade scripts always clone the official tagged Community Edition release
+into a new sibling folder. They do not merge, rebase, or alter your fork's Git
+history, so the same command is safe when your fork or clone has local framework
+customizations. Compare and transfer any custom code deliberately after the new
+workspace has been checked.
 
 ## Roll Back
 
@@ -107,7 +98,7 @@ git switch --detach vPREVIOUS.VERSION
 ```
 
 Never use `git reset --hard` as an upgrade step. It is unnecessary for the
-supported update paths and can discard tracked local changes.
+supported update script and can discard tracked local changes.
 
 ## Release Notes Rule
 

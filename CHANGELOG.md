@@ -7,8 +7,11 @@ Edition.
 
 ### Upgrade Safety
 
-- Added a data-preserving upgrade guide for direct clones and forks, including
-  a separate-clone test path, external workspace support and safe rollback.
+- Added `upgrade.sh` and `upgrade.bat` for data-preserving updates. They create
+  a dated backup, a separate tagged workspace, and copy personal records
+  without changing the original clone or fork.
+- Added a one-time bootstrap path for users upgrading from `v0.2.0` or earlier,
+  where the upgrade scripts were not yet present.
 - Every GitHub release note now links to the current upgrade procedure. A
   release-policy workflow verifies that link after publishing or editing a
   release.

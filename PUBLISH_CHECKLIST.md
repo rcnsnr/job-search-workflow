@@ -15,6 +15,7 @@ own additional checklist in `PUBLISH_CHECKLIST_EXTENSION.md`.
 - [ ] Start the GitHub release body from `docs/release-notes-template.md` and
   retain its direct link to
   `https://github.com/rcnsnr/job-search-workflow/blob/main/docs/UPGRADING.md`.
+  State the exact `upgrade.sh` and `upgrade.bat` command for the release tag.
   The release-policy workflow must pass after publication; a release without
   that link is not verified.
 - [ ] Write release notes that state the source-only scope and do not claim a
@@ -39,6 +40,9 @@ own additional checklist in `PUBLISH_CHECKLIST_EXTENSION.md`.
   passes.
 - [ ] `python3 scripts/check_sample_cv_fixture_coverage.py --base origin/main`
   passes.
+- [ ] Run the platform-specific lossless upgrade script against the previous
+  release tag, or rely on the current-main Setup Audit where Linux and Windows
+  contracts run `upgrade.sh` and `upgrade.bat` against that tag.
 - [ ] If dashboard visuals changed, refresh all five stable files under
   `assets/screenshots/` and run
   `python3 scripts/check_dashboard_screenshot_coverage.py --base origin/main`.

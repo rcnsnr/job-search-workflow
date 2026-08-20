@@ -39,6 +39,8 @@ def test_release_notes_always_link_to_the_current_upgrade_guide() -> None:
     assert (ROOT / "docs" / "UPGRADING.md").is_file()
     assert "docs/UPGRADING.md" in readme
     assert "docs/UPGRADING.md" in changelog
+    assert "upgrade.sh" in checklist
+    assert "upgrade.bat" in checklist
     assert guide_url in checklist
     assert guide_url in template
     assert "types: [published, edited]" in workflow
