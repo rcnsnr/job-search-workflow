@@ -44,3 +44,31 @@ def test_docx_reference_path_matches_validator_contract() -> None:
         assert "exports/cv-reference.docx" in content
         assert "templates/cv-reference.docx" not in content
         assert "exports/cv-variants-2026-06-21" not in content
+
+
+def test_onboarding_paths_make_ai_data_boundary_explicit() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    getting_started = (ROOT / "docs" / "getting-started" / "GETTING_STARTED.md").read_text(
+        encoding="utf-8"
+    )
+    template_readme = (ROOT / "templates" / "user-data-skeleton" / "README.md").read_text(
+        encoding="utf-8"
+    )
+    assistant_guide = (
+        ROOT / "docs" / "getting-started" / "AI-ASSISTANT-INTEGRATION.md"
+    ).read_text(encoding="utf-8")
+    quickstart = (ROOT / "docs" / "getting-started" / "QUICKSTART-30MIN.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "docs/getting-started/QUICKSTART-30MIN.md" in readme
+    assert "docs/getting-started/AI-ASSISTANT-INTEGRATION.md" in readme
+    assert "- `templates/`" in readme
+    assert "## Advanced: Browser Extension" in readme
+    assert "[AI Assistant Integration Guide](AI-ASSISTANT-INTEGRATION.md)" in getting_started
+    assert "[30-Minute Quickstart](QUICKSTART-30MIN.md)" in getting_started
+    assert "The framework does not send your files to an AI provider." in assistant_guide
+    assert "Do not assume that a browser-based AI chat can read a local file path." in assistant_guide
+    assert "The 30-minute path starts after base setup is complete." in quickstart
+    assert "## Starter Files" in template_readme
+    assert "## Optional Working Files" in template_readme

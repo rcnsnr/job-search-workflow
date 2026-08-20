@@ -4,6 +4,10 @@ This guide walks you through your first job triage, CV generation, and tracking
 — on macOS, Linux, or Windows.
 
 > **New here?** Read the [README](../../README.md) first for the project overview.
+>
+> **Want the shortest path?** Follow the [30-Minute Quickstart](QUICKSTART-30MIN.md).
+> Before sharing personal material with an AI assistant, read the
+> [AI Assistant Integration Guide](AI-ASSISTANT-INTEGRATION.md).
 
 ---
 
@@ -11,6 +15,7 @@ This guide walks you through your first job triage, CV generation, and tracking
 
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+- [Choose an AI Assistant Safely](#choose-an-ai-assistant-safely)
 - [Your First Triage](#your-first-triage)
 - [Generate a Tailored CV](#generate-a-tailored-cv)
 - [Track in the Dashboard](#track-in-the-dashboard)
@@ -153,6 +158,19 @@ npm install -g markdownlint-cli2
 
 ---
 
+## Choose an AI Assistant Safely
+
+This framework works with any assistant that can accept pasted text. The
+portable default is simple: paste the full mode file, then share only the
+smallest profile excerpt and job-posting text needed for that task.
+
+Use the [AI Assistant Integration Guide](AI-ASSISTANT-INTEGRATION.md) to choose
+between a browser chat, a workspace-aware coding assistant, and fixture-only
+practice. The guide explains what a provider can receive and how to avoid
+sharing contact details, full work history, or application records by default.
+
+---
+
 ## Your First Triage
 
 The framework uses `modes/` files as structured prompts. You paste the
@@ -161,11 +179,16 @@ under it.
 
 ### Step 1: Fill Your Profile
 
-Open `user_data/career_profile.md` in your AI assistant and replace the
-placeholders with your real experience, skills, and preferences.
+Open `user_data/career_profile.md` in a local editor and replace the placeholders
+with your real experience, skills, and preferences. For a first triage, prepare
+a short role-relevant excerpt instead of sharing the whole file by default.
 
 Do the same for `user_data/target_roles.md` with your role, location, and
 deal-breaker preferences.
+
+The [AI Assistant Integration Guide](AI-ASSISTANT-INTEGRATION.md) shows what to
+share in a browser chat and what to check before granting a workspace-aware
+assistant access to local files.
 
 ### Step 2: Find a Job Posting
 
@@ -181,7 +204,9 @@ Copy a job posting that interests you. You can use:
 1. Open `modes/01_JOB_TRIAGE.md`.
 2. Copy the entire file.
 3. Paste it into your AI assistant.
-4. Add:
+4. Add a short, role-relevant profile excerpt. Do not include contact details
+   unless they are needed for the task.
+5. Add:
 
    ```text
    Here is the job posting I want to evaluate:
@@ -189,7 +214,7 @@ Copy a job posting that interests you. You can use:
    [paste the posting here]
    ```
 
-5. The AI returns a structured evaluation with:
+6. The AI returns a structured evaluation with:
    - fit score
    - risks (ghost, exploitation, chaos)
    - compensation signal
@@ -382,6 +407,12 @@ npx markdownlint-cli2 "**/*.md" "#**/node_modules/**"
 Your personal data lives in `user_data/`, `inbox/`, `runs/`, `outputs/`, and
 `exports/`. These directories are gitignored by default. Never commit real
 personal information to the repository.
+
+The framework itself does not send these files to an AI provider. If you paste
+or upload content to an AI assistant, that selected content is sent to the
+provider under its own terms. A local file path alone does not make a browser
+chat able to read the file. Use the [AI Assistant Integration Guide](AI-ASSISTANT-INTEGRATION.md)
+to choose what to share and review your provider settings separately.
 
 If you want to back up your data, copy the directories above to a private
 location outside the repository.
