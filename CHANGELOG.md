@@ -3,7 +3,20 @@
 This file records user-visible changes to Job Search Workflow Community
 Edition.
 
+## [0.2.1] - 2026-08-20
+
+### Upgrade Safety
+
+- Added a data-preserving upgrade guide for direct clones and forks, including
+  a separate-clone test path, external workspace support and safe rollback.
+- Every GitHub release note now links to the current upgrade procedure. A
+  release-policy workflow verifies that link after publishing or editing a
+  release.
+
 ## [0.2.0] - 2026-08-20
+
+For upgrade instructions, see
+[Upgrade Safely](docs/UPGRADING.md).
 
 ### Stable Release Additions
 

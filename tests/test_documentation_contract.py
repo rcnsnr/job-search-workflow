@@ -26,6 +26,26 @@ def test_local_markdown_links_resolve() -> None:
     assert missing == []
 
 
+def test_release_notes_always_link_to_the_current_upgrade_guide() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    checklist = (ROOT / "PUBLISH_CHECKLIST.md").read_text(encoding="utf-8")
+    template = (ROOT / "docs" / "release-notes-template.md").read_text(encoding="utf-8")
+    workflow = (ROOT / ".github" / "workflows" / "release-policy.yml").read_text(
+        encoding="utf-8"
+    )
+
+    guide_url = "https://github.com/rcnsnr/job-search-workflow/blob/main/docs/UPGRADING.md"
+    assert (ROOT / "docs" / "UPGRADING.md").is_file()
+    assert "docs/UPGRADING.md" in readme
+    assert "docs/UPGRADING.md" in changelog
+    assert guide_url in checklist
+    assert guide_url in template
+    assert "types: [published, edited]" in workflow
+    assert "ref: main" in workflow
+    assert "scripts/check_release_notes_upgrade_link.py" in workflow
+
+
 def test_setup_guide_matches_current_workflow_and_node_contract() -> None:
     guide = (ROOT / "docs" / "setup-and-verification.md").read_text(encoding="utf-8")
 

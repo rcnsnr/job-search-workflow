@@ -12,6 +12,11 @@ own additional checklist in `PUBLISH_CHECKLIST_EXTENSION.md`.
 - [ ] Choose an unused semantic version and update `pyproject.toml`,
   `dashboard/server.py`, and `CHANGELOG.md` together.
 - [ ] Confirm the release target is the current protected `main` commit.
+- [ ] Start the GitHub release body from `docs/release-notes-template.md` and
+  retain its direct link to
+  `https://github.com/rcnsnr/job-search-workflow/blob/main/docs/UPGRADING.md`.
+  The release-policy workflow must pass after publication; a release without
+  that link is not verified.
 - [ ] Write release notes that state the source-only scope and do not claim a
   hosted service, package-store publication, or commercial-use grant.
 
@@ -69,6 +74,8 @@ own additional checklist in `PUBLISH_CHECKLIST_EXTENSION.md`.
 
 - [ ] Confirm the tag and release resolve to the intended commit.
 - [ ] Confirm the release is not marked draft or prerelease.
+- [ ] Confirm the `Release policy / Verify release notes upgrade link` workflow
+  passes for the published release.
 - [ ] Confirm no new open release-blocking pull request or issue was created.
 - [ ] Record the release URL, commit, checks, and remaining non-release risks
   in the canonical private WP receipt.

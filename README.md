@@ -7,7 +7,8 @@
 > 1.0.0. Commercial use is not granted by this repository. See
 > [Commercial Use and SaaS Boundary](COMMERCIAL_USE.md).
 
-See the [Changelog](CHANGELOG.md) for the current release notes.
+See the [Changelog](CHANGELOG.md) for the current release notes and
+[Upgrade Safely](docs/UPGRADING.md) before updating an existing clone or fork.
 Report vulnerabilities through the private-first process in
 [Security Policy](SECURITY.md).
 
@@ -52,6 +53,7 @@ Read the [Setup and Verification Guide](docs/setup-and-verification.md) for the 
 | First end-to-end workflow | [Getting Started](docs/getting-started/GETTING_STARTED.md) |
 | Use an AI assistant safely | [AI Assistant Integration Guide](docs/getting-started/AI-ASSISTANT-INTEGRATION.md) |
 | Setup and supported environments | [Setup and Verification](docs/setup-and-verification.md) |
+| Upgrade an existing clone or fork | [Upgrade Safely](docs/UPGRADING.md) |
 | Read-only record checks | [Workflow Guards](docs/getting-started/WORKFLOW_GUARDS.md) |
 | Public job-source discovery | [Source Discovery Operations](docs/runbooks/source-discovery-operations.md) |
 | Browser extension install | [Extension Install](docs/runbooks/browser-extension-install.md) |
