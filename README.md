@@ -132,6 +132,8 @@ The local dashboard is the primary visual surface for Job Search Workflow
 Community Edition. It reads Markdown from `inbox/jobs/` and falls back to
 fictitious fixtures when no personal workspace exists.
 
+![Community Operations Desk overview](assets/screenshots/dashboard-overview.png)
+
 ```bash
 pip install -e ".[dashboard]"
 python3 -m jsw dashboard
@@ -149,6 +151,10 @@ Open `http://localhost:3000` to use:
 The dashboard is read-only and does not require an account or external data
 transfer. `scripts/job_dashboard.py` is retained as a legacy compatibility
 entry point; `python3 -m jsw dashboard` is the canonical interface.
+
+The public preview uses five stable fixture screenshots. They are refreshed at
+the same paths whenever dashboard visuals change; see the
+[Dashboard Screenshot Baseline](docs/runbooks/dashboard-screenshot-baseline.md).
 
 To surface application documents for a job, place them under
 `exports/applications/<posting-filename-without-.md>/`. The dashboard admits
