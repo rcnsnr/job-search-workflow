@@ -1,0 +1,22 @@
+name: Release policy
+
+on:
+  release:
+    types: [published, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  release-notes:
+    name: Verify release notes upgrade link
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 scripts/check_release_notes_upgrade_link.py --event "$GITHUB_EVENT_PATH"
+        name: Require the current upgrade procedure in release notes

@@ -29,6 +29,27 @@ def test_nonvisual_change_does_not_require_screenshot_refresh() -> None:
     assert coverage.missing_screenshot_updates({"README.md"}) == set()
 
 
+def test_fastapi_version_only_bump_does_not_require_screenshot_refresh() -> None:
+    version_only_diff = '-    version="0.2.0",\n+    version="0.2.1",\n'
+
+    assert coverage.server_diff_is_metadata_only(version_only_diff)
+    assert (
+        coverage.missing_screenshot_updates(
+            {"dashboard/server.py"}, server_change_is_metadata_only=True
+        )
+        == set()
+    )
+
+
+def test_dashboard_server_content_change_still_requires_screenshot_refresh() -> None:
+    content_diff = '-    description="Old copy",\n+    description="New copy",\n'
+
+    assert not coverage.server_diff_is_metadata_only(content_diff)
+    assert coverage.missing_screenshot_updates({"dashboard/server.py"}) == set(
+        coverage.STABLE_SCREENSHOTS
+    )
+
+
 def test_capture_receipt_covers_a_recheck_with_identical_pixels() -> None:
     changed_paths = {
         "dashboard/server.py",

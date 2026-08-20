@@ -3,7 +3,23 @@
 This file records user-visible changes to Job Search Workflow Community
 Edition.
 
+## [0.2.1] - 2026-08-20
+
+### Upgrade Safety
+
+- Added `upgrade.sh` and `upgrade.bat` for data-preserving updates. They create
+  a dated backup, a separate tagged workspace, and copy personal records
+  without changing the original clone or fork.
+- Added a one-time bootstrap path for users upgrading from `v0.2.0` or earlier,
+  where the upgrade scripts were not yet present.
+- Every GitHub release note now links to the current upgrade procedure. A
+  release-policy workflow verifies that link after publishing or editing a
+  release.
+
 ## [0.2.0] - 2026-08-20
+
+For upgrade instructions, see
+[Upgrade Safely](docs/UPGRADING.md).
 
 ### Stable Release Additions
 

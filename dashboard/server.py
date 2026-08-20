@@ -468,7 +468,7 @@ def compute_stage_counts(cards: list[JobCard]) -> dict[str, int]:
 app = FastAPI(
     title=PRODUCT_NAME,
     description="Local-first dashboard for job search pipeline tracking.",
-    version="0.2.0",
+    version="0.2.1",
 )
 
 templates = Jinja2Templates(directory=str(PACKAGE_ROOT / "templates"))

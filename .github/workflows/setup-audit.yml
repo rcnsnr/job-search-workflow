@@ -24,9 +24,13 @@ jobs:
       - run: shellcheck --version
       - run: bash -n scripts/setup.sh
       - run: shellcheck scripts/setup.sh
+      - run: bash -n scripts/upgrade.sh
+      - run: shellcheck scripts/upgrade.sh
       - run: python3 -m unittest discover -s tests -v
       - run: ./scripts/setup.sh --check-only
       - run: ./scripts/setup.sh
+      - run: ./scripts/upgrade.sh v0.2.0
+        name: Verify lossless upgrade script
 
   windows:
     name: Windows setup contract
@@ -43,3 +47,6 @@ jobs:
         run: scripts\setup.bat --check-only
       - shell: cmd
         run: scripts\setup.bat
+      - shell: cmd
+        run: scripts\upgrade.bat v0.2.0
+        name: Verify lossless upgrade script

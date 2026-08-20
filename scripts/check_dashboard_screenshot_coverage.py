@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import subprocess
 from pathlib import Path
 
@@ -22,18 +23,36 @@ VISUAL_SOURCE_PREFIXES = (
     "dashboard/templates/",
 )
 VISUAL_SOURCE_FILES = {"dashboard/server.py"}
+SERVER_VERSION_CHANGE = re.compile(r'^[+-]\s*version="[^"]+",$')
 
 
-def has_visual_dashboard_change(changed_paths: set[str]) -> bool:
+def server_diff_is_metadata_only(diff: str) -> bool:
+    """Allow a FastAPI version-only bump without requiring new screenshots."""
+    changed_lines = [
+        line
+        for line in diff.splitlines()
+        if line.startswith(("+", "-")) and not line.startswith(("+++", "---"))
+    ]
+    return bool(changed_lines) and all(SERVER_VERSION_CHANGE.fullmatch(line) for line in changed_lines)
+
+
+def has_visual_dashboard_change(
+    changed_paths: set[str], *, server_change_is_metadata_only: bool = False
+) -> bool:
+    """Return whether changed paths can alter dashboard screenshots."""
     return any(
-        path in VISUAL_SOURCE_FILES
+        (path in VISUAL_SOURCE_FILES and not server_change_is_metadata_only)
         or path.startswith(VISUAL_SOURCE_PREFIXES)
         for path in changed_paths
     )
 
 
-def missing_screenshot_updates(changed_paths: set[str]) -> set[str]:
-    if not has_visual_dashboard_change(changed_paths):
+def missing_screenshot_updates(
+    changed_paths: set[str], *, server_change_is_metadata_only: bool = False
+) -> set[str]:
+    if not has_visual_dashboard_change(
+        changed_paths, server_change_is_metadata_only=server_change_is_metadata_only
+    ):
         return set()
     if CAPTURE_RECEIPT in changed_paths:
         return set()
@@ -49,6 +68,18 @@ def changed_paths_since(base_ref: str) -> set[str]:
         text=True,
     )
     return {line for line in result.stdout.splitlines() if line}
+
+
+def server_diff_since(base_ref: str) -> str:
+    """Return the zero-context diff for the dashboard server."""
+    result = subprocess.run(
+        ["git", "diff", "--unified=0", f"{base_ref}...HEAD", "--", "dashboard/server.py"],
+        check=True,
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout
 
 
 def main() -> int:
@@ -74,7 +105,13 @@ def main() -> int:
             print(error.stderr.strip())
         return 2
 
-    missing = missing_screenshot_updates(changed_paths)
+    metadata_only = (
+        "dashboard/server.py" in changed_paths
+        and server_diff_is_metadata_only(server_diff_since(args.base))
+    )
+    missing = missing_screenshot_updates(
+        changed_paths, server_change_is_metadata_only=metadata_only
+    )
     if not missing:
         print("PASS dashboard screenshot coverage")
         return 0
