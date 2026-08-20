@@ -38,13 +38,19 @@ by each user; it does not require a hosted account.
 4. Replace the generated sample files under `user_data/` with your own verified
    information. Fictitious examples remain available under `fixtures/`.
 
+5. Follow the [30-Minute Quickstart](docs/getting-started/QUICKSTART-30MIN.md)
+   to complete one first triage. Before sharing personal material with an AI
+   assistant, read the [AI Assistant Integration Guide](docs/getting-started/AI-ASSISTANT-INTEGRATION.md).
+
 Read the [Setup and Verification Guide](docs/setup-and-verification.md) for the detailed behavior contract, support matrix and troubleshooting steps.
 
 ## Documentation Map
 
 | Need | Guide |
 | --- | --- |
+| First triage in one sitting | [30-Minute Quickstart](docs/getting-started/QUICKSTART-30MIN.md) |
 | First end-to-end workflow | [Getting Started](docs/getting-started/GETTING_STARTED.md) |
+| Use an AI assistant safely | [AI Assistant Integration Guide](docs/getting-started/AI-ASSISTANT-INTEGRATION.md) |
 | Setup and supported environments | [Setup and Verification](docs/setup-and-verification.md) |
 | Read-only record checks | [Workflow Guards](docs/getting-started/WORKFLOW_GUARDS.md) |
 | Public job-source discovery | [Source Discovery Operations](docs/runbooks/source-discovery-operations.md) |
@@ -95,9 +101,10 @@ The setup scripts do not install missing system packages automatically and do no
 - `docs/runbooks/` - repeatable operational procedures
 - `tools/browser-extension/` - `Job Search Workflow Capture` browser extension source
 - `fixtures/` - fictitious sample data for local demos and tests
+- `templates/` - starter files to copy into your Git-ignored local `user_data/` workspace
 - `dashboard/` - local Community Operations Desk interface
 
-## Browser Extension
+## Advanced: Browser Extension
 
 The `Job Search Workflow Capture` browser extension captures job postings from
 LinkedIn Jobs and exports them as Job Search Workflow Markdown/JSONL, CSV, or JSON. It can
@@ -174,6 +181,10 @@ Windows support is not considered verified unless that job passes.
 
 - Content under `user_data/`, `inbox/jobs/`, `runs/`, `outputs/` and `exports/` is excluded by `.gitignore`.
 - `.gitignore` alone does not guarantee prevention of personal-data leaks.
+- The framework does not send your files to an AI provider. If you paste or
+  upload content to an AI assistant, that selected content is handled by that
+  provider under its own terms. Use the [AI Assistant Integration Guide](docs/getting-started/AI-ASSISTANT-INTEGRATION.md)
+  to choose a narrow sharing path.
 - Before every public contribution or release, run deterministic PII and secret
   scans, perform a manual content review, verify licensing, and confirm that
   Git history contains no unintended private data.
