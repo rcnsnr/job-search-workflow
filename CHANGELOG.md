@@ -3,6 +3,23 @@
 This file records user-visible changes to Job Search Workflow Community
 Edition.
 
+## [0.2.0] - 2026-08-20
+
+### Stable Release Additions
+
+- A real, reusable `fixtures/sample-cv.pdf` generated from the tracked
+  `fixtures/sample-cv.tex` source with the standard LaTeX export chain.
+- A repository-wide publication checklist covering privacy, license, quality,
+  documentation, release, and post-release verification.
+- A stable public dashboard screenshot baseline that is refreshed whenever
+  dashboard visuals change.
+
+### Stable Release Changes
+
+- The demo job's CV entry now opens the real public PDF fixture instead of a
+  display-only placeholder.
+- Updated package and dashboard metadata for the first stable source release.
+
 ## [0.1.0] - 2026-08-19
 
 ### Added

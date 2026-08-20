@@ -12,6 +12,10 @@
 \usepackage{parskip}
 \usepackage{titlesec}
 
+% Keep the public fixture byte-stable across intentional rebuilds.
+\pdfinfoomitdate=1
+\pdftrailerid{}
+
 \setlength{\parindent}{0pt}
 \setlist[itemize]{leftmargin=1.2em,itemsep=0.15em,topsep=0.2em,parsep=0em}
 \titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
@@ -29,6 +33,8 @@
 Berlin, Germany \,|\, \href{mailto:alex.chen@example.com}{alex.chen@example.com} \,|\, +1-555-0142\\
 \href{https://linkedin.com/in/alexchen-example}{linkedin.com/in/alexchen-example} \,|\, \href{https://github.com/alexchen-example}{github.com/alexchen-example}\\[0.4em]
 \textbf{Senior Platform Engineer --- AI Infrastructure}
+
+\textit{Fictional sample for Job Search Workflow Community Edition}
 \end{center}
 
 \section{Professional Summary}
@@ -69,6 +75,36 @@ workflows and LLM-powered developer productivity tooling.
 \item Automated monitoring setup (Prometheus + Grafana) for 50+ services
 \item Migrated legacy deployment scripts to Helm charts (30+ services containerized)
 \item Contributed to SLO definition and alerting strategy for core data pipeline
+\end{itemize}
+
+\newpage
+
+\section{Selected Projects}
+
+\needspace{4\baselineskip}
+\textbf{Developer Self-Service Portal} \hfill \textit{2024}
+
+\begin{itemize}
+\item Designed a catalog workflow for service ownership, environment requests, and operational runbooks
+\item Added policy checks that prevented incomplete production-readiness handoffs before deployment
+\item Partnered with application teams to turn recurring support requests into reusable templates
+\end{itemize}
+
+\needspace{4\baselineskip}
+\textbf{AI-Assisted Incident Review Prototype} \hfill \textit{2023}
+
+\begin{itemize}
+\item Built a retrieval prototype that connected incident timelines, runbooks, and change records for operators
+\item Added human review steps so generated summaries remained evidence-based and safe to correct
+\item Measured repeated alert patterns and proposed small automation opportunities for follow-up work
+\end{itemize}
+
+\section{Leadership and Collaboration}
+
+\begin{itemize}
+\item Mentored four engineers on incident response, practical observability, and sustainable on-call practices
+\item Facilitated quarterly reliability reviews with product, security, and platform stakeholders
+\item Wrote concise decision records for infrastructure trade-offs, ownership boundaries, and operational risks
 \end{itemize}
 
 \section{Technical Skills}

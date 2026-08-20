@@ -94,12 +94,14 @@ def test_job_detail_lists_only_application_documents() -> None:
     assert "Extracted Facts" in response.text
 
 
-def test_demo_pdf_label_does_not_expose_a_fake_file() -> None:
+def test_demo_pdf_is_an_available_application_document() -> None:
     response = client.get(
         "/application-file/sample-job-posting.md/sample-cv.pdf"
     )
 
-    assert response.status_code == 404
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/pdf"
+    assert response.content.startswith(b"%PDF-")
 
 
 def test_application_document_route_rejects_non_application_fixture() -> None:

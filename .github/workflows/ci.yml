@@ -38,6 +38,12 @@ jobs:
         name: Require screenshots for dashboard visual changes
         env:
           COMPARE_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+      - run: python3 scripts/check_sample_cv_fixture_coverage.py --base "$COMPARE_BASE"
+        name: Require PDF refresh for sample CV source changes
+        env:
+          COMPARE_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+      - run: python3 scripts/validate_pdf_standard.py --public-fixture --strict
+        name: Validate public sample CV fixture
       - run: python3 scripts/scan_pii.py --path .
         name: Scan the complete public tree
       - run: python3 scripts/check_secret_hygiene.py

@@ -16,6 +16,7 @@ STABLE_SCREENSHOTS = (
     "assets/screenshots/dashboard-profile.png",
     "assets/screenshots/dashboard-scoring.png",
 )
+CAPTURE_RECEIPT = "assets/screenshots/manifest.json"
 VISUAL_SOURCE_PREFIXES = (
     "dashboard/static/",
     "dashboard/templates/",
@@ -33,6 +34,8 @@ def has_visual_dashboard_change(changed_paths: set[str]) -> bool:
 
 def missing_screenshot_updates(changed_paths: set[str]) -> set[str]:
     if not has_visual_dashboard_change(changed_paths):
+        return set()
+    if CAPTURE_RECEIPT in changed_paths:
         return set()
     return set(STABLE_SCREENSHOTS) - changed_paths
 

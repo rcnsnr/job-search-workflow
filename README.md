@@ -183,6 +183,11 @@ Pull-request CI runs Python, dashboard, privacy, documentation, and extension
 checks. The scheduled Setup Audit runs Linux and real Windows CMD setup jobs;
 Windows support is not considered verified unless that job passes.
 
+Before creating a public release, complete the
+[General Publish Checklist](PUBLISH_CHECKLIST.md). The tracked public sample
+CV is always `fixtures/sample-cv.tex` plus `fixtures/sample-cv.pdf`; rebuild
+the PDF only when its LaTeX source intentionally changes.
+
 ## Security and Privacy
 
 - Content under `user_data/`, `inbox/jobs/`, `runs/`, `outputs/` and `exports/` is excluded by `.gitignore`.

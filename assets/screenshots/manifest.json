@@ -1,0 +1,11 @@
+{
+  "baseline_revision": 2,
+  "capture_contract": "1920x1200 viewport, default light theme, full-page PNG, generic fixtures only",
+  "routes": {
+    "dashboard-jobs.png": "/jobs",
+    "dashboard-overview.png": "/",
+    "dashboard-pipeline.png": "/pipeline",
+    "dashboard-profile.png": "/profile",
+    "dashboard-scoring.png": "/scoring"
+  }
+}

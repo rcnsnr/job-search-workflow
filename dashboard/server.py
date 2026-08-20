@@ -401,6 +401,7 @@ def application_document_paths(posting_filename: str) -> list[Path]:
 
     if posting_filename == "sample-job-posting.md" and not (JOBS_DIR / posting_filename).is_file():
         return [
+            FIXTURES_DIR / "sample-cv.pdf",
             FIXTURES_DIR / "sample-cover-letter.md",
             FIXTURES_DIR / "sample-application-answers.md",
         ]
@@ -411,20 +412,6 @@ def load_application_documents(posting_filename: str) -> list[ApplicationDocumen
     """Return existing, allowlisted application documents for one posting."""
     order = {"CV": 0, "Cover letter": 1, "Application answers": 2}
     documents: list[ApplicationDocument] = []
-    if (
-        posting_filename == "sample-job-posting.md"
-        and not (JOBS_DIR / posting_filename).is_file()
-    ):
-        documents.append(
-            ApplicationDocument(
-                filename="sample-cv.pdf",
-                label="CV",
-                file_format="PDF",
-                href=None,
-                action="Delivery format",
-                path=None,
-            )
-        )
     for path in application_document_paths(posting_filename):
         if not path.is_file():
             continue
@@ -481,7 +468,7 @@ def compute_stage_counts(cards: list[JobCard]) -> dict[str, int]:
 app = FastAPI(
     title=PRODUCT_NAME,
     description="Local-first dashboard for job search pipeline tracking.",
-    version="0.1.0",
+    version="0.2.0",
 )
 
 templates = Jinja2Templates(directory=str(PACKAGE_ROOT / "templates"))
